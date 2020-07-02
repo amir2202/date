@@ -21,8 +21,8 @@ class Dating extends StatelessWidget {
     OutlineButton loginButton = new OutlineButton(
       onPressed: () {},
       child: Text(
-        'LOG IN',
-        style: TextStyle(color: Colors.white)
+          'LOG IN',
+          style: TextStyle(color: Colors.white)
       ),
       highlightedBorderColor: Colors.white,
       borderSide: BorderSide(color: Colors.white,width:1.0),
@@ -65,15 +65,14 @@ class Dating extends StatelessWidget {
     //DropdownButton<String> languages = new DropdownButton<String>();
 
     return new MaterialApp(
-      home: new Stack(
-        alignment:Alignment.center,
-        children: <Widget>[
-          backgroundGradient,
-          buttonColumn,
-        ],
-      )
+        home: new Stack(
+          alignment:Alignment.center,
+          children: <Widget>[
+            backgroundGradient,
+            buttonColumn,
+          ],
+        )
     );
   }
 
 }
-
