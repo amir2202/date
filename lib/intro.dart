@@ -77,7 +77,9 @@ class _introState extends State<intro>{
           alignment:Alignment.center,
           children: <Widget>[
             backgroundGradient,
-            buttonColumn, new DropdownButton(items: null, onChanged: null)
+            buttonColumn, /*Material(
+              child: DropdownButton(items: null, onChanged: null)
+            )*/
           ],
         )
     );
@@ -85,3 +87,4 @@ class _introState extends State<intro>{
   }
 
 }
+
