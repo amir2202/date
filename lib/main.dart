@@ -16,14 +16,14 @@ class Dating extends StatelessWidget {
     );
 
 
-    RaisedButton login = new RaisedButton(onPressed: null,
-        child: Text('Login'));
-    RaisedButton register = new RaisedButton(onPressed: null,
-        child: Text('Sign Up'));
+    OutlineButton login = new OutlineButton(onPressed: () {},
+        child: Text('LOG IN',style: TextStyle(color: Colors.white)),highlightedBorderColor: Colors.white, borderSide: BorderSide(color: Colors.white,width:1.0),);
+    RaisedButton register = new RaisedButton(onPressed: () {},
+        child: Text('SIGN UP'),color: Colors.white,);
     Column buttoncol = new Column(mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,children: <Widget>[login,register]);
 
-    DropdownButton<String> languages = new DropdownButton<String>();
+    //DropdownButton<String> languages = new DropdownButton<String>();
 
     return new MaterialApp(
 
