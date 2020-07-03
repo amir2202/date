@@ -1,20 +1,34 @@
-import 'package:dating/register.dart';
+
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-void main() => runApp(new intro());
-class intro extends StatefulWidget {
+import 'package:dating/signup.dart';
+void main() {
+  runApp(intro());
+}
 
+
+
+class intro extends StatefulWidget {
+  static const String routeName = "/MyItemsPage";
   @override
   _introState createState() => _introState();
 
 }
 
+
+
 class _introState extends State<intro>{
+
   String dropdownValue = "English";
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
-        home: new Stack(
+        routes:{
+          'register': (context) => SignUpPage(),
+        },
+        home: Builder(
+          builder: (context) => Stack(
           alignment:Alignment.center,
           children: <Widget>[
             Container(
@@ -40,7 +54,6 @@ class _introState extends State<intro>{
                     height: 50,
                     child: OutlineButton(
                       onPressed: () {
-
                       },
                       child: Text(
                           'LOG IN',
@@ -61,6 +74,7 @@ class _introState extends State<intro>{
                     height: 50,
                     child: RaisedButton(
                       onPressed: () {
+                        Navigator.pushNamed(context, 'register');
                       },
                       child: Text('SIGN UP'),
                       color: Colors.white,
@@ -105,7 +119,7 @@ class _introState extends State<intro>{
             )
           ],
         )
+        )
     );
-
   }
 }
