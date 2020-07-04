@@ -1,8 +1,9 @@
 
 
+import 'package:date/login.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:dating/signup.dart';
+import 'package:date/signup.dart';
 void main() {
   runApp(intro());
 }
@@ -26,6 +27,7 @@ class _introState extends State<intro>{
     return new MaterialApp(
         routes:{
           'register': (context) => SignUpPage(),
+          'login': (context) => LogInPage(),
         },
         home: Builder(
           builder: (context) => Stack(
@@ -54,11 +56,12 @@ class _introState extends State<intro>{
                     height: 50,
                     child: OutlineButton(
                       onPressed: () {
+                        Navigator.pushNamed(context, 'login');
                       },
                       child: Text(
-                          'LOG IN',
-                          style: TextStyle(color: Colors.white)
-                      ),
+                        'LOG IN',
+                        style: TextStyle(color: Colors.white)
+                    ),
                       highlightedBorderColor: Colors.white,
                       borderSide: BorderSide(color: Colors.white,width:1.0),
                       shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
