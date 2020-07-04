@@ -10,7 +10,6 @@ void main() {
 
 
 class intro extends StatefulWidget {
-  static const String routeName = "/MyItemsPage";
   @override
   _introState createState() => _introState();
 
@@ -97,7 +96,7 @@ class _introState extends State<intro>{
                             tileMode: TileMode.clamp,
                           )
                       ),
-                    child: DropdownButton(
+                    /*child: DropdownButton(
                         underline: SizedBox(),
                         dropdownColor: Color.fromRGBO(159, 89, 162, 1.0),
                         value: dropdownValue,
@@ -113,7 +112,7 @@ class _introState extends State<intro>{
                             dropdownValue = newValue;
                           });
                         }
-                    ),
+                    )*/
                   )
               )
             )
