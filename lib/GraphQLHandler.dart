@@ -13,10 +13,12 @@ class GraphQLHandler {
   static ValueNotifier<GraphQLClient> getClient(){
     return client;
   }
-   static const String registerUser = r"""mutation addUserManual($name:String!,$password:String!,$premium:Boolean!,$email:String!) {
+   static const String registerUser = r"""mutation addUserManual($name:String!,$password:String!,$premium:Boolean!,$email:String!,$gender:Boolean!,$country:String!) {
   addUserManuala(name:$name,password:$password,premium:$premium,email:$email){
     userid
   }
+  addUserInfo(gender:$gender,country:$country){
+  userid}
 }
 """;
 
