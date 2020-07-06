@@ -42,18 +42,9 @@ class SignUpPageState extends State<SignUpPage> {
 
   @override
   Widget build(BuildContext context) {
-    String name = "YYEEEE";
-    String password = "";
-    bool premium = false;
-    String email = "";
-    String registerUser = """
-    mutation {
-      addUserManual(name:"$name",password:"$password",premium:$premium,email:"$email"){
-      userid
-      }
-    }
-""";
-    TextEditingController nameController = TextEditingController();
+   TextEditingController nameController = TextEditingController();
+   TextEditingController passwordController = TextEditingController();
+   TextEditingController emailController = TextEditingController();
     return GraphQLProvider(
         client: GraphQLHandler.client/*ValueNotifier(
           GraphQLClient(
@@ -191,6 +182,7 @@ class SignUpPageState extends State<SignUpPage> {
                           Material(
                             color: Colors.white,
                             child: TextFormField(
+                                controller: emailController,
                                 focusNode: textFocusNode2,
                                 decoration: InputDecoration(
                                   focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(30.0), borderSide: BorderSide(color: Color(0xFFCA436B))),
@@ -208,6 +200,7 @@ class SignUpPageState extends State<SignUpPage> {
                             color: Colors.white,
                             child: TextFormField(
                                 focusNode: textFocusNode3,
+                                controller: passwordController,
                                 obscureText: true,
                                 decoration: InputDecoration(
                                   focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(30.0), borderSide: BorderSide(color: Color(0xFFCA436B))),
@@ -230,7 +223,7 @@ class SignUpPageState extends State<SignUpPage> {
                 width: 200,
                 height: 50,
                 child: Mutation(options: MutationOptions(
-                  documentNode: gql(registerUser),
+                  documentNode: gql(GraphQLHandler.registerUser),
                   update: (Cache cache, QueryResult result) {
                     return cache;
                   },
@@ -242,8 +235,8 @@ class SignUpPageState extends State<SignUpPage> {
                   return RaisedButton(
                     elevation: 5,
                     onPressed: () {
-                      //FIX LATER
-                      runMutation({'name':'yddddd'});
+                      print(result.data);
+                      runMutation({'name':nameController.text,'password':passwordController.text,'premium':false,'email':emailController.text});
                     },
                     child: Text('SIGN UP'),
                     color: Colors.white,
