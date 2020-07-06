@@ -42,7 +42,7 @@ class SignUpPageState extends State<SignUpPage> {
 
   @override
   Widget build(BuildContext context) {
-    String name = "";
+    String name = "YYEEEE";
     String password = "";
     bool premium = false;
     String email = "";
