@@ -1,6 +1,9 @@
-import 'package:date/country_suggetions.dart';
+import 'package:dating/country_suggetions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
+
+import 'GraphQLHandler.dart';
 
 class SignUpPage extends StatefulWidget {
   @override
@@ -19,6 +22,13 @@ class SignUpPageState extends State<SignUpPage> {
   String selectedGender;
   String selectedCountry;
 
+  //TO DO memory deallocation
+
+  @override
+  void dispose(){
+
+  }
+
   @override
   void initState() {
     super.initState();
@@ -30,8 +40,28 @@ class SignUpPageState extends State<SignUpPage> {
 
   @override
   Widget build(BuildContext context) {
+    final nameController = TextEditingController();
 
-    return Scaffold(
+
+    String name = "";
+    String password = "";
+    bool premium = false;
+    String email = "";
+    String registerUser = """
+    mutation {
+      addUserManual(name:"$name",password:"$password",premium:$premium,email:"$email"){
+      userid
+      }
+    }
+""";
+    return GraphQLProvider(
+        client: GraphQLHandler.client/*ValueNotifier(
+          GraphQLClient(
+            cache: InMemoryCache(),
+            link: api as Link,
+          ),
+        )*/,
+    child: Scaffold(
       body: Stack(
         alignment:Alignment.center,
         children: <Widget>[
@@ -68,6 +98,7 @@ class SignUpPageState extends State<SignUpPage> {
                                 child: Material(
                                   color: Colors.white,
                                   child: TextFormField(
+                                    controller: nameController,
                                     focusNode: textFocusNode1,
                                     decoration: InputDecoration(
                                       focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(30.0), borderSide: BorderSide(color: Color(0xFFCA436B))),
@@ -198,14 +229,42 @@ class SignUpPageState extends State<SignUpPage> {
               SizedBox(
                 width: 200,
                 height: 50,
-                child: RaisedButton(
+                child: Mutation(options: MutationOptions(
+                  documentNode: gql(registerUser),
+                  update: (Cache cache, QueryResult result) {
+                    return cache;
+                  },
+                  // or do something with the result.data on completion
+                  onCompleted: (dynamic resultData) {
+                    print(resultData);
+                  },
+                ), builder: (RunMutation runMutation, QueryResult result){
+                  return RaisedButton(
+                    elevation: 5,
+                    onPressed: () {
+                      name = nameController.text.toString();
+                      password = "";
+                      email = "";
+                      runMutation({});
+                    },
+                    child: Text('SIGN UP'),
+                    color: Colors.white,
+                    shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
+                  );
+                })
+
+
+
+
+                /*RaisedButton(
                   elevation: 5,
                   onPressed: () {
+
                   },
                   child: Text('SIGN UP'),
                   color: Colors.white,
                   shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
-                ),
+                ) */,
               )
             ],
           ),
@@ -223,6 +282,7 @@ class SignUpPageState extends State<SignUpPage> {
         ],
       ),
       resizeToAvoidBottomInset: false,
+    )
     );
 
   }

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
+
+import 'GraphQLHandler.dart';
 
 class LogInPage extends StatefulWidget {
   @override
@@ -19,7 +22,14 @@ class LogInPageState extends State<LogInPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
+    return new GraphQLProvider(
+        client: GraphQLHandler.getClient()/*ValueNotifier(
+          GraphQLClient(
+            cache: InMemoryCache(),
+            link: api as Link,
+          ),
+        )*/,
+      child: Material(
       child: Stack(
         alignment:Alignment.center,
         children: <Widget>[
@@ -122,6 +132,7 @@ class LogInPageState extends State<LogInPage> {
           ),
         ]
       ),
+      )
     );
   }
 }

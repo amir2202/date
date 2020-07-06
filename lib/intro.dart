@@ -1,9 +1,11 @@
 
 
-import 'package:date/login.dart';
+import 'package:dating/GraphQLHandler.dart';
+import 'package:dating/login.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:date/signup.dart';
+import 'package:dating/signup.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
 void main() {
   runApp(intro());
 }
@@ -19,7 +21,9 @@ class intro extends StatefulWidget {
 
 
 class _introState extends State<intro>{
-
+  static final HttpLink api = HttpLink(
+    uri: 'http://192.168.0.14:8090/graphiql',
+  );
   String dropdownValue = "English";
   @override
   Widget build(BuildContext context) {
