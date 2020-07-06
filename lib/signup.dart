@@ -18,17 +18,19 @@ class SignUpPageState extends State<SignUpPage> {
   FocusNode textFocusNode4 = new FocusNode();
 
   final TextEditingController _typeAheadController = TextEditingController();
-
   String selectedGender;
   String selectedCountry;
 
+
+
+
   //TO DO memory deallocation
 
-  @override
+ /* @override
   void dispose(){
 
   }
-
+*/
   @override
   void initState() {
     super.initState();
@@ -40,9 +42,6 @@ class SignUpPageState extends State<SignUpPage> {
 
   @override
   Widget build(BuildContext context) {
-    final nameController = TextEditingController();
-
-
     String name = "";
     String password = "";
     bool premium = false;
@@ -54,6 +53,7 @@ class SignUpPageState extends State<SignUpPage> {
       }
     }
 """;
+    TextEditingController nameController = TextEditingController();
     return GraphQLProvider(
         client: GraphQLHandler.client/*ValueNotifier(
           GraphQLClient(
@@ -242,10 +242,8 @@ class SignUpPageState extends State<SignUpPage> {
                   return RaisedButton(
                     elevation: 5,
                     onPressed: () {
-                      name = nameController.text.toString();
-                      password = "";
-                      email = "";
-                      runMutation({});
+                      //FIX LATER
+                      runMutation({'name':'yddddd'});
                     },
                     child: Text('SIGN UP'),
                     color: Colors.white,
