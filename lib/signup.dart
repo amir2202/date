@@ -21,8 +21,8 @@ class SignUpPageState extends State<SignUpPage> {
   final nameController = TextEditingController();
   final passwordController = TextEditingController();
   final emailController = TextEditingController();
-  String selectedGender;
-  String selectedCountry;
+  String selectedGender="Male";
+  String _selectedCountry;
 
 
 
@@ -123,7 +123,9 @@ class SignUpPageState extends State<SignUpPage> {
                                   }).toList(),
                                   onChanged: (String gender) {
                                     setState(() {
+                                      print("cHANGING gender");
                                       selectedGender = gender;
+                                      print(selectedGender);
                                     });
                                   },
                                 ),
@@ -171,7 +173,10 @@ class SignUpPageState extends State<SignUpPage> {
                                       return 'Please select a country';
                                     }
                                   },
-                                  onSaved: (value) => this.selectedCountry = value,
+                                  //This does not execute
+                                  onSaved: (value) {this._selectedCountry = value;
+                                  print(this._selectedCountry);
+                                  },
                                 ),
                               ),
 
@@ -239,8 +244,8 @@ class SignUpPageState extends State<SignUpPage> {
                       bool gen = selectedGender == "Male";
                       print(result.data);
                       print(selectedGender);
-                      print(selectedCountry);
-                      runMutation({'name':nameController.text,'password':passwordController.text,'premium':false,'email':emailController.text,'gender':gen,'country':selectedCountry});
+                      print(_selectedCountry);
+                      runMutation({'name':nameController.text,'password':passwordController.text,'premium':false,'email':emailController.text,'gender':gen,'country':_selectedCountry});
                     },
                     child: Text('SIGN UP'),
                     color: Colors.white,
