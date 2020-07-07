@@ -1,5 +1,5 @@
-import 'package:date/country_suggetions.dart';
-import 'package:date/eye_colors.dart';
+import 'package:dating/country_suggetions.dart';
+import 'package:dating/eye_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';

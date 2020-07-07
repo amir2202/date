@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_signin_button/button_list.dart';
+import 'package:flutter_signin_button/button_view.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
-
 import 'GraphQLHandler.dart';
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert' as JSON;
 
 class LogInPage extends StatefulWidget {
+  bool isLoggedIn = false;
   @override
   LogInPageState createState() => LogInPageState();
 }
 
 class LogInPageState extends State<LogInPage> {
-
+  bool isLoggedIn = false;
   FocusNode textFocusNode1 = new FocusNode();
   FocusNode textFocusNode2 = new FocusNode();
 
@@ -19,6 +24,45 @@ class LogInPageState extends State<LogInPage> {
     textFocusNode1.addListener(() { setState(() {}); });
     textFocusNode2.addListener(() { setState(() {}); });
   }
+
+  bool _isLoggedIn = false;
+  Map userProfile;
+  final facebookLogin = FacebookLogin();
+
+  _loginWithFB() async{
+
+
+    final result = await facebookLogin.logInWithReadPermissions(['email']);
+
+    switch (result.status) {
+      case FacebookLoginStatus.loggedIn:
+        final token = result.accessToken.token;
+        final graphResponse = await http.get('https://graph.facebook.com/v2.12/me?fields=name,picture,email&access_token=${token}');
+        final profile = JSON.jsonDecode(graphResponse.body);
+        print(profile);
+        setState(() {
+          userProfile = profile;
+          _isLoggedIn = true;
+        });
+        break;
+
+      case FacebookLoginStatus.cancelledByUser:
+        setState(() => _isLoggedIn = false );
+        break;
+      case FacebookLoginStatus.error:
+        setState(() => _isLoggedIn = false );
+        break;
+    }
+
+  }
+
+  _logout(){
+    facebookLogin.logOut();
+    setState(() {
+      _isLoggedIn = false;
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -79,6 +123,16 @@ class LogInPageState extends State<LogInPage> {
                         obscureText: true,
                         focusNode: textFocusNode2,
                         decoration: InputDecoration(
+                        suffix: GestureDetector(
+                        onTap: () {
+                        print('tapped');
+                        },
+                        child: Text(
+                        'Forgot Password?',
+                        style: TextStyle(fontSize: 12,
+                        color: Color(0xFFCA436B),fontWeight: FontWeight.bold),
+                        ),
+                        ),
                           focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(30.0), borderSide: BorderSide(color: Color(0xFFCA436B))),
                           enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(30.0), borderSide: BorderSide(color: Colors.grey)),
                           labelText: 'Password',
@@ -88,8 +142,8 @@ class LogInPageState extends State<LogInPage> {
                       ),
                     ),
                     Divider(
-                      color: Colors.grey,
-                      height: 80,
+                      color: Colors.transparent,
+                      height: 20,
                       thickness: 1,
                       indent: 50,
                       endIndent: 50,
@@ -97,18 +151,12 @@ class LogInPageState extends State<LogInPage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        Container(
-                          width: 120,
-                          height: 60,
-                          color: Colors.pink,
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Container(
-                          width: 120,
-                          height: 60,
-                          color: Colors.blue,
+                        SignInButton(
+                          Buttons.Facebook,
+                          text: "Sign in with Facebook",
+                          onPressed: () {
+                            _loginWithFB();
+                          },
                         ),
                       ],
                     )
@@ -116,8 +164,7 @@ class LogInPageState extends State<LogInPage> {
                 )
               ),
             ),
-          ),
-          Positioned(
+          ),Positioned (
             bottom: 80,
             width: 200,
             height: 50,
