@@ -1,7 +1,9 @@
-import 'package:date/country_suggetions.dart';
+import 'package:date/common.dart';
+import 'package:date/ethnicity_options.dart';
 import 'package:date/eye_colors.dart';
+import 'package:date/hair_colors.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:flutter/services.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
 import 'GraphQLHandler.dart';
@@ -14,32 +16,23 @@ class Finalsignup extends StatefulWidget {
 
 
 class FinalsignupState extends State<Finalsignup>{
-  String selectedEyeColor;
-  String selectedCounty;
+  String _selectedHairColor;
+  String _selectedEyeColor;
+  String _selectedEthnicity;
+  String _selectedReligion;
+  String _selectedCounty;
 
-  final TextEditingController _typeAheadController = TextEditingController();
+  FocusNode _bodyFocusNode = new FocusNode();
+  FocusNode _heightFocusNode = new FocusNode();
 
-  FocusNode textFocusNode1 = new FocusNode();
-  FocusNode textFocusNode2 = new FocusNode();
-  FocusNode textFocusNode3 = new FocusNode();
-  FocusNode textFocusNode4 = new FocusNode();
-  FocusNode textFocusNode5 = new FocusNode();
-
-  final haircontroll = TextEditingController();
-  final eyecontroll = TextEditingController();
-  final bodycontroll = TextEditingController();
-  final heightcontroll = TextEditingController();
-  final ethnicitycontroll = TextEditingController();
-  final religioncontroll = TextEditingController();
+  final _bodyController = TextEditingController();
+  final _heightController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    textFocusNode1.addListener(() { setState(() {}); });
-    textFocusNode2.addListener(() { setState(() {}); });
-    textFocusNode3.addListener(() { setState(() {}); });
-    textFocusNode4.addListener(() { setState(() {}); });
-    textFocusNode5.addListener(() { setState(() {}); });
+    _bodyFocusNode.addListener(() { setState(() {}); });
+    _heightFocusNode.addListener(() { setState(() {}); });
   }
 
   @override
@@ -50,6 +43,7 @@ class FinalsignupState extends State<Finalsignup>{
           body: Stack(
             alignment:Alignment.center,
             children: <Widget>[
+
               Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
@@ -60,158 +54,168 @@ class FinalsignupState extends State<Finalsignup>{
                     tileMode: TileMode.clamp,
                   ),
                 ),
-              ),Column(
+              ),
+
+              Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   SizedBox(
-                    width: 350,
-                    height: 450,
+                      width: Common.screenWidth * 0.9,
+                      height: Common.screenHeight * 0.54,
                     child: Card(
                       elevation: 10,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30.0),
                       ),
-                      child:
-                        Padding(
-                            padding: EdgeInsets.all(20),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
+                      child: Padding(
+                        padding: EdgeInsets.all(20),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Row(
                               children: <Widget>[
-                                Row(
-                                  children: <Widget>[
-                                    Expanded(
-                                      child: Material(
-                                        color: Colors.white,
-                                        child: TextFormField(
-                                          controller: haircontroll,
-                                          focusNode: textFocusNode1,
-                                          decoration: InputDecoration(
-                                            focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(30.0), borderSide: BorderSide(color: Color(0xFFCA436B))),
-                                            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(30.0), borderSide: BorderSide(color: Colors.grey)),
-                                            labelText: 'Hair Color',
-                                            labelStyle: TextStyle(color: textFocusNode1.hasFocus ? Color(0xFFCA436B) : Colors.grey),
-                                            contentPadding: EdgeInsets.all(20),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                    SizedBox(
-                                      width: 100,
-                                      child: DropdownButtonFormField<String>(
-                                        decoration: InputDecoration(
-                                            focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(30.0), borderSide: BorderSide(color: Color(0xFFCA436B))),
-                                            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(30.0), borderSide: BorderSide(color: Colors.grey)),
-                                            labelText: 'Eye Color',
-                                            contentPadding: EdgeInsets.fromLTRB(20, 20, 0, 20)
-                                        ),
-                                        value: 'Blue',
-                                        items: EyeColors.colors.map<DropdownMenuItem<String>>((String value) {
-                                          return DropdownMenuItem<String>(value: value, child: Text(value),);
-                                        }).toList(),
-                                        onChanged: (String color) {
-                                          setState(() {
-                                            print("cHANGING selectedEyeColor");
-                                            selectedEyeColor = color;
-                                            print(selectedEyeColor);
-                                          });
-                                        },
-                                      ),
-                                    ),
-
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: 10,
-                                ),Row(
-                                  children: <Widget>[
-                                    Expanded(
-                                      child: Material(
-                                        color: Colors.white,
-                                        child: TextFormField(
-                                          controller: bodycontroll,
-                                          focusNode: textFocusNode2,
-                                          decoration: InputDecoration(
-                                            focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(30.0), borderSide: BorderSide(color: Color(0xFFCA436B))),
-                                            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(30.0), borderSide: BorderSide(color: Colors.grey)),
-                                            labelText: 'Body type',
-                                            labelStyle: TextStyle(color: textFocusNode2.hasFocus ? Color(0xFFCA436B) : Colors.grey),
-                                            contentPadding: EdgeInsets.all(20),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                    Expanded(
-                                      child: Material(
-                                        color: Colors.white,
-                                        child: TextFormField(
-                                          controller: heightcontroll,
-                                          focusNode: textFocusNode3,
-                                          decoration: InputDecoration(
-                                            focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(30.0), borderSide: BorderSide(color: Color(0xFFCA436B))),
-                                            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(30.0), borderSide: BorderSide(color: Colors.grey)),
-                                            labelText: 'Height',
-                                            labelStyle: TextStyle(color: textFocusNode3.hasFocus ? Color(0xFFCA436B) : Colors.grey),
-                                            contentPadding: EdgeInsets.all(20),
-                                          ),
-                                        ),
-                                      ),
-                                    )
-                                    //insert here
-
-                                  ],
-                                ),SizedBox(
-                                  height: 10,
-                                ),
-                                Material(
-                                  color: Colors.white,
-                                  child: TextFormField(
-                                      controller: ethnicitycontroll,
-                                      focusNode: textFocusNode5,
-                                      decoration: InputDecoration(
+                                Expanded(
+                                  child: DropdownButtonFormField<String>(
+                                    decoration: InputDecoration(
                                         focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(30.0), borderSide: BorderSide(color: Color(0xFFCA436B))),
                                         enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(30.0), borderSide: BorderSide(color: Colors.grey)),
-                                        labelText: 'Ethnicity',
-                                        labelStyle: TextStyle(color: textFocusNode5.hasFocus ? Color(0xFFCA436B) : Colors.grey),
-                                        contentPadding: EdgeInsets.all(20),
-                                      )
+                                        labelText: 'Hair color',
+                                        contentPadding: EdgeInsets.fromLTRB(20, 20, 0, 16)
+                                    ),
+                                    value: null,
+                                    items: HairColors.colors.map<DropdownMenuItem<String>>((String value) {
+                                      return DropdownMenuItem<String>(value: value, child: Text(value),);
+                                    }).toList(),
+                                    onChanged: (String color) {
+                                      setState(() {
+                                        _selectedHairColor = color;
+                                      });
+                                    },
                                   ),
                                 ),
                                 SizedBox(
-                                  height: 10,
+                                  width: 10,
                                 ),
-                                Material(
-                                  color: Colors.white,
-                                  child: TextFormField(
-                                      controller: religioncontroll,
-                                      focusNode: textFocusNode4,
-                                      decoration: InputDecoration(
+                                SizedBox(
+                                  width: 120,
+                                  child: DropdownButtonFormField<String>(
+                                    decoration: InputDecoration(
                                         focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(30.0), borderSide: BorderSide(color: Color(0xFFCA436B))),
                                         enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(30.0), borderSide: BorderSide(color: Colors.grey)),
-                                        labelText: 'Religion',
-                                        labelStyle: TextStyle(color: textFocusNode4.hasFocus ? Color(0xFFCA436B) : Colors.grey),
-                                        contentPadding: EdgeInsets.all(20),
-                                      )
+                                        labelText: 'Eye color',
+                                        contentPadding: EdgeInsets.fromLTRB(20, 20, 0, 16)
+                                    ),
+                                    value: null,
+                                    items: EyeColors.colors.map<DropdownMenuItem<String>>((String value) {
+                                      return DropdownMenuItem<String>(value: value, child: Text(value),);
+                                    }).toList(),
+                                    onChanged: (String color) {
+                                      setState(() {
+                                        _selectedEyeColor = color;
+                                      });
+                                    },
                                   ),
-                                )
+                                ),
 
                               ],
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Row(
+                              children: <Widget>[
+                                Expanded(
+                                  child: Material(
+                                    color: Colors.white,
+                                    child: TextFormField(
+                                      inputFormatters: [LengthLimitingTextInputFormatter(20)],
+                                      controller: _bodyController,
+                                      focusNode: _bodyFocusNode,
+                                      decoration: InputDecoration(
+                                        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(30.0), borderSide: BorderSide(color: Color(0xFFCA436B))),
+                                        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(30.0), borderSide: BorderSide(color: Colors.grey)),
+                                        labelText: 'Body type',
+                                        labelStyle: TextStyle(color: _bodyFocusNode.hasFocus ? Color(0xFFCA436B) : Colors.grey),
+                                        contentPadding: EdgeInsets.all(20),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                SizedBox(
+                                  width: 120,
+                                  child: Material(
+                                    color: Colors.white,
+                                    child: TextFormField(
+                                      keyboardType: TextInputType.number,
+                                      inputFormatters: [WhitelistingTextInputFormatter.digitsOnly, LengthLimitingTextInputFormatter(3)],
+                                      controller: _heightController,
+                                      focusNode: _heightFocusNode,
+                                      decoration: InputDecoration(
+                                        suffix: Text('cm', style: TextStyle(color: Colors.grey)),
+                                        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(30.0), borderSide: BorderSide(color: Color(0xFFCA436B))),
+                                        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(30.0), borderSide: BorderSide(color: Colors.grey)),
+                                        labelText: 'Height',
+                                        labelStyle: TextStyle(color: _heightFocusNode.hasFocus ? Color(0xFFCA436B) : Colors.grey),
+                                        contentPadding: EdgeInsets.all(20),
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),SizedBox(
+                              height: 10,
+                            ),
+                            DropdownButtonFormField<String>(
+                              decoration: InputDecoration(
+                                  focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(30.0), borderSide: BorderSide(color: Color(0xFFCA436B))),
+                                  enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(30.0), borderSide: BorderSide(color: Colors.grey)),
+                                  labelText: 'Ethnicity',
+                                  contentPadding: EdgeInsets.fromLTRB(20, 20, 0, 16)
+                              ),
+                              value: null,
+                              items: EthnicityOptions.options.map<DropdownMenuItem<String>>((String value) {
+                                return DropdownMenuItem<String>(value: value, child: Text(value),);
+                              }).toList(),
+                              onChanged: (String option) {
+                                setState(() {
+                                  _selectedEthnicity = option;
+                                });
+                              },
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            DropdownButtonFormField<String>(
+                              decoration: InputDecoration(
+                                  focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(30.0), borderSide: BorderSide(color: Color(0xFFCA436B))),
+                                  enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(30.0), borderSide: BorderSide(color: Colors.grey)),
+                                  labelText: 'Religion',
+                                  contentPadding: EdgeInsets.fromLTRB(20, 20, 0, 16)
+                              ),
+                              value: null,
+                              items: EthnicityOptions.options.map<DropdownMenuItem<String>>((String value) {
+                                return DropdownMenuItem<String>(value: value, child: Text(value),);
+                              }).toList(),
+                              onChanged: (String option) {
+                                setState(() {
+                                  _selectedReligion = option;
+                                });
+                              },
                             )
+                          ],
                         )
+                      )
                     )
-
                   )
                 ],
               )
             ],
-          )
-    ),
+          ),
+          resizeToAvoidBottomInset: false,
+        ),
     );
   }
-
 }

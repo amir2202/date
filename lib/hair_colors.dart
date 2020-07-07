@@ -1,12 +1,10 @@
-class EyeColors {
+class HairColors {
   static List<String> colors = <String>[
-    "Amber",
-    "Blue",
     "Brown",
-    "Gray",
-    "Green",
-    "Hazel",
+    "Blond",
+    "Black",
     "Red",
+    "White",
     "Other",
   ];
 }
