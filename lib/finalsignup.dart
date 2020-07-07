@@ -1,5 +1,5 @@
-import 'package:dating/country_suggetions.dart';
-import 'package:dating/eye_colors.dart';
+import 'package:date/country_suggetions.dart';
+import 'package:date/eye_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
@@ -15,13 +15,16 @@ class Finalsignup extends StatefulWidget {
 
 class FinalsignupState extends State<Finalsignup>{
   String selectedEyeColor;
+  String selectedCounty;
+
   final TextEditingController _typeAheadController = TextEditingController();
+
   FocusNode textFocusNode1 = new FocusNode();
   FocusNode textFocusNode2 = new FocusNode();
   FocusNode textFocusNode3 = new FocusNode();
   FocusNode textFocusNode4 = new FocusNode();
   FocusNode textFocusNode5 = new FocusNode();
-  String selectedcounty;
+
   final haircontroll = TextEditingController();
   final eyecontroll = TextEditingController();
   final bodycontroll = TextEditingController();
@@ -104,8 +107,8 @@ class FinalsignupState extends State<Finalsignup>{
                                             labelText: 'Eye Color',
                                             contentPadding: EdgeInsets.fromLTRB(20, 20, 0, 20)
                                         ),
-                                        value: 'blue',
-                                        items: Eye_colors.colors.map<DropdownMenuItem<String>>((String value) {
+                                        value: 'Blue',
+                                        items: EyeColors.colors.map<DropdownMenuItem<String>>((String value) {
                                           return DropdownMenuItem<String>(value: value, child: Text(value),);
                                         }).toList(),
                                         onChanged: (String color) {
