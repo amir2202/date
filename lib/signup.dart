@@ -1,4 +1,5 @@
 import 'package:dating/country_suggetions.dart';
+import 'package:dating/finalsignup.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
@@ -22,7 +23,7 @@ class SignUpPageState extends State<SignUpPage> {
   final passwordController = TextEditingController();
   final emailController = TextEditingController();
   String selectedGender="Male";
-  String _selectedCountry;
+  String _selectedCountry="waa";
 
 
 
@@ -45,7 +46,6 @@ class SignUpPageState extends State<SignUpPage> {
 
   @override
   Widget build(BuildContext context) {
-
     return GraphQLProvider(
         client: GraphQLHandler.client/*ValueNotifier(
           GraphQLClient(
@@ -241,11 +241,13 @@ class SignUpPageState extends State<SignUpPage> {
                   return RaisedButton(
                     elevation: 5,
                     onPressed: () {
-                      bool gen = selectedGender == "Male";
+                      Navigator.pushNamed(context, 'signup');
+                      /*bool gen = selectedGender == "Male";
                       print(result.data);
                       print(selectedGender);
                       print(_selectedCountry);
                       runMutation({'name':nameController.text,'password':passwordController.text,'premium':false,'email':emailController.text,'gender':gen,'country':_selectedCountry});
+                      */
                     },
                     child: Text('SIGN UP'),
                     color: Colors.white,

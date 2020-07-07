@@ -1,6 +1,7 @@
 
 
 import 'package:dating/GraphQLHandler.dart';
+import 'package:dating/finalsignup.dart';
 import 'package:dating/login.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -31,6 +32,7 @@ class _introState extends State<intro>{
         routes:{
           'register': (context) => SignUpPage(),
           'login': (context) => LogInPage(),
+          'signup': (context) => Finalsignup(),
         },
         home: Builder(
           builder: (context) => Stack(
