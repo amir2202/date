@@ -103,7 +103,7 @@ class SignUpPageState extends State<SignUpPage> {
 
                 SizedBox(
                   width: Common.screenWidth * 0.9,
-                  height: Common.screenHeight * 0.54,
+                  height: Common.screenHeight * 0.47,
                   child: Card(
                       elevation: 10,
                       shape: RoundedRectangleBorder(
@@ -344,7 +344,7 @@ class SignUpPageState extends State<SignUpPage> {
                         runMutation({'name':nameController.text,'password':passwordController.text,'premium':false,'email':emailController.text,'gender':gen,'country':_selectedCountry});
                         */
                       },
-                      child: Text('SIGN UP'),
+                      child: Text('NEXT'),
                       color: Colors.white,
                       shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
                     );
@@ -353,14 +353,14 @@ class SignUpPageState extends State<SignUpPage> {
                 SizedBox(
                   height: Common.screenHeight * 0.1,
                 ),
-                Material(
-                    type: MaterialType.transparency,
-                    child: Text(
-                      'By pressing "SIGN UP", you acknowledge that\n you have read and understand our Privacy Policy and our Terms of Service.',
-                      style: TextStyle(color: Colors.white, fontSize: 10),
-                      textAlign: TextAlign.center,
-                    )
-                ),
+//                Material(
+//                    type: MaterialType.transparency,
+//                    child: Text(
+//                      'By pressing "SIGN UP", you acknowledge that\n you have read and understand our Privacy Policy and our Terms of Service.',
+//                      style: TextStyle(color: Colors.white, fontSize: 10),
+//                      textAlign: TextAlign.center,
+//                    )
+//                ),
                 SizedBox(
                   height: Common.screenHeight * 0.1,
                 ),

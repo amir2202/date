@@ -1,3 +1,4 @@
+import 'package:date/Bundesland_suggestions.dart';
 import 'package:date/common.dart';
 import 'package:date/ethnicity_options.dart';
 import 'package:date/eye_colors.dart';
@@ -27,6 +28,32 @@ class FinalsignupState extends State<Finalsignup>{
 
   final _bodyController = TextEditingController();
   final _heightController = TextEditingController();
+
+  static final _defaultEnabledBorder = OutlineInputBorder(borderRadius: BorderRadius.circular(30.0), borderSide: BorderSide(color: Colors.grey));
+  static final _defaultFocusedBorder = OutlineInputBorder(borderRadius: BorderRadius.circular(30.0), borderSide: BorderSide(color: Color(0xFFCA436B)));
+  static final _errorBorder = OutlineInputBorder(borderRadius: BorderRadius.circular(30.0), borderSide: BorderSide(color: Colors.red));
+
+  OutlineInputBorder _hairEnabledBorder = _defaultEnabledBorder;
+  OutlineInputBorder _hairFocusedBorder = _defaultFocusedBorder;
+  bool _hairCorrect = true;
+  OutlineInputBorder _eyeEnabledBorder = _defaultEnabledBorder;
+  OutlineInputBorder _eyeFocusedBorder = _defaultFocusedBorder;
+  bool _eyeCorrect = true;
+  OutlineInputBorder _bodyEnabledBorder = _defaultEnabledBorder;
+  OutlineInputBorder _bodyFocusedBorder = _defaultFocusedBorder;
+  bool _bodyCorrect = true;
+  OutlineInputBorder _heightEnabledBorder = _defaultEnabledBorder;
+  OutlineInputBorder _heightFocusedBorder = _defaultFocusedBorder;
+  bool _heightCorrect = true;
+  OutlineInputBorder _ethnicityEnabledBorder = _defaultEnabledBorder;
+  OutlineInputBorder _ethnicityFocusedBorder = _defaultFocusedBorder;
+  bool _ethnicityCorrect = true;
+  OutlineInputBorder _religionEnabledBorder = _defaultEnabledBorder;
+  OutlineInputBorder _religionFocusedBorder = _defaultFocusedBorder;
+  bool _religionCorrect = true;
+  OutlineInputBorder _countyEnabledBorder = _defaultEnabledBorder;
+  OutlineInputBorder _countyFocusedBorder = _defaultFocusedBorder;
+  bool _countyCorrect = true;
 
   @override
   void initState() {
@@ -61,7 +88,7 @@ class FinalsignupState extends State<Finalsignup>{
                 children: <Widget>[
                   SizedBox(
                       width: Common.screenWidth * 0.9,
-                      height: Common.screenHeight * 0.54,
+                      height: Common.screenHeight * 0.56,
                     child: Card(
                       elevation: 10,
                       shape: RoundedRectangleBorder(
@@ -77,9 +104,10 @@ class FinalsignupState extends State<Finalsignup>{
                                 Expanded(
                                   child: DropdownButtonFormField<String>(
                                     decoration: InputDecoration(
-                                        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(30.0), borderSide: BorderSide(color: Color(0xFFCA436B))),
-                                        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(30.0), borderSide: BorderSide(color: Colors.grey)),
+                                        enabledBorder: _hairEnabledBorder,
+                                        focusedBorder: _hairFocusedBorder,
                                         labelText: 'Hair color',
+                                        labelStyle: TextStyle(color: _hairCorrect ? Colors.grey : Colors.red),
                                         contentPadding: EdgeInsets.fromLTRB(20, 20, 0, 16)
                                     ),
                                     value: null,
@@ -88,6 +116,9 @@ class FinalsignupState extends State<Finalsignup>{
                                     }).toList(),
                                     onChanged: (String color) {
                                       setState(() {
+                                        _hairEnabledBorder = _defaultEnabledBorder;
+                                        _hairFocusedBorder = _defaultFocusedBorder;
+                                        _hairCorrect = true;
                                         _selectedHairColor = color;
                                       });
                                     },
@@ -100,9 +131,10 @@ class FinalsignupState extends State<Finalsignup>{
                                   width: 120,
                                   child: DropdownButtonFormField<String>(
                                     decoration: InputDecoration(
-                                        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(30.0), borderSide: BorderSide(color: Color(0xFFCA436B))),
-                                        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(30.0), borderSide: BorderSide(color: Colors.grey)),
+                                        enabledBorder: _eyeEnabledBorder,
+                                        focusedBorder: _eyeFocusedBorder,
                                         labelText: 'Eye color',
+                                        labelStyle: TextStyle(color: _eyeCorrect ? Colors.grey : Colors.red),
                                         contentPadding: EdgeInsets.fromLTRB(20, 20, 0, 16)
                                     ),
                                     value: null,
@@ -111,12 +143,14 @@ class FinalsignupState extends State<Finalsignup>{
                                     }).toList(),
                                     onChanged: (String color) {
                                       setState(() {
+                                        _eyeEnabledBorder = _defaultEnabledBorder;
+                                        _eyeFocusedBorder = _defaultFocusedBorder;
+                                        _eyeCorrect = true;
                                         _selectedEyeColor = color;
                                       });
                                     },
                                   ),
                                 ),
-
                               ],
                             ),
                             SizedBox(
@@ -128,14 +162,21 @@ class FinalsignupState extends State<Finalsignup>{
                                   child: Material(
                                     color: Colors.white,
                                     child: TextFormField(
+                                      onChanged: (value) {
+                                        setState(() {
+                                          _bodyEnabledBorder = _defaultEnabledBorder;
+                                          _bodyFocusedBorder = _defaultFocusedBorder;
+                                          _bodyCorrect = true;
+                                        });
+                                      },
                                       inputFormatters: [LengthLimitingTextInputFormatter(20)],
                                       controller: _bodyController,
                                       focusNode: _bodyFocusNode,
                                       decoration: InputDecoration(
-                                        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(30.0), borderSide: BorderSide(color: Color(0xFFCA436B))),
-                                        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(30.0), borderSide: BorderSide(color: Colors.grey)),
+                                        enabledBorder: _bodyEnabledBorder,
+                                        focusedBorder: _bodyFocusedBorder,
                                         labelText: 'Body type',
-                                        labelStyle: TextStyle(color: _bodyFocusNode.hasFocus ? Color(0xFFCA436B) : Colors.grey),
+                                        labelStyle: _bodyCorrect ? TextStyle(color: _bodyFocusNode.hasFocus ? Color(0xFFCA436B) : Colors.grey) : TextStyle(color: Colors.red),
                                         contentPadding: EdgeInsets.all(20),
                                       ),
                                     ),
@@ -149,16 +190,23 @@ class FinalsignupState extends State<Finalsignup>{
                                   child: Material(
                                     color: Colors.white,
                                     child: TextFormField(
+                                      onChanged: (value) {
+                                        setState(() {
+                                          _heightEnabledBorder = _defaultEnabledBorder;
+                                          _heightFocusedBorder = _defaultFocusedBorder;
+                                          _heightCorrect = true;
+                                        });
+                                      },
                                       keyboardType: TextInputType.number,
                                       inputFormatters: [WhitelistingTextInputFormatter.digitsOnly, LengthLimitingTextInputFormatter(3)],
                                       controller: _heightController,
                                       focusNode: _heightFocusNode,
                                       decoration: InputDecoration(
                                         suffix: Text('cm', style: TextStyle(color: Colors.grey)),
-                                        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(30.0), borderSide: BorderSide(color: Color(0xFFCA436B))),
-                                        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(30.0), borderSide: BorderSide(color: Colors.grey)),
+                                        enabledBorder: _heightEnabledBorder,
+                                        focusedBorder: _heightFocusedBorder,
                                         labelText: 'Height',
-                                        labelStyle: TextStyle(color: _heightFocusNode.hasFocus ? Color(0xFFCA436B) : Colors.grey),
+                                        labelStyle: _heightCorrect ? TextStyle(color: _heightFocusNode.hasFocus ? Color(0xFFCA436B) : Colors.grey) : TextStyle(color: Colors.red),
                                         contentPadding: EdgeInsets.all(20),
                                       ),
                                     ),
@@ -170,9 +218,10 @@ class FinalsignupState extends State<Finalsignup>{
                             ),
                             DropdownButtonFormField<String>(
                               decoration: InputDecoration(
-                                  focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(30.0), borderSide: BorderSide(color: Color(0xFFCA436B))),
-                                  enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(30.0), borderSide: BorderSide(color: Colors.grey)),
+                                  enabledBorder: _ethnicityEnabledBorder,
+                                  focusedBorder: _ethnicityFocusedBorder,
                                   labelText: 'Ethnicity',
+                                  labelStyle: TextStyle(color: _ethnicityCorrect ? Colors.grey : Colors.red),
                                   contentPadding: EdgeInsets.fromLTRB(20, 20, 0, 16)
                               ),
                               value: null,
@@ -181,6 +230,9 @@ class FinalsignupState extends State<Finalsignup>{
                               }).toList(),
                               onChanged: (String option) {
                                 setState(() {
+                                  _ethnicityEnabledBorder = _defaultEnabledBorder;
+                                  _ethnicityFocusedBorder = _defaultFocusedBorder;
+                                  _ethnicityCorrect = true;
                                   _selectedEthnicity = option;
                                 });
                               },
@@ -190,9 +242,10 @@ class FinalsignupState extends State<Finalsignup>{
                             ),
                             DropdownButtonFormField<String>(
                               decoration: InputDecoration(
-                                  focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(30.0), borderSide: BorderSide(color: Color(0xFFCA436B))),
-                                  enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(30.0), borderSide: BorderSide(color: Colors.grey)),
+                                  enabledBorder: _religionEnabledBorder,
+                                  focusedBorder: _religionFocusedBorder,
                                   labelText: 'Religion',
+                                  labelStyle: TextStyle(color: _religionCorrect ? Colors.grey : Colors.red),
                                   contentPadding: EdgeInsets.fromLTRB(20, 20, 0, 16)
                               ),
                               value: null,
@@ -201,7 +254,34 @@ class FinalsignupState extends State<Finalsignup>{
                               }).toList(),
                               onChanged: (String option) {
                                 setState(() {
+                                  _religionEnabledBorder = _defaultEnabledBorder;
+                                  _religionFocusedBorder = _defaultFocusedBorder;
+                                  _religionCorrect = true;
                                   _selectedReligion = option;
+                                });
+                              },
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            DropdownButtonFormField<String>(
+                              decoration: InputDecoration(
+                                  enabledBorder: _countyEnabledBorder,
+                                  focusedBorder: _countyFocusedBorder,
+                                  labelText: 'County',
+                                  labelStyle: TextStyle(color: _countyCorrect ? Colors.grey : Colors.red),
+                                  contentPadding: EdgeInsets.fromLTRB(20, 20, 0, 16)
+                              ),
+                              value: null,
+                              items: BundeslandOptions.options.map<DropdownMenuItem<String>>((String value) {
+                                return DropdownMenuItem<String>(value: value, child: Text(value),);
+                              }).toList(),
+                              onChanged: (String option) {
+                                setState(() {
+                                  _countyEnabledBorder = _defaultEnabledBorder;
+                                  _countyFocusedBorder = _defaultFocusedBorder;
+                                  _countyCorrect = true;
+                                  _selectedCounty = option;
                                 });
                               },
                             )
@@ -209,9 +289,70 @@ class FinalsignupState extends State<Finalsignup>{
                         )
                       )
                     )
+                  ),
+                  SizedBox(
+                    height: Common.screenHeight * 0.05,
+                  ),
+                  SizedBox(
+                    width: 200,
+                    height: 50,
+                    child: RaisedButton(
+                      onPressed: () {
+                        if (_selectedHairColor == null ||
+                            _selectedEyeColor == null ||
+                            _bodyController.text.isEmpty ||
+                            _heightController.text.isEmpty ||
+                            _selectedEthnicity == null ||
+                            _selectedReligion == null ||
+                            _selectedCounty == null) {
+
+                          setState(() {
+                            if (_selectedHairColor == null) {
+                              _hairEnabledBorder = _errorBorder;
+                              _hairFocusedBorder = _errorBorder;
+                              _hairCorrect = false;
+                            }
+                            if (_selectedEyeColor == null) {
+                              _eyeEnabledBorder = _errorBorder;
+                              _eyeFocusedBorder = _errorBorder;
+                              _eyeCorrect = false;
+                            }
+                            if (_bodyController.text.isEmpty) {
+                              _bodyEnabledBorder = _errorBorder;
+                              _bodyFocusedBorder = _errorBorder;
+                              _bodyCorrect = false;
+                            }
+                            if (_heightController.text.isEmpty) {
+                              _heightEnabledBorder = _errorBorder;
+                              _heightFocusedBorder = _errorBorder;
+                              _heightCorrect = false;
+                            }
+                            if (_selectedEthnicity == null) {
+                              _ethnicityEnabledBorder = _errorBorder;
+                              _ethnicityFocusedBorder = _errorBorder;
+                              _ethnicityCorrect = false;
+                            }
+                            if (_selectedReligion == null) {
+                              _religionEnabledBorder = _errorBorder;
+                              _religionFocusedBorder = _errorBorder;
+                              _religionCorrect = false;
+                            }
+                            if (_selectedCounty == null) {
+                              _countyEnabledBorder = _errorBorder;
+                              _countyFocusedBorder = _errorBorder;
+                              _countyCorrect = false;
+                            }
+                          });
+                        }
+                      },
+                      elevation: 5,
+                      child: Text('NEXT'),
+                      color: Colors.white,
+                      shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
+                    ),
                   )
                 ],
-              )
+              ),
             ],
           ),
           resizeToAvoidBottomInset: false,

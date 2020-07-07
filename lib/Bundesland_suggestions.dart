@@ -1,6 +1,7 @@
-class Bundesland_suggesstions{
-
-  static List<String> states = <String>["Baden-Württemberg",
+class BundeslandOptions{
+  static List<String> options = <String>[
+    "Not in Germany",
+    "Baden-Württemberg",
     "Bayern",
     "Berlin",
     "Brandenburg",
@@ -15,19 +16,6 @@ class Bundesland_suggesstions{
     "Sachsen",
     "Sachsen-Anhalt",
     "Schleswig-Holstein",
-    "Thüringen"
+    "Thüringen",
   ];
-
-  static getStateSuggesstions(String pattern) {
-    RegExp exp = new RegExp("$pattern");
-
-    List<String> matches = new List<String>();
-
-    for (String c in states) {
-      if (exp.hasMatch(c))
-        matches.add(c);
-    }
-
-    return matches;
-  }
 }

@@ -6,5 +6,6 @@ class HairColors {
     "Red",
     "White",
     "Other",
+    "Rather not say",
   ];
 }
