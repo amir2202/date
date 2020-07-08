@@ -7,6 +7,8 @@ import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as JSON;
 
+import 'home.dart';
+
 class LogInPage extends StatefulWidget {
   bool isLoggedIn = false;
   @override
@@ -173,6 +175,13 @@ class LogInPageState extends State<LogInPage> {
                 elevation: 5,
                 onPressed: () {
                   runMutation({'email':_emailController.text,'password':_passwordController.text});
+                  ///RETRIEVE INFO TO PASS ON
+                  print(result.data);
+                  String name ="testname";
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => HomePage(name: name)),
+                  );
                 },
                 child: Text('LOG IN'),
                 color: Colors.white,

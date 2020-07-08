@@ -125,7 +125,7 @@ class PreviewPageState extends State<PreviewPage> {
                             onPressed: () {
                               runMutation({'name': Common.fullName, 'password': Common.password, 'premium':Common.premium,'email':Common.email,'gender': Common.gender, 'birthday':Common.birthday, 'country': Common.country,'haircolor':Common.haircolor,'eyecolor':Common.eyecolor,'body':Common.body,'height':Common.height, 'ethnicity':Common.ethnicity,'religion':Common.religion,'state':Common.state,'facebook':Common.facebook});
                               storeImage();
-                              Navigator.pushNamedAndRemoveUntil(context, 'home', (r) => false);
+                              Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => HomePage(name: Common.fullName)), (r) => false);
                             },
                             elevation: 10,
                             fillColor: Color(0xFFCA436B),

@@ -42,7 +42,7 @@ class _introState extends State<intro>{
           'login': (context) => LogInPage(),
           'signup': (context) => Finalsignup(),
           'preview': (context) => PreviewPage(),
-          'home': (context) => HomePage(),
+       //   'home': (context) => HomePage(),
         },
         home: Builder(
           builder: (context) => Stack(

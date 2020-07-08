@@ -34,7 +34,7 @@ class HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    _pageController = PageController();
+    _pageController = PageController(initialPage: _index);
   }
 
   @override
