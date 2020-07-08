@@ -1,20 +1,40 @@
 import 'package:date/Bundesland_suggestions.dart';
 import 'package:date/common.dart';
+import 'package:date/preview.dart';
 import 'package:date/ethnicity_options.dart';
 import 'package:date/eye_colors.dart';
 import 'package:date/hair_colors.dart';
+import 'package:date/religion_options.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
 import 'GraphQLHandler.dart';
 
+class FadeRoute extends PageRouteBuilder {
+  final Widget page;
+
+  FadeRoute({this.page})
+      : super(
+    pageBuilder: (BuildContext context,
+        Animation<double> animation,
+        Animation<double> secondaryAnimation,) =>
+    page,
+    transitionsBuilder: (BuildContext context,
+        Animation<double> animation,
+        Animation<double> secondaryAnimation,
+        Widget child,) =>
+        FadeTransition(
+          opacity: animation,
+          child: child,
+        ),
+  );
+}
+
 class Finalsignup extends StatefulWidget {
   @override
   FinalsignupState createState() => FinalsignupState();
 }
-
-
 
 class FinalsignupState extends State<Finalsignup>{
   String _selectedHairColor;
@@ -249,7 +269,7 @@ class FinalsignupState extends State<Finalsignup>{
                                   contentPadding: EdgeInsets.fromLTRB(20, 20, 0, 16)
                               ),
                               value: null,
-                              items: EthnicityOptions.options.map<DropdownMenuItem<String>>((String value) {
+                              items: ReligionOptions.options.map<DropdownMenuItem<String>>((String value) {
                                 return DropdownMenuItem<String>(value: value, child: Text(value),);
                               }).toList(),
                               onChanged: (String option) {
@@ -293,62 +313,68 @@ class FinalsignupState extends State<Finalsignup>{
                   SizedBox(
                     height: Common.screenHeight * 0.05,
                   ),
-                  SizedBox(
-                    width: 200,
-                    height: 50,
-                    child: RaisedButton(
-                      onPressed: () {
-                        if (_selectedHairColor == null ||
-                            _selectedEyeColor == null ||
-                            _bodyController.text.isEmpty ||
-                            _heightController.text.isEmpty ||
-                            _selectedEthnicity == null ||
-                            _selectedReligion == null ||
-                            _selectedCounty == null) {
+                  Hero(
+                    tag: 'preview_tag',
+                    child: SizedBox(
+                      width: 200,
+                      height: 50,
+                      child: RaisedButton(
+                        onPressed: () {
+                          if (_selectedHairColor == null ||
+                              _selectedEyeColor == null ||
+                              _bodyController.text.isEmpty ||
+                              _heightController.text.isEmpty ||
+                              _selectedEthnicity == null ||
+                              _selectedReligion == null ||
+                              _selectedCounty == null) {
 
-                          setState(() {
-                            if (_selectedHairColor == null) {
-                              _hairEnabledBorder = _errorBorder;
-                              _hairFocusedBorder = _errorBorder;
-                              _hairCorrect = false;
-                            }
-                            if (_selectedEyeColor == null) {
-                              _eyeEnabledBorder = _errorBorder;
-                              _eyeFocusedBorder = _errorBorder;
-                              _eyeCorrect = false;
-                            }
-                            if (_bodyController.text.isEmpty) {
-                              _bodyEnabledBorder = _errorBorder;
-                              _bodyFocusedBorder = _errorBorder;
-                              _bodyCorrect = false;
-                            }
-                            if (_heightController.text.isEmpty) {
-                              _heightEnabledBorder = _errorBorder;
-                              _heightFocusedBorder = _errorBorder;
-                              _heightCorrect = false;
-                            }
-                            if (_selectedEthnicity == null) {
-                              _ethnicityEnabledBorder = _errorBorder;
-                              _ethnicityFocusedBorder = _errorBorder;
-                              _ethnicityCorrect = false;
-                            }
-                            if (_selectedReligion == null) {
-                              _religionEnabledBorder = _errorBorder;
-                              _religionFocusedBorder = _errorBorder;
-                              _religionCorrect = false;
-                            }
-                            if (_selectedCounty == null) {
-                              _countyEnabledBorder = _errorBorder;
-                              _countyFocusedBorder = _errorBorder;
-                              _countyCorrect = false;
-                            }
-                          });
-                        }
-                      },
-                      elevation: 5,
-                      child: Text('NEXT'),
-                      color: Colors.white,
-                      shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
+                            setState(() {
+                              if (_selectedHairColor == null) {
+                                _hairEnabledBorder = _errorBorder;
+                                _hairFocusedBorder = _errorBorder;
+                                _hairCorrect = false;
+                              }
+                              if (_selectedEyeColor == null) {
+                                _eyeEnabledBorder = _errorBorder;
+                                _eyeFocusedBorder = _errorBorder;
+                                _eyeCorrect = false;
+                              }
+                              if (_bodyController.text.isEmpty) {
+                                _bodyEnabledBorder = _errorBorder;
+                                _bodyFocusedBorder = _errorBorder;
+                                _bodyCorrect = false;
+                              }
+                              if (_heightController.text.isEmpty) {
+                                _heightEnabledBorder = _errorBorder;
+                                _heightFocusedBorder = _errorBorder;
+                                _heightCorrect = false;
+                              }
+                              if (_selectedEthnicity == null) {
+                                _ethnicityEnabledBorder = _errorBorder;
+                                _ethnicityFocusedBorder = _errorBorder;
+                                _ethnicityCorrect = false;
+                              }
+                              if (_selectedReligion == null) {
+                                _religionEnabledBorder = _errorBorder;
+                                _religionFocusedBorder = _errorBorder;
+                                _religionCorrect = false;
+                              }
+                              if (_selectedCounty == null) {
+                                _countyEnabledBorder = _errorBorder;
+                                _countyFocusedBorder = _errorBorder;
+                                _countyCorrect = false;
+                              }
+                            });
+                          }
+                          else {
+                            Navigator.push(context, FadeRoute(page: PreviewPage()));
+                          }
+                        },
+                        elevation: 5,
+                        child: Text('NEXT'),
+                        color: Colors.white,
+                        shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
+                      ),
                     ),
                   )
                 ],

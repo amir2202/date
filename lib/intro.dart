@@ -1,11 +1,12 @@
 
 
-import 'package:dating/GraphQLHandler.dart';
-import 'package:dating/finalsignup.dart';
-import 'package:dating/login.dart';
+import 'package:date/GraphQLHandler.dart';
+import 'package:date/finalsignup.dart';
+import 'package:date/login.dart';
+import 'package:date/preview.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:dating/signup.dart';
+import 'package:date/signup.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 void main() {
   runApp(intro());
@@ -29,10 +30,17 @@ class _introState extends State<intro>{
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
+      theme: ThemeData(
+        brightness: Brightness.light,
+        primaryColor: Color(0xFF915FB5),
+        accentColor: Color(0xFFCA436B),
+        splashColor: Color(0xFFCA436B),
+      ),
         routes:{
           'register': (context) => SignUpPage(),
           'login': (context) => LogInPage(),
           'signup': (context) => Finalsignup(),
+          'preview': (context) => PreviewPage(),
         },
         home: Builder(
           builder: (context) => Stack(

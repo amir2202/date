@@ -8,6 +8,5 @@ class EyeColors {
     "Hazel",
     "Red",
     "Other",
-    "Rather not say",
   ];
 }

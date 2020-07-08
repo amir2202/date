@@ -1,8 +1,11 @@
+import 'dart:ui';
+
 import 'package:date/common.dart';
 import 'package:date/country_suggetions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:intl/intl.dart';
 
 import 'GraphQLHandler.dart';
 
@@ -36,6 +39,7 @@ class SignUpPageState extends State<SignUpPage> {
   OutlineInputBorder _countryEnabledBorder = _defaultEnabledBorder;
   OutlineInputBorder _countryFocusedBorder = _defaultFocusedBorder;
   bool _countryCorrect = true;
+  bool _birthdayCorrect = true;
   OutlineInputBorder _emailEnabledBorder = _defaultEnabledBorder;
   OutlineInputBorder _emailFocusedBorder = _defaultFocusedBorder;
   bool _emailCorrect = true;
@@ -45,6 +49,7 @@ class SignUpPageState extends State<SignUpPage> {
 
   String _selectedGender;
   String _selectedCountry;
+  DateTime _selectedBirthDay;
 
   final _formKey = GlobalKey<FormState>();
 
@@ -62,6 +67,19 @@ class SignUpPageState extends State<SignUpPage> {
     _countryFocusNode.addListener(() { setState(() {}); });
     _emailFocusNode.addListener(() { setState(() {}); });
     _passwordFocusNode.addListener(() { setState(() {}); });
+  }
+
+  Future<Null> _selectDate(BuildContext context) async {
+    final picked = await showDatePicker(
+        context: context,
+        initialDate: _selectedBirthDay == null ? DateTime.now() : _selectedBirthDay,
+        firstDate: DateTime(1900),
+        lastDate: DateTime.now());
+    if (picked != null)
+      setState(() {
+        _birthdayCorrect = true;
+        _selectedBirthDay = picked;
+      });
   }
 
   @override
@@ -224,6 +242,28 @@ class SignUpPageState extends State<SignUpPage> {
                                       },
                                     ),
                                   ),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  SizedBox(
+                                    width: 150,
+                                    height: 60,
+                                    child: OutlineButton(
+                                      shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
+                                      borderSide: BorderSide(color: _birthdayCorrect ? Colors.grey : Colors.red, width:1.0),
+                                      highlightedBorderColor: _birthdayCorrect ? Color(0xFFCA436B) : Colors.red,
+                                      splashColor: _birthdayCorrect ? Color(0xFFCA436B) : Colors.red,
+                                      child: Text(
+                                        _selectedBirthDay == null ? "Date of birth" : DateFormat.yMd().format(_selectedBirthDay),
+                                        style: TextStyle(color: _birthdayCorrect ? (_selectedBirthDay == null ? Colors.grey : Colors.black) : Colors.red, fontWeight: FontWeight.normal, fontSize: 16),
+                                      ),
+                                      onPressed: () {
+                                        setState(() {
+                                          _selectDate(context);
+                                        });
+                                      },
+                                    ),
+                                  )
                                 ],
                               ),
                               SizedBox(
@@ -303,6 +343,7 @@ class SignUpPageState extends State<SignUpPage> {
                         if (_nameController.text.isEmpty ||
                             _selectedGender == null ||
                             _selectedCountry == null || _selectedCountry.isEmpty || !CountrySuggestions.countries.contains(_selectedCountry) ||
+                            _selectedBirthDay == null ||
                             _emailController.text.isEmpty ||
                             _passwordController.text.isEmpty) {
 
@@ -322,6 +363,9 @@ class SignUpPageState extends State<SignUpPage> {
                               _countryFocusedBorder = _errorBorder;
                               _countryCorrect = false;
                             }
+                            if (_selectedBirthDay == null) {
+                              _birthdayCorrect = false;
+                            }
                             if (_emailController.text.isEmpty) { // || TODO: regex email match)
                               _emailEnabledBorder = _errorBorder;
                               _emailFocusedBorder = _errorBorder;
@@ -335,6 +379,7 @@ class SignUpPageState extends State<SignUpPage> {
                           });
                         }
                         else {
+                          Common.fullName = _nameController.text;
                           Navigator.pushNamed(context, 'signup');
                         }
                         /*bool gen = selectedGender == "Male";
