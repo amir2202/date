@@ -6,19 +6,17 @@ class GraphQLHandler {
   static ValueNotifier<GraphQLClient> client = ValueNotifier(
     GraphQLClient(
       cache: InMemoryCache(),
-      link: HttpLink(uri:'http://192.168.0.14:8091/graphql'),
+      link: HttpLink(uri:'http://192.168.0.14:8090/graphql'),
     ),
   );
 
   static ValueNotifier<GraphQLClient> getClient(){
     return client;
   }
-   static const String registerUser = r"""mutation addUserManual($name:String!,$password:String!,$premium:Boolean!,$email:String!,$gender:Boolean!,$country:String!) {
-  addUserManuala(name:$name,password:$password,premium:$premium,email:$email){
+   static const String registerUser = r"""mutation AddUserManual($name: String!, $password: String!, $premium:Boolean!,$email:String!,$gender: Boolean!, $birthday:String!, $country: String!,$haircolor:String,$eyecolor:String,$body:String,$height:Int, $ethnicity:String,$religion:String,$state:String!,$facebook:String) {
+  addUser(name:$name,password:$password,premium:$premium,email:$email,gender:$gender,birthday:$birthday,country:$country,haircolor:$haircolor,eyecolor:$eyecolor,body:$body,height:$height,ethnicity:$ethnicity,religion:$religion,state:$state,facebook:$facebook){
     userid
   }
-  addUserInfo(gender:$gender,country:$country){
-  userid}
 }
 """;
 

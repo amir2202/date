@@ -1,10 +1,10 @@
-import 'package:date/suggestions/Bundesland_suggestions.dart';
-import 'package:date/common.dart';
-import 'package:date/preview.dart';
-import 'package:date/suggestions/ethnicity_options.dart';
-import 'package:date/suggestions/eye_colors.dart';
-import 'package:date/suggestions/hair_colors.dart';
-import 'package:date/suggestions/religion_options.dart';
+import 'package:dating/suggestions/Bundesland_suggestions.dart';
+import 'package:dating/common.dart';
+import 'package:dating/preview.dart';
+import 'package:dating/suggestions/ethnicity_options.dart';
+import 'package:dating/suggestions/eye_colors.dart';
+import 'package:dating/suggestions/hair_colors.dart';
+import 'package:dating/suggestions/religion_options.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
@@ -84,9 +84,7 @@ class FinalsignupState extends State<Finalsignup>{
 
   @override
   Widget build(BuildContext context) {
-    return GraphQLProvider(
-        client: GraphQLHandler.client,
-        child: Scaffold(
+    return Scaffold(
           body: Stack(
             alignment:Alignment.center,
             children: <Widget>[
@@ -382,7 +380,6 @@ class FinalsignupState extends State<Finalsignup>{
             ],
           ),
           resizeToAvoidBottomInset: false,
-        ),
     );
   }
 }

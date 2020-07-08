@@ -1,13 +1,13 @@
 
 
-import 'package:date/GraphQLHandler.dart';
-import 'package:date/finalsignup.dart';
-import 'package:date/login.dart';
-import 'package:date/preview.dart';
+import 'package:dating/GraphQLHandler.dart';
+import 'package:dating/finalsignup.dart';
+import 'package:dating/login.dart';
+import 'package:dating/preview.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:date/signup.dart';
-import 'package:date/home.dart';
+import 'package:dating/signup.dart';
+import 'package:dating/home.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 void main() {
   runApp(intro());

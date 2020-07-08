@@ -1,4 +1,4 @@
-import 'package:date/common.dart';
+import 'package:dating/common.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';

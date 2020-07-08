@@ -1,7 +1,7 @@
 import 'dart:ui';
 
-import 'package:date/common.dart';
-import 'package:date/suggestions/country_suggetions.dart';
+import 'package:dating/common.dart';
+import 'package:dating/suggestions/country_suggetions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
@@ -327,73 +327,50 @@ class SignUpPageState extends State<SignUpPage> {
                 SizedBox(
                   width: 200,
                   height: 50,
-                  child: Mutation(options: MutationOptions(
-                    documentNode: gql(GraphQLHandler.registerUser),
-                    update: (Cache cache, QueryResult result) {
-                      return cache;
-                    },
-                    // or do something with the result.data on completion
-                    onCompleted: (dynamic resultData) {
-                      print(resultData);
-                    },
-                  ), builder: (RunMutation runMutation, QueryResult result){
-                    return RaisedButton(
-                      elevation: 5,
-                      onPressed: () {
-                        if (_nameController.text.isEmpty ||
-                            _selectedGender == null ||
-                            _selectedCountry == null || _selectedCountry.isEmpty || !CountrySuggestions.countries.contains(_selectedCountry) ||
-                            _selectedBirthDay == null ||
-                            _emailController.text.isEmpty ||
-                            _passwordController.text.isEmpty) {
-
-                          setState(() {
-                            if (_nameController.text.isEmpty) {
-                              _nameEnabledBorder = _errorBorder;
-                              _nameFocusedBorder = _errorBorder;
-                              _nameCorrect = false;
-                            }
-                            if (_selectedGender == null) {
-                              _genderEnabledBorder = _errorBorder;
-                              _genderFocusedBorder = _errorBorder;
-                              _genderCorrect = false;
-                            }
-                            if (_selectedCountry == null || _selectedCountry.isEmpty || !CountrySuggestions.countries.contains(_selectedCountry)) {
-                              _countryEnabledBorder = _errorBorder;
-                              _countryFocusedBorder = _errorBorder;
-                              _countryCorrect = false;
-                            }
-                            if (_selectedBirthDay == null) {
-                              _birthdayCorrect = false;
-                            }
-                            if (_emailController.text.isEmpty) { // || TODO: regex email match)
-                              _emailEnabledBorder = _errorBorder;
-                              _emailFocusedBorder = _errorBorder;
-                              _emailCorrect = false;
-                            }
-                            if (_passwordController.text.isEmpty) { // || TODO: regex password / check length and requirements
-                              _passwordEnabledBorder = _errorBorder;
-                              _passwordFocusedBorder = _errorBorder;
-                              _passwordCorrect = false;
-                            }
-                          });
-                        }
-                        else {
-                          Common.fullName = _nameController.text;
-                          Navigator.pushNamed(context, 'signup');
-                        }
-                        /*bool gen = selectedGender == "Male";
-                        print(result.data);
-                        print(selectedGender);
-                        print(_selectedCountry);
-                        runMutation({'name':nameController.text,'password':passwordController.text,'premium':false,'email':emailController.text,'gender':gen,'country':_selectedCountry});
-                        */
+                  child: RaisedButton(
+                    elevation: 5,
+                    onPressed: () {
+                      if (_nameController.text.isEmpty || _selectedGender == null || _selectedCountry == null || _selectedCountry.isEmpty || !CountrySuggestions.countries.contains(_selectedCountry) || _selectedBirthDay == null || _emailController.text.isEmpty || _passwordController.text.isEmpty) {
+                        setState(() {
+                          if (_nameController.text.isEmpty) {
+                            _nameEnabledBorder = _errorBorder;
+                            _nameFocusedBorder = _errorBorder;
+                            _nameCorrect = false;
+                          }
+                          if (_selectedGender == null) {
+                            _genderEnabledBorder = _errorBorder;
+                            _genderFocusedBorder = _errorBorder;
+                            _genderCorrect = false;
+                          }
+                          if (_selectedCountry == null || _selectedCountry.isEmpty || !CountrySuggestions.countries.contains(_selectedCountry)) {
+                            _countryEnabledBorder = _errorBorder;
+                            _countryFocusedBorder = _errorBorder;
+                            _countryCorrect = false;
+                          }
+                          if (_selectedBirthDay == null) {
+                            _birthdayCorrect = false;
+                          }
+                          if (_emailController.text.isEmpty) { // || TODO: regex email match)
+                             _emailEnabledBorder = _errorBorder;
+                             _emailFocusedBorder = _errorBorder;
+                             _emailCorrect = false;
+                           }
+                          if (_passwordController.text.isEmpty) { // || TODO: regex password / check length and requirements
+                            _passwordEnabledBorder = _errorBorder;
+                            _passwordFocusedBorder = _errorBorder;
+                            _passwordCorrect = false;
+                          }
+                        });
+                      }
+                      else {
+                        Common.fullName = _nameController.text;
+                        Navigator.pushNamed(context, 'signup');
+                      }
                       },
-                      child: Text('NEXT'),
-                      color: Colors.white,
-                      shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
-                    );
-                  })
+    child: Text('NEXT'),
+    color: Colors.white,
+    shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
+    )
                 ),
                 SizedBox(
                   height: Common.screenHeight * 0.1,
