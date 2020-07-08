@@ -34,10 +34,21 @@ class ProfilePage {
                 elevation: 10,
                 color: Colors.white,
                 child: Container(
-                  padding: EdgeInsets.all(40),
+                  padding: EdgeInsets.fromLTRB(40, 0, 40, 0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
+
+                      Common.profilePicture == null ?
+                      SizedBox(
+                        width: 75,
+                        height: 75,
+                        child: Material(
+                          elevation: 4,
+                          color: Colors.grey,
+                          shape: CircleBorder(),
+                        ),
+                      ) :
                       Material(
                         elevation: 4,
                         shape: CircleBorder(),
@@ -46,13 +57,20 @@ class ProfilePage {
                         child: Ink.image(
                           image: FileImage(Common.profilePicture),
                           fit: BoxFit.cover,
-                          width: 100,
-                          height: 100,
+                          width: 75,
+                          height: 75,
                           child: InkWell(
                             onTap: () {},
                           ),
                         ),
                       ),
+
+                      SizedBox(
+                        width: 20,
+                      ),
+                      Flexible(
+                        child: Text("${Common.fullName}", style: TextStyle(fontSize: 20), ),
+                      )
                     ],
                   ),
                 ),
