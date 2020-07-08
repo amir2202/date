@@ -11,18 +11,28 @@ class HomePage extends StatefulWidget {
 
 class HomePageState extends State<HomePage> {
 
-  int _index = 4;
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _index = index;
-    });
-  }
-
   void getProfilePicture() async {
     final String path = (await getApplicationDocumentsDirectory()).path;
     setState(() { Common.profilePicture = File('$path/pfp.jpg'); });
-}
+  }
+
+  int _index = 4;
+
+  callback(index) {
+    setState(() {
+      _index = index;
+      _pageController.animateToPage(index,
+          duration: Duration(milliseconds: 200), curve: Curves.easeOut);
+    });
+  }
+
+  PageController _pageController;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,12 +50,18 @@ class HomePageState extends State<HomePage> {
       Text('a'),
       Text('a'),
       Text('a'),
-      Text('a'),
-      ProfilePage.profilePage(),
+      Container(color: Colors.blue),
+      ProfilePage(callback: callback),
     ];
 
     return Scaffold(
-      body: _pages.elementAt(_index),
+      body: PageView(
+        controller: _pageController,
+        onPageChanged: (index) {
+          setState(() => _index = index);
+        },
+        children: _pages,
+      ),
       bottomNavigationBar: BottomNavigationBar(
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
@@ -72,7 +88,9 @@ class HomePageState extends State<HomePage> {
         selectedItemColor: Color(0xFFCA436B),
         unselectedItemColor: Colors.grey,
         currentIndex: _index,
-        onTap: _onItemTapped,
+        onTap: (index) {
+          callback(index);
+        },
       ),
     );
   }
