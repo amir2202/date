@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:date/common.dart';
+import 'package:dating/common.dart';
 
 class ProfilePage {
   static Widget profilePage() {
