@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:date/common.dart';
-import 'package:date/country_suggetions.dart';
+import 'package:date/suggestions/country_suggetions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';

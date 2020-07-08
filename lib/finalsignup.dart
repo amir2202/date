@@ -1,10 +1,10 @@
-import 'package:date/Bundesland_suggestions.dart';
+import 'package:date/suggestions/Bundesland_suggestions.dart';
 import 'package:date/common.dart';
 import 'package:date/preview.dart';
-import 'package:date/ethnicity_options.dart';
-import 'package:date/eye_colors.dart';
-import 'package:date/hair_colors.dart';
-import 'package:date/religion_options.dart';
+import 'package:date/suggestions/ethnicity_options.dart';
+import 'package:date/suggestions/eye_colors.dart';
+import 'package:date/suggestions/hair_colors.dart';
+import 'package:date/suggestions/religion_options.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
