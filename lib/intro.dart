@@ -7,6 +7,7 @@ import 'package:date/preview.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:date/signup.dart';
+import 'package:date/home.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 void main() {
   runApp(intro());
@@ -41,6 +42,7 @@ class _introState extends State<intro>{
           'login': (context) => LogInPage(),
           'signup': (context) => Finalsignup(),
           'preview': (context) => PreviewPage(),
+          'home': (context) => HomePage(),
         },
         home: Builder(
           builder: (context) => Stack(

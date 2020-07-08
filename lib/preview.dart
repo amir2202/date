@@ -4,6 +4,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';
 import 'dart:io';
 import 'dart:async';
+import 'package:path_provider/path_provider.dart';
+
+import 'home.dart';
 
 class PreviewPage extends StatefulWidget {
   @override
@@ -18,7 +21,13 @@ class PreviewPageState extends State<PreviewPage> {
     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
     setState(() {
       _image = image == null ? _image : image;
+      Common.profilePicture = _image;
     });
+  }
+
+  void storeImage() async {
+    final String path = (await getApplicationDocumentsDirectory()).path;
+    final File newImage = await _image.copy('$path/pfp.jpg');
   }
 
   @override
@@ -53,9 +62,6 @@ class PreviewPageState extends State<PreviewPage> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: <Widget>[
-                              SizedBox(
-                                width: 0,
-                              ),
                               _image == null ?
                               SizedBox(
                                 width: 100,
@@ -108,7 +114,10 @@ class PreviewPageState extends State<PreviewPage> {
             child: Opacity(
               opacity: _image == null ? 0 : 1,
               child: RawMaterialButton(
-                onPressed: () {},
+                onPressed: () {
+                  storeImage();
+                  Navigator.pushNamedAndRemoveUntil(context, 'home', (r) => false);
+                },
                 elevation: 10,
                 fillColor: Color(0xFFCA436B),
                 splashColor: Colors.white,
