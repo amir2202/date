@@ -121,14 +121,14 @@ class SignUpPageState extends State<SignUpPage> {
 
                 SizedBox(
                   width: Common.screenWidth * 0.9,
-                  height: Common.screenHeight * 0.47,
+                  //height: Common.screenHeight * 0.47,
                   child: Card(
                       elevation: 10,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30.0),
                       ),
                       child: Padding(
-                        padding: EdgeInsets.all(20),
+                        padding: EdgeInsets.fromLTRB(20, 40, 20, 40),
                         child: Form(
                           key: _formKey,
                           child: Column(
