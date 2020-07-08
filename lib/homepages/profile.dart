@@ -3,7 +3,8 @@ import 'package:date/common.dart';
 
 class ProfilePage extends StatefulWidget {
   final Function(int) callback;
-  ProfilePage({Key key, @required this.callback});
+  final String name;
+  ProfilePage({Key key, @required this.callback, @required this.name});
 
   @override
   ProfilePageState createState() => ProfilePageState();
@@ -89,7 +90,7 @@ class ProfilePageState extends State<ProfilePage> {
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: <Widget>[
                               SizedBox(width: 10,),
-                              Text("Matt Loller", style: TextStyle(fontSize: 20)),
+                              Text("${widget.name}", style: TextStyle(fontSize: 20)),
                             ],
                           ),
 

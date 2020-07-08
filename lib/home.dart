@@ -5,6 +5,9 @@ import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 
 class HomePage extends StatefulWidget {
+  final String name;
+  HomePage({Key key, @required this.name});
+
   @override
   HomePageState createState() => HomePageState();
 }
@@ -51,7 +54,7 @@ class HomePageState extends State<HomePage> {
       Text('a'),
       Text('a'),
       Container(color: Colors.blue),
-      ProfilePage(callback: callback),
+      ProfilePage(callback: callback, name: widget.name),
     ];
 
     return Scaffold(
