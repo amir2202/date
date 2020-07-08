@@ -18,6 +18,9 @@ class LogInPageState extends State<LogInPage> {
   FocusNode textFocusNode1 = new FocusNode();
   FocusNode textFocusNode2 = new FocusNode();
 
+  final _passwordController = TextEditingController();
+  final _emailController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
@@ -67,12 +70,7 @@ class LogInPageState extends State<LogInPage> {
   @override
   Widget build(BuildContext context) {
     return new GraphQLProvider(
-        client: GraphQLHandler.getClient()/*ValueNotifier(
-          GraphQLClient(
-            cache: InMemoryCache(),
-            link: api as Link,
-          ),
-        )*/,
+        client: GraphQLHandler.getClient(),
       child: Material(
       child: Stack(
         alignment:Alignment.center,
@@ -104,6 +102,7 @@ class LogInPageState extends State<LogInPage> {
                     Material(
                       color: Colors.white,
                       child: TextFormField(
+                        controller:_emailController,
                         focusNode: textFocusNode1,
                         decoration: InputDecoration(
                           focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(30.0), borderSide: BorderSide(color: Color(0xFFCA436B))),
@@ -120,6 +119,7 @@ class LogInPageState extends State<LogInPage> {
                     Material(
                       color: Colors.white,
                       child: TextFormField(
+                        controller: _passwordController,
                         obscureText: true,
                         focusNode: textFocusNode2,
                         decoration: InputDecoration(
@@ -168,14 +168,17 @@ class LogInPageState extends State<LogInPage> {
             bottom: 80,
             width: 200,
             height: 50,
-            child: RaisedButton(
-              elevation: 5,
-              onPressed: () {
-              },
-              child: Text('LOG IN'),
-              color: Colors.white,
-              shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
-            ),
+            child: Mutation(options: MutationOptions(documentNode: gql(GraphQLHandler.loginUser)), builder: (RunMutation runMutation,QueryResult result){
+              return RaisedButton(
+                elevation: 5,
+                onPressed: () {
+                  runMutation({'email':_emailController.text,'password':_passwordController.text});
+                },
+                child: Text('LOG IN'),
+                color: Colors.white,
+                shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
+              );
+            })
           ),
         ]
       ),

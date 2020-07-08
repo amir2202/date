@@ -4,6 +4,7 @@ import 'package:dating/preview.dart';
 import 'package:dating/suggestions/ethnicity_options.dart';
 import 'package:dating/suggestions/eye_colors.dart';
 import 'package:dating/suggestions/hair_colors.dart';
+import 'dart:convert';
 import 'package:dating/suggestions/religion_options.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -365,6 +366,13 @@ class FinalsignupState extends State<Finalsignup>{
                             });
                           }
                           else {
+                            Common.haircolor = _selectedHairColor;
+                            Common.eyecolor = _selectedEyeColor;
+                            Common.body = _bodyController.text;
+                            Common.height = int.parse(_heightController.text);
+                            Common.ethnicity = _selectedEthnicity;
+                            Common.religion = _selectedReligion;
+                            Common.state = _selectedCounty;
                             Navigator.push(context, FadeRoute(page: PreviewPage()));
                           }
                         },

@@ -364,13 +364,19 @@ class SignUpPageState extends State<SignUpPage> {
                       }
                       else {
                         Common.fullName = _nameController.text;
+                        Common.gender = (_selectedGender == "Male");
+                        Common.country = _selectedCountry;
+                        Common.birthday = _selectedBirthDay.toString();
+                        Common.email = _emailController.text;
+                        Common.password = _passwordController.text;
+                        Common.premium = false;
                         Navigator.pushNamed(context, 'signup');
                       }
-                      },
-    child: Text('NEXT'),
-    color: Colors.white,
-    shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
-    )
+                    },
+                    child: Text('NEXT'),
+                    color: Colors.white,
+                    shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
+                  )
                 ),
                 SizedBox(
                   height: Common.screenHeight * 0.1,

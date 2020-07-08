@@ -20,6 +20,13 @@ class GraphQLHandler {
 }
 """;
 
+  static const String loginUser = r"""mutation LoginM($email:String!, $password:String!){
+  loginManual(email:$email,password:$password){
+    userid
+  }
+  }
+  """;
+
   /*
   final AuthLink authLink = AuthLink(
     getToken: () async => 'Bearer <YOUR_PERSONAL_ACCESS_TOKEN>',

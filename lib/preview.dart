@@ -1,5 +1,7 @@
+import 'package:dating/GraphQLHandler.dart';
 import 'package:dating/common.dart';
 import 'package:flutter/material.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';
 import 'dart:io';
@@ -32,109 +34,116 @@ class PreviewPageState extends State<PreviewPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: <Widget>[
-
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+    return GraphQLProvider(
+      client: GraphQLHandler.client,
+      child: Scaffold(
+          body: Stack(
             children: <Widget>[
-              Text(
-                'One last step...',
-                style: TextStyle(fontSize: 25),
-              ),
-              SizedBox(
-                height: Common.screenHeight * 0.05,
-              ),
-              Row(
+
+              Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Hero(
-                    tag: 'preview_tag',
-                    child: SizedBox(
-                      width: Common.screenWidth * 0.9,
-                      height: 200,
-                      child: Card(
-                        elevation: 10,
-                        color: Colors.white,
-                        child: Container(
-                          padding: EdgeInsets.all(40),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: <Widget>[
-                              _image == null ?
-                              SizedBox(
-                                width: 100,
-                                height: 100,
-                                child: RawMaterialButton(
-                                  onPressed: openGallery,
-                                  elevation: 4,
-                                  fillColor: Colors.white,
-                                  child: Icon(
-                                    Icons.image,
-                                    size: 40,
-                                  ),
-                                  padding: EdgeInsets.all(15.0),
-                                  shape: CircleBorder(),
+                  Text(
+                    'One last step...',
+                    style: TextStyle(fontSize: 25),
+                  ),
+                  SizedBox(
+                    height: Common.screenHeight * 0.05,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Hero(
+                        tag: 'preview_tag',
+                        child: SizedBox(
+                          width: Common.screenWidth * 0.9,
+                          height: 200,
+                          child: Card(
+                              elevation: 10,
+                              color: Colors.white,
+                              child: Container(
+                                padding: EdgeInsets.all(40),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: <Widget>[
+                                    _image == null ?
+                                    SizedBox(
+                                      width: 100,
+                                      height: 100,
+                                      child: RawMaterialButton(
+                                        onPressed: openGallery,
+                                        elevation: 4,
+                                        fillColor: Colors.white,
+                                        child: Icon(
+                                          Icons.image,
+                                          size: 40,
+                                        ),
+                                        padding: EdgeInsets.all(15.0),
+                                        shape: CircleBorder(),
+                                      ),
+                                    ) :
+                                    Material(
+                                      elevation: 4,
+                                      shape: CircleBorder(),
+                                      clipBehavior: Clip.hardEdge,
+                                      color: Colors.transparent,
+                                      child: Ink.image(
+                                        image: FileImage(_image),
+                                        fit: BoxFit.cover,
+                                        width: 100,
+                                        height: 100,
+                                        child: InkWell(
+                                          onTap: openGallery,
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 20,
+                                    ),
+                                    Flexible(
+                                      child: Text("${Common.fullName}", style: TextStyle(fontSize: 25), ),
+                                    )
+                                  ],
                                 ),
-                              ) :
-                              Material(
-                                elevation: 4,
-                                shape: CircleBorder(),
-                                clipBehavior: Clip.hardEdge,
-                                color: Colors.transparent,
-                                child: Ink.image(
-                                  image: FileImage(_image),
-                                  fit: BoxFit.cover,
-                                  width: 100,
-                                  height: 100,
-                                  child: InkWell(
-                                    onTap: openGallery,
-                                  ),
-                                ),
-                              ),
-                              SizedBox(
-                                width: 20,
-                              ),
-                              Flexible(
-                                child: Text("${Common.fullName}", style: TextStyle(fontSize: 25), ),
                               )
-                            ],
                           ),
-                        )
-                      ),
-                    ),
+                        ),
+                      )
+                    ],
                   )
                 ],
+              ), Positioned(
+                  top: Common.screenHeight * 0.5 + 75,
+                  left: Common.screenWidth * 0.9 - 100,
+                  child: Mutation(options: MutationOptions(
+                    documentNode: gql(GraphQLHandler.registerUser),
+                  ),
+                      builder: (RunMutation runMutation,QueryResult result){
+                        return Opacity(
+                          opacity: _image == null ? 0 : 1,
+                          child: RawMaterialButton(
+                            onPressed: () {
+                              runMutation({'name': Common.fullName, 'password': Common.password, 'premium':Common.premium,'email':Common.email,'gender': Common.gender, 'birthday':Common.birthday, 'country': Common.country,'haircolor':Common.haircolor,'eyecolor':Common.eyecolor,'body':Common.body,'height':Common.height, 'ethnicity':Common.ethnicity,'religion':Common.religion,'state':Common.state,'facebook':Common.facebook});
+                              storeImage();
+                              Navigator.pushNamedAndRemoveUntil(context, 'home', (r) => false);
+                            },
+                            elevation: 10,
+                            fillColor: Color(0xFFCA436B),
+                            splashColor: Colors.white,
+                            child: Icon(
+                              Icons.check,
+                              color: Colors.white,
+                              size: 40,
+                            ),
+                            padding: EdgeInsets.all(15.0),
+                            shape: CircleBorder(),
+                          ),
+                        );
+                      })
               )
             ],
-          ),
-
-          Positioned(
-            child: Opacity(
-              opacity: _image == null ? 0 : 1,
-              child: RawMaterialButton(
-                onPressed: () {
-                  storeImage();
-                  Navigator.pushNamedAndRemoveUntil(context, 'home', (r) => false);
-                },
-                elevation: 10,
-                fillColor: Color(0xFFCA436B),
-                splashColor: Colors.white,
-                child: Icon(
-                  Icons.check,
-                  color: Colors.white,
-                  size: 40,
-                ),
-                padding: EdgeInsets.all(15.0),
-                shape: CircleBorder(),
-              ),
-            ),
-            top: Common.screenHeight * 0.5 + 75,
-            left: Common.screenWidth * 0.9 - 100,
           )
-        ],
-      )
+      ),
     );
   }
 }
