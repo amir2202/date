@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:date/homepages/profile.dart';
-import 'package:date/common.dart';
+import 'package:dating/homepages/profile.dart';
+import 'package:dating/common.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 
