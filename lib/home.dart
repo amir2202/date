@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:dating/homepages/profile.dart';
-import 'package:dating/common.dart';
+import 'package:date/homepages/profile.dart';
+import 'package:date/common.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 
@@ -21,7 +21,7 @@ class HomePageState extends State<HomePage> {
 
   void getProfilePicture() async {
     final String path = (await getApplicationDocumentsDirectory()).path;
-    Common.profilePicture = File('$path/pfp.jpg');
+    setState(() { Common.profilePicture = File('$path/pfp.jpg'); });
 }
 
   @override
