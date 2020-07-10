@@ -1,5 +1,6 @@
 import 'package:dating/GraphQLHandler.dart';
 import 'package:dating/common.dart';
+import 'package:dating/imagelogic/ImageHandler.dart';
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:image_picker/image_picker.dart';
@@ -27,9 +28,10 @@ class PreviewPageState extends State<PreviewPage> {
     });
   }
 
-  void storeImage() async {
+  void storeImage(String id) async {
     final String path = (await getApplicationDocumentsDirectory()).path;
     final File newImage = await _image.copy('$path/pfp.jpg');
+    ImageHandler.uploadImage(newImage,id);
   }
 
   @override
@@ -117,15 +119,17 @@ class PreviewPageState extends State<PreviewPage> {
                   left: Common.screenWidth * 0.9 - 100,
                   child: Mutation(options: MutationOptions(
                     documentNode: gql(GraphQLHandler.registerUser),
-                  ),
-                      builder: (RunMutation runMutation,QueryResult result){
+                      onCompleted: (dynamic result) {
+                        print(result);
+                        storeImage("1");
+                        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => HomePage(name: Common.fullName)), (r) => false);
+                      })
+                    ,builder: (RunMutation runMutation,QueryResult result){
                         return Opacity(
                           opacity: _image == null ? 0 : 1,
                           child: RawMaterialButton(
                             onPressed: () {
                               runMutation({'name': Common.fullName, 'password': Common.password, 'premium':Common.premium,'email':Common.email,'gender': Common.gender, 'birthday':Common.birthday, 'country': Common.country,'haircolor':Common.haircolor,'eyecolor':Common.eyecolor,'body':Common.body,'height':Common.height, 'ethnicity':Common.ethnicity,'religion':Common.religion,'state':Common.state,'facebook':Common.facebook});
-                              storeImage();
-                              Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => HomePage(name: Common.fullName)), (r) => false);
                             },
                             elevation: 10,
                             fillColor: Color(0xFFCA436B),
@@ -139,7 +143,8 @@ class PreviewPageState extends State<PreviewPage> {
                             shape: CircleBorder(),
                           ),
                         );
-                      })
+                      },
+                  )
               )
             ],
           )
