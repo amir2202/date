@@ -9,6 +9,31 @@ class CmScrollBehavior extends ScrollBehavior {
   }
 }
 
+class ProfileImageBox extends StatelessWidget {
+  final String imageUrl;
+  ProfileImageBox({Key key, @required this.imageUrl});
+
+  @override
+  Widget build(BuildContext context) {
+    return Hero(
+      tag: 'image_post',
+      child: Material(
+        child: Ink.image(
+          image: NetworkImage(this.imageUrl),
+          fit: BoxFit.cover,
+          alignment: Alignment.center,
+          width: 100,
+          height: 100,
+          child: InkWell(
+            onTap: () {},
+            splashColor: Colors.white.withOpacity(0.5),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class ProfilePage extends StatefulWidget {
   final Function(int) callback;
   final String name;
@@ -29,14 +54,16 @@ class ProfilePageState extends State<ProfilePage> {
   @override
   void initState() {
     super.initState();
-    _scrollController = ScrollController();
+    _scrollController = ScrollController(initialScrollOffset: 0.0);
     _scrollController.addListener(() {setState(() { });});
 
     WidgetsBinding.instance.addPostFrameCallback(_onBuildCompleted);
   }
+
   _onBuildCompleted(Duration timestamp) {
     final RenderBox containerRenderBox = _bioKey.currentContext.findRenderObject();
     final containerPosition = containerRenderBox.localToGlobal(Offset.zero);
+    //while (!_scrollController.hasClients) {}
     setState(() {
       _containerPosition = containerPosition;
       _containerSize = containerRenderBox.size;
@@ -54,10 +81,13 @@ class ProfilePageState extends State<ProfilePage> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               Container(
-                height: (Common.screenHeight * 0.2 - (
-                    (_scrollController.hasClients ? _scrollController.position.pixels * _scrollController.position.pixels * 0.001 : 0)) < 0 ? 0 :
-                    Common.screenHeight * 0.2 - (_scrollController.hasClients ? _scrollController.position.pixels * _scrollController.position.pixels * 0.001 : 0)
-                ),
+                height: Common.screenHeight * 0.2 +
+                        (_scrollController.hasClients ?
+                          (_scrollController.position.pixels > 0 ? -1 : 0.5) *
+                          (Common.screenHeight * 0.2 - (_scrollController.position.pixels * _scrollController.position.pixels * 0.001) >= 0 ?
+                          (_scrollController.position.pixels * _scrollController.position.pixels * 0.001)
+                          : Common.screenHeight * 0.2)
+                        : 0),
                 color: Color(0xFFCA436B),
               ),
               Expanded(
@@ -68,24 +98,74 @@ class ProfilePageState extends State<ProfilePage> {
             ]
         ),
 
+        Positioned(
+          bottom: _scrollController.hasClients ? (_scrollController.position.pixels < 0 ? (400 + -_scrollController.position.pixels * 1.5 < Common.screenHeight * 0.3 ? -_scrollController.position.pixels * 1.5 : Common.screenHeight * 0.3) : 0) : 0,
+          //left: Common.screenWidth * 0.5,// +_scrollController.position.pixels* 0.125,
+          child: Opacity(
+            opacity: _scrollController.hasClients ? (-(_scrollController.position.pixels * 0.002) < 1 ? (_scrollController.position.pixels < 0 ? -(_scrollController.position.pixels * 0.002) : 0.0) : 1.0) : 1.0,
+            child: Center(
+              child: Container(
+                width: Common.screenWidth,
+                alignment: Alignment.center,
+                child: Transform(
+                  alignment: FractionalOffset.center,
+                  transform: Matrix4.rotationZ(10 - (_scrollController.hasClients ? _scrollController.position.pixels*0.1 : 0.0)),
+                  child: Icon(
+                    Icons.refresh,
+                    color: Colors.grey,
+                    size: _scrollController.hasClients ? (-_scrollController.position.pixels*-_scrollController.position.pixels* 0.002 < 50 ? -_scrollController.position.pixels*-_scrollController.position.pixels* 0.002 : 50) : 0,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+
         ScrollConfiguration(
           behavior: CmScrollBehavior(),
-          child: ListView(
+          child: GridView.count(
+            padding: EdgeInsets.fromLTRB(0, _containerPosition.dy + 140, 0, 0),
+            primary: false,
+            scrollDirection: Axis.vertical,
+            crossAxisCount: 3,
+            physics: BouncingScrollPhysics(),
             controller: _scrollController,
             children: <Widget>[
-              Container(
-                height: 1000,
-                margin: EdgeInsets.fromLTRB(20, _containerPosition.dy + 120, 20, 20),
-                child: Card(
-                  elevation: 3,
-                ),
-              )
+              ProfileImageBox(
+                imageUrl: 'https://www.vets4pets.com/siteassets/species/cat/close-up-of-cat-looking-up.jpg',
+              ),
+              ProfileImageBox(
+                imageUrl: 'https://t7-live-ahsd8.nyc3.cdn.digitaloceanspaces.com/animalhumanesociety.org/files/styles/crop_16_9_960x540/flypub/media/image/2019-06/collared%20cat%20outside.jpg?itok=Njrr22Tn',
+              ),
+              ProfileImageBox(
+                imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/6/66/An_up-close_picture_of_a_curious_male_domestic_shorthair_tabby_cat.jpg',
+              ),
+              ProfileImageBox(
+                imageUrl: 'https://i.chzbgr.com/full/9152634112/h0F2F0855/deep-fried-meme-graphics-snylov-im-smiling-on-the-outside-but-im-also-smiling-on-the-inside',
+              ),
+              ProfileImageBox(
+                imageUrl: 'https://vignette.wikia.nocookie.net/meme/images/d/d5/Swag_Cat.jpg/revision/latest?cb=20200611194419',
+              ),
+              ProfileImageBox(
+                imageUrl: 'https://i.redd.it/qz50cjgch4221.jpg',
+              ),
+              ProfileImageBox(
+                imageUrl: 'https://i.redd.it/u3ti37l4nop31.jpg',
+              ),
+              ProfileImageBox(
+                imageUrl: 'https://live.staticflickr.com/835/28590032917_e6fcc5a9c7_b.jpg',
+              ),
             ],
           ),
         ),
 
         Positioned(
-          top: Common.screenHeight * 0.1 + 175 - (_scrollController.hasClients ? _scrollController.position.pixels * _scrollController.position.pixels * 0.0015 + _scrollController.position.pixels : 0),
+          top: Common.screenHeight * 0.1 + 175 +
+              (_scrollController.hasClients ?
+                (_scrollController.position.pixels > 0 ? -1 : 0.5) *
+                (_scrollController.position.pixels * _scrollController.position.pixels * 0.0015 +
+                (_scrollController.position.pixels > 0 ? _scrollController.position.pixels : 0))
+              : 0),
           left: Common.screenWidth * 0.1,
           child: Container(
             key: _bioKey,
@@ -97,6 +177,7 @@ class ProfilePageState extends State<ProfilePage> {
               style: TextStyle(fontSize: 15),
             ),
             decoration: BoxDecoration(
+              color: Colors.white,
               border: Border.all(
                 color: Colors.grey,
               ),
@@ -107,7 +188,12 @@ class ProfilePageState extends State<ProfilePage> {
         ),
 
         Positioned(
-          bottom: _containerPosition.dy + _containerSize.height - 15 + (_scrollController.hasClients ? _scrollController.position.pixels * _scrollController.position.pixels * 0.0015 + _scrollController.position.pixels : 0),
+          bottom: _containerPosition.dy + _containerSize.height - 15 -
+              (_scrollController.hasClients ?
+              (_scrollController.position.pixels > 0 ? -1 : 0.5) *
+                  (_scrollController.position.pixels * _scrollController.position.pixels * 0.0015 +
+                      (_scrollController.position.pixels > 0 ? _scrollController.position.pixels : 0))
+                  : 0),
           right: Common.screenWidth * 0.05,
           child: RawMaterialButton(
             onPressed: () {
@@ -125,8 +211,14 @@ class ProfilePageState extends State<ProfilePage> {
           ),
         ),
 
+
+
         Positioned(
-          top: Common.screenHeight * 0.1 - (_scrollController.hasClients ? _scrollController.position.pixels * _scrollController.position.pixels * 0.002 : 0),
+          top: Common.screenHeight * 0.1 +
+              (_scrollController.hasClients ?
+                (_scrollController.position.pixels > 0 ? -1 : 0.5) *
+                (_scrollController.position.pixels * _scrollController.position.pixels * 0.002)
+              : 0),
           left: Common.screenWidth * 0.05,
           child: Hero(
             tag: 'preview_tag',
