@@ -23,9 +23,16 @@ class GraphQLHandler {
   static const String loginUser = r"""mutation LoginM($email:String!, $password:String!){
   loginManual(email:$email,password:$password){
     userid
+    name
   }
   }
   """;
+
+  static const String uploadImage = r"""mutation uploadImage($img:String!,$id:String!){
+  uploadImg(img:$img,id:$id){
+  is
+  }
+  } """;
 
   /*
   final AuthLink authLink = AuthLink(

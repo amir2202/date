@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/button_list.dart';
 import 'package:flutter_signin_button/button_view.dart';
@@ -176,8 +178,7 @@ class LogInPageState extends State<LogInPage> {
                 onPressed: () {
                   runMutation({'email':_emailController.text,'password':_passwordController.text});
                   ///RETRIEVE INFO TO PASS ON
-                  print(result.data);
-                  String name ="testname";
+                  String name = result.data['loginManual']['name'];
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => HomePage(name: name)),
