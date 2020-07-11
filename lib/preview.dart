@@ -121,7 +121,7 @@ class PreviewPageState extends State<PreviewPage> {
                     documentNode: gql(GraphQLHandler.registerUser),
                       onCompleted: (dynamic result) {
                         print(result);
-                        storeImage("1");
+                        storeImage("5");
                         Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => HomePage(name: Common.fullName)), (r) => false);
                       })
                     ,builder: (RunMutation runMutation,QueryResult result){
