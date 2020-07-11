@@ -40,7 +40,8 @@ class ProfilePage extends StatefulWidget {
   final ValueNotifier<double> notifier;
   final String name;
   final String imageUrl;
-  ProfilePage({Key key, @required this.callback, @required this.disownCallback, @required this.notifier, @required this.name, @required this.imageUrl});
+  final List<String> pictureUrls;
+  ProfilePage({Key key, @required this.callback, @required this.disownCallback, @required this.notifier, @required this.name, @required this.imageUrl, @required this.pictureUrls});
 
   @override
   ProfilePageState createState() => ProfilePageState();
@@ -53,6 +54,9 @@ class ProfilePageState extends State<ProfilePage> {
   Size _containerSize = Size(0, 0);
 
   ScrollController _scrollController;
+
+  List<String> _pictures;
+  int _pictureIndex;
 
   double _containerHeight() {
     return Common.screenHeight * 0.2 +
@@ -71,7 +75,20 @@ class ProfilePageState extends State<ProfilePage> {
     _scrollController.addListener(() {setState(() {
       widget.disownCallback(4);
       widget.notifier.value = _containerHeight();
+      if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+        // query more ?? idk
+        if (_pictures.length - 1 > _pictureIndex) {
+          _pictureIndex = (_pictureIndex + 9 < _pictures.length ? _pictureIndex + 9 : _pictures.length - 1);
+        }
+      }
     });});
+
+    _pictureIndex = widget.pictureUrls.length < 9 ? widget.pictureUrls.length - 1 : 8;
+    _pictures = List<String>();
+
+    for (int i = 0; i <= _pictureIndex; i++) {
+      _pictures.add(widget.pictureUrls[i]);
+    }
 
     WidgetsBinding.instance.addPostFrameCallback(_onBuildCompleted);
   }
@@ -137,39 +154,19 @@ class ProfilePageState extends State<ProfilePage> {
 
         ScrollConfiguration(
           behavior: CmScrollBehavior(),
-          child: GridView.count(
+          child: GridView.builder(
+            itemCount: _pictures.length,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3,
+            ),
+            itemBuilder: (BuildContext context, int index) {
+              return ProfileImageBox(imageUrl: _pictures[index]);
+            },
             padding: EdgeInsets.fromLTRB(0, _containerPosition.dy + 140, 0, 0),
             primary: false,
             scrollDirection: Axis.vertical,
-            crossAxisCount: 3,
             physics: BouncingScrollPhysics(),
             controller: _scrollController,
-            children: <Widget>[
-              ProfileImageBox(
-                imageUrl: 'https://www.vets4pets.com/siteassets/species/cat/close-up-of-cat-looking-up.jpg',
-              ),
-              ProfileImageBox(
-                imageUrl: 'https://t7-live-ahsd8.nyc3.cdn.digitaloceanspaces.com/animalhumanesociety.org/files/styles/crop_16_9_960x540/flypub/media/image/2019-06/collared%20cat%20outside.jpg?itok=Njrr22Tn',
-              ),
-              ProfileImageBox(
-                imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/6/66/An_up-close_picture_of_a_curious_male_domestic_shorthair_tabby_cat.jpg',
-              ),
-              ProfileImageBox(
-                imageUrl: 'https://i.chzbgr.com/full/9152634112/h0F2F0855/deep-fried-meme-graphics-snylov-im-smiling-on-the-outside-but-im-also-smiling-on-the-inside',
-              ),
-              ProfileImageBox(
-                imageUrl: 'https://vignette.wikia.nocookie.net/meme/images/d/d5/Swag_Cat.jpg/revision/latest?cb=20200611194419',
-              ),
-              ProfileImageBox(
-                imageUrl: 'https://i.redd.it/qz50cjgch4221.jpg',
-              ),
-              ProfileImageBox(
-                imageUrl: 'https://i.redd.it/u3ti37l4nop31.jpg',
-              ),
-              ProfileImageBox(
-                imageUrl: 'https://live.staticflickr.com/835/28590032917_e6fcc5a9c7_b.jpg',
-              ),
-            ],
           ),
         ),
 

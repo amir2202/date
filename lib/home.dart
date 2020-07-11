@@ -9,7 +9,8 @@ class HomePage extends StatefulWidget {
 
   final String name;
   final String imageUrl;
-  HomePage({Key key, @required this.name, @required this.imageUrl});
+  final List<String> pictureUrls;
+  HomePage({Key key, @required this.name, @required this.imageUrl, @required this.pictureUrls});
 
   @override
   HomePageState createState() => HomePageState();
@@ -100,7 +101,7 @@ class HomePageState extends State<HomePage> {
       Text('a'),
       Text('a'),
       ProfileInfoPage(),
-      ProfilePage(callback: callback, disownCallback: disownCallback, notifier: _n4, name: widget.name, imageUrl: widget.imageUrl),
+      ProfilePage(callback: callback, disownCallback: disownCallback, notifier: _n4, name: widget.name, imageUrl: widget.imageUrl, pictureUrls: widget.pictureUrls),
     ];
 
     return Scaffold(
