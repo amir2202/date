@@ -28,12 +28,6 @@ class GraphQLHandler {
   }
   """;
 
-  static const String uploadImage = r"""mutation uploadImage($img:String!,$id:String!){
-  uploadImg(img:$img,id:$id){
-  is
-  }
-  } """;
-
   /*
   final AuthLink authLink = AuthLink(
     getToken: () async => 'Bearer <YOUR_PERSONAL_ACCESS_TOKEN>',

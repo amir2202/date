@@ -16,7 +16,7 @@ class ProfileImageBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Hero(
-      tag: 'image_post',
+      tag: imageUrl,
       child: Material(
         child: Ink.image(
           image: NetworkImage(this.imageUrl),
