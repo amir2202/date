@@ -261,7 +261,7 @@ class ProfilePageState extends State<ProfilePage> {
                         clipBehavior: Clip.hardEdge,
                         color: Colors.transparent,
                         child: Ink.image(
-                          image: NetworkImage(widget.imageUrl),
+                          image: widget.imageUrl == null ? FileImage(Common.profilePicture) : NetworkImage(widget.imageUrl),
                           fit: BoxFit.cover,
                           width: 75,
                           height: 75,
