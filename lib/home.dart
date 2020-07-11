@@ -1,4 +1,3 @@
-import 'package:dating/homepages/profile_info.dart';
 import 'package:flutter/material.dart';
 import 'package:dating/homepages/profile.dart';
 import 'package:dating/common.dart';
@@ -54,7 +53,7 @@ class HomePageState extends State<HomePage> {
       Text('a'),
       Text('a'),
       Text('a'),
-      ProfileInfoPage(),
+      Text('a'),
       ProfilePage(callback: callback, name: widget.name),
     ];
 

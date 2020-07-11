@@ -42,11 +42,17 @@ class LogInPageState extends State<LogInPage> {
     final result = await facebookLogin.logInWithReadPermissions(['email']);
 
     switch (result.status) {
+
+      //IF ALREADY AN ASSOSCIATION IT will continue to page
       case FacebookLoginStatus.loggedIn:
         final token = result.accessToken.token;
         final graphResponse = await http.get('https://graph.facebook.com/v2.12/me?fields=name,picture,email&access_token=${token}');
         final profile = JSON.jsonDecode(graphResponse.body);
         print(profile);
+        //IF TOKEN ASSOSCIATED WITH AN ACCOUNT GO TO PROFILE PAGE^^ WITH USERID
+
+        //ELSE COMPLETE REGISTRATION
+
         setState(() {
           userProfile = profile;
           _isLoggedIn = true;
@@ -172,17 +178,19 @@ class LogInPageState extends State<LogInPage> {
             bottom: 80,
             width: 200,
             height: 50,
-            child: Mutation(options: MutationOptions(documentNode: gql(GraphQLHandler.loginUser)), builder: (RunMutation runMutation,QueryResult result){
+            child: Mutation(options: MutationOptions(documentNode: gql(GraphQLHandler.loginUser),onCompleted:(dynamic resultData){
+              String name = resultData['loginManual']['name'];
+              print(name);
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => HomePage(name: name)),
+              );
+            }),builder: (RunMutation runMutation,QueryResult result){
               return RaisedButton(
                 elevation: 5,
                 onPressed: () {
                   runMutation({'email':_emailController.text,'password':_passwordController.text});
                   ///RETRIEVE INFO TO PASS ON
-                  String name = result.data['loginManual']['name'];
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => HomePage(name: name)),
-                  );
                 },
                 child: Text('LOG IN'),
                 color: Colors.white,
