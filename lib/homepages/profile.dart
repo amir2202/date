@@ -36,8 +36,11 @@ class ProfileImageBox extends StatelessWidget {
 
 class ProfilePage extends StatefulWidget {
   final Function(int) callback;
+  final Function(int) disownCallback;
+  final ValueNotifier<double> notifier;
   final String name;
-  ProfilePage({Key key, @required this.callback, @required this.name});
+  final String imageUrl;
+  ProfilePage({Key key, @required this.callback, @required this.disownCallback, @required this.notifier, @required this.name, @required this.imageUrl});
 
   @override
   ProfilePageState createState() => ProfilePageState();
@@ -51,11 +54,24 @@ class ProfilePageState extends State<ProfilePage> {
 
   ScrollController _scrollController;
 
+  double _containerHeight() {
+    return Common.screenHeight * 0.2 +
+                        (_scrollController.hasClients ?
+                          (_scrollController.position.pixels > 0 ? -1 : 0.5) *
+                          (Common.screenHeight * 0.2 - (_scrollController.position.pixels * _scrollController.position.pixels * 0.001) >= 0 ?
+                          (_scrollController.position.pixels * _scrollController.position.pixels * 0.001)
+                          : Common.screenHeight * 0.2)
+                        : 0);
+  }
+
   @override
   void initState() {
     super.initState();
     _scrollController = ScrollController(initialScrollOffset: 0.0);
-    _scrollController.addListener(() {setState(() { });});
+    _scrollController.addListener(() {setState(() {
+      widget.disownCallback(4);
+      widget.notifier.value = _containerHeight();
+    });});
 
     WidgetsBinding.instance.addPostFrameCallback(_onBuildCompleted);
   }
@@ -77,37 +93,36 @@ class ProfilePageState extends State<ProfilePage> {
     return Stack(
       children: <Widget>[
 
-        Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              Container(
-                height: Common.screenHeight * 0.2 +
-                        (_scrollController.hasClients ?
-                          (_scrollController.position.pixels > 0 ? -1 : 0.5) *
-                          (Common.screenHeight * 0.2 - (_scrollController.position.pixels * _scrollController.position.pixels * 0.001) >= 0 ?
-                          (_scrollController.position.pixels * _scrollController.position.pixels * 0.001)
-                          : Common.screenHeight * 0.2)
-                        : 0),
-                color: Color(0xFFCA436B),
-              ),
-              Expanded(
-                child: Container(
-                  color: Colors.white,
-                ),
-              ),
-            ]
-        ),
+//        Column(
+//            mainAxisAlignment: MainAxisAlignment.start,
+//            children: <Widget>[
+//              Container(
+//                height: Common.screenHeight * 0.2 +
+//                        (_scrollController.hasClients ?
+//                          (_scrollController.position.pixels > 0 ? -1 : 0.5) *
+//                          (Common.screenHeight * 0.2 - (_scrollController.position.pixels * _scrollController.position.pixels * 0.001) >= 0 ?
+//                          (_scrollController.position.pixels * _scrollController.position.pixels * 0.001)
+//                          : Common.screenHeight * 0.2)
+//                        : 0),
+//                color: Color(0xFFCA436B),
+//              ),
+//              Expanded(
+//                child: Container(
+//                  color: Colors.white,
+//                ),
+//              ),
+//            ]
+//        ),
 
         Positioned(
           bottom: _scrollController.hasClients ? (_scrollController.position.pixels < 0 ? (400 + -_scrollController.position.pixels * 1.5 < Common.screenHeight * 0.3 ? -_scrollController.position.pixels * 1.5 : Common.screenHeight * 0.3) : 0) : 0,
           //left: Common.screenWidth * 0.5,// +_scrollController.position.pixels* 0.125,
           child: Opacity(
             opacity: _scrollController.hasClients ? (-(_scrollController.position.pixels * 0.002) < 1 ? (_scrollController.position.pixels < 0 ? -(_scrollController.position.pixels * 0.002) : 0.0) : 1.0) : 1.0,
-            child: Center(
-              child: Container(
-                width: Common.screenWidth,
-                alignment: Alignment.center,
-                child: Transform(
+            child: Container(
+              alignment: Alignment.center,
+              width: Common.screenWidth,
+              child: Transform(
                   alignment: FractionalOffset.center,
                   transform: Matrix4.rotationZ(10 - (_scrollController.hasClients ? _scrollController.position.pixels*0.1 : 0.0)),
                   child: Icon(
@@ -116,7 +131,6 @@ class ProfilePageState extends State<ProfilePage> {
                     size: _scrollController.hasClients ? (-_scrollController.position.pixels*-_scrollController.position.pixels* 0.002 < 50 ? -_scrollController.position.pixels*-_scrollController.position.pixels* 0.002 : 50) : 0,
                   ),
                 ),
-              ),
             ),
           ),
         ),
@@ -250,7 +264,7 @@ class ProfilePageState extends State<ProfilePage> {
                         clipBehavior: Clip.hardEdge,
                         color: Colors.transparent,
                         child: Ink.image(
-                          image: FileImage(Common.profilePicture),
+                          image: NetworkImage(widget.imageUrl),
                           fit: BoxFit.cover,
                           width: 75,
                           height: 75,
