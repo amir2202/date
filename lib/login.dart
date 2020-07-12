@@ -183,7 +183,7 @@ class LogInPageState extends State<LogInPage> {
               print(name);
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => HomePage(name: name)),
+                MaterialPageRoute(builder: (context) => HomePage(name:resultData['loginManual']['name'],imageUrl:resultData['loginManual']['profilepic'], pictureUrls: null)),
               );
             }),builder: (RunMutation runMutation,QueryResult result){
               return RaisedButton(
