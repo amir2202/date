@@ -23,7 +23,13 @@ class GraphQLHandler {
   static const String loginUser = r"""mutation LoginM($email:String!, $password:String!){
   loginManual(email:$email,password:$password){
     userid
+    info{
     name
+    }
+    profilepic
+    pictures{
+    filepath
+    }
   }
   }
   """;
