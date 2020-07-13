@@ -61,7 +61,7 @@ class ProfileInfoPageState extends State<ProfileInfoPage> with SingleTickerProvi
               return Container(
                 height: Common.screenHeight * 0.1,
                 padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-                color: Colors.white,
+                color: Colors.transparent,
                 child: Row(
                   children: <Widget>[
                     Text('---')
