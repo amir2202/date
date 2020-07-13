@@ -41,7 +41,9 @@ class ProfilePage extends StatefulWidget {
   final String name;
   final String imageUrl;
   final List<String> pictureUrls;
-  ProfilePage({Key key, @required this.callback, @required this.disownCallback, @required this.notifier, @required this.name, @required this.imageUrl, @required this.pictureUrls});
+  final int totallikes;
+  final int totalviews;
+  ProfilePage({Key key, @required this.callback, @required this.disownCallback, @required this.notifier, @required this.name, @required this.imageUrl, @required this.pictureUrls,@required this.totalviews, @required this.totallikes});
 
   @override
   ProfilePageState createState() => ProfilePageState();
@@ -307,7 +309,7 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
                                     children: <Widget>[
                                       Icon(Icons.remove_red_eye, size: 20),
                                       SizedBox(width: 5,),
-                                      Text('248', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+                                      Text(widget.totalviews.toString(), style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
                                     ],
                                   )
                               ),
@@ -325,7 +327,7 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
                                     children: <Widget>[
                                       Icon(Icons.favorite, size: 20),
                                       SizedBox(width: 5,),
-                                      Text('64', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+                                      Text(widget.totallikes.toString(), style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
                                     ],
                                   )
                               ),
