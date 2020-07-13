@@ -47,7 +47,10 @@ class ProfilePage extends StatefulWidget {
   ProfilePageState createState() => ProfilePageState();
 }
 
-class ProfilePageState extends State<ProfilePage> {
+class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientMixin<ProfilePage> {
+
+  @override
+  bool get wantKeepAlive => true;
 
   GlobalKey _bioKey = GlobalKey();
   Offset _containerPosition = Offset(0, 0);
@@ -71,7 +74,7 @@ class ProfilePageState extends State<ProfilePage> {
   @override
   void initState() {
     super.initState();
-    _scrollController = ScrollController(initialScrollOffset: 0.0);
+    _scrollController = ScrollController();
     _scrollController.addListener(() {setState(() {
       widget.disownCallback(4);
       widget.notifier.value = _containerHeight();

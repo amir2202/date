@@ -23,11 +23,13 @@ class HomePageState extends State<HomePage> {
     setState(() { Common.profilePicture = File('$path/pfp.jpg'); });
   }
 
+  List<Widget> _pages;
+
   int _index = 4;
   int _ownership = -1;
 
+  ValueNotifier<double> _n3;
   ValueNotifier<double> _n4;
-  ValueNotifier<double> _nc4;
 
   callback(index) {
     setState(() {
@@ -49,16 +51,20 @@ class HomePageState extends State<HomePage> {
     });
   }
 
-  double _cHeight;
+  double _cHeight = 0;
+  double _c3Height = 0;
 
   double _containerHeight() {
     if (Common.screenHeight == null || !_pageController.hasClients) {
       return 0;
     } else if (_ownership == -1) {
-      double t = _pageController.hasClients ? _cHeight - (4 - _pageController.page) * (_cHeight - Common.screenHeight * 0.12) : 0;
-      return t > Common.screenHeight * 0.12 ? t : Common.screenHeight * 0.12;
+      double t = _pageController.hasClients ? _cHeight - (4 - _pageController.page) * (_cHeight - _c3Height) : 0;
+      return t > _c3Height ? t : _c3Height;
     } else if (_ownership == 4) {
       _cHeight = _n4.value;
+    } else if (_ownership == 3) {
+      _c3Height = _n3.value;
+      return _c3Height;
     }
 
     return _cHeight;
@@ -72,6 +78,7 @@ class HomePageState extends State<HomePage> {
       Common.screenHeight = MediaQuery.of(context).size.height;
     }
     _cHeight = Common.screenHeight * 0.2;
+    _c3Height = Common.screenHeight * 0.12;
   }
 
   @override
@@ -80,7 +87,9 @@ class HomePageState extends State<HomePage> {
 
     _pageController = PageController(initialPage: _index);
     _pageController.addListener(_onScroll);
+    _n3 = ValueNotifier<double>(0);
     _n4 = ValueNotifier<double>(0);
+
     WidgetsBinding.instance.addPostFrameCallback(_onBuildCompleted);
   }
 
@@ -96,11 +105,11 @@ class HomePageState extends State<HomePage> {
       getProfilePicture();
     }
 
-    List<Widget> _pages = <Widget>[
+    _pages = <Widget>[
       Text('a'),
       Text('a'),
       Text('a'),
-      ProfileInfoPage(),
+      ProfileInfoPage(disownCallback: disownCallback, notifier: _n3),
       ProfilePage(callback: callback, disownCallback: disownCallback, notifier: _n4, name: widget.name, imageUrl: widget.imageUrl, pictureUrls: widget.pictureUrls),
     ];
 
