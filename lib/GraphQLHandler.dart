@@ -25,6 +25,10 @@ class GraphQLHandler {
     userid
     info{
     name
+    stats{
+    totalviews
+    totallikes
+    }
     }
     profilepic
     pictures{

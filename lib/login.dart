@@ -1,3 +1,4 @@
+import 'dart:collection';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -179,12 +180,23 @@ class LogInPageState extends State<LogInPage> {
             width: 200,
             height: 50,
             child: Mutation(options: MutationOptions(documentNode: gql(GraphQLHandler.loginUser),onCompleted:(dynamic resultData){
-              String name = resultData['loginManual']['name'];
-              print(name);
-              Navigator.push(
+              print(resultData);
+              print(resultData['loginManual']['info']['name']);
+              if(resultData['loginManual']['userid'] == "LOGIN FAILED"){
+                print("login failed");
+
+              }
+              else{
+                List<dynamic> pics = resultData['loginManual']['pictures'];
+                List<String> pics2 = List<String>();
+                for(dynamic el in pics){
+                  pics2.add("http://"+el['filepath']);
+                  print(el['filepath']);
+                }
+                Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => HomePage(name:resultData['loginManual']['name'],imageUrl:resultData['loginManual']['profilepic'], pictureUrls: null)),
-              );
+                MaterialPageRoute(builder: (context) => HomePage(name:resultData['loginManual']['info']['name'],imageUrl:"http://"+resultData['loginManual']['profilepic'], pictureUrls:pics2,totalviews: resultData['loginManual']['info']['stats']['totalviews'],totallikes: resultData['loginManual']['info']['stats']['totallikes']),
+              ));}
             }),builder: (RunMutation runMutation,QueryResult result){
               return RaisedButton(
                 elevation: 5,

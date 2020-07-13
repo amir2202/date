@@ -10,11 +10,16 @@ class HomePage extends StatefulWidget {
   final String name;
   final String imageUrl;
   final List<String> pictureUrls;
-  HomePage({Key key, @required this.name, @required this.imageUrl, @required this.pictureUrls});
+  final int totalviews;
+  final int totallikes;
+  HomePage({Key key, @required this.name, @required this.imageUrl, @required this.pictureUrls, @required this.totalviews, @required this.totallikes,});
 
   @override
   HomePageState createState() => HomePageState();
 }
+
+
+
 
 class HomePageState extends State<HomePage> {
 
@@ -110,7 +115,7 @@ class HomePageState extends State<HomePage> {
       Text('a'),
       Text('a'),
       ProfileInfoPage(disownCallback: disownCallback, notifier: _n3),
-      ProfilePage(callback: callback, disownCallback: disownCallback, notifier: _n4, name: widget.name, imageUrl: widget.imageUrl, pictureUrls: widget.pictureUrls),
+      ProfilePage(callback: callback, disownCallback: disownCallback, notifier: _n4, name: widget.name, imageUrl: widget.imageUrl, pictureUrls: widget.pictureUrls,totalviews: widget.totalviews,totallikes: widget.totallikes,),
     ];
 
     return Scaffold(
