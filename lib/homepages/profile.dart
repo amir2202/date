@@ -204,7 +204,7 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
         ),
 
         Positioned(
-          bottom: _containerPosition.dy + _containerSize.height - 15 -
+          top: _containerPosition.dy + _containerSize.height - 27.5 +
               (_scrollController.hasClients ?
               (_scrollController.position.pixels > 0 ? -1 : 0.5) *
                   (_scrollController.position.pixels * _scrollController.position.pixels * 0.0015 +
