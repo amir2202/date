@@ -28,11 +28,10 @@ class PreviewPageState extends State<PreviewPage> {
     });
   }
 
-  Future<String> storeImage(String id,bool prof) async {
+  Future<QueryResult> storeImage(String id,bool prof) async {
     final String path = (await getApplicationDocumentsDirectory()).path;
     final File newImage = await _image.copy('$path/pfp.jpg');
-    String r = await ImageHandler.uploadImage(newImage,id,prof);
-    return r;
+    return await ImageHandler.uploadImage(newImage,id,prof);
   }
 
   @override
@@ -121,9 +120,13 @@ class PreviewPageState extends State<PreviewPage> {
                   child: Mutation(options: MutationOptions(
                     documentNode: gql(GraphQLHandler.registerUser),
                       onCompleted: (dynamic result) {
-                        print(result);
-                        Future<String> r = storeImage(result['addUser']['userid'],true);
-                        r.then((value) => print(value));
+                        Timer.run(() async {
+                          QueryResult urlImageApi = await storeImage(result['addUser']['userid'],true);
+                          setState(() {
+
+                          });
+                        });
+
                      })
                     ,builder: (RunMutation runMutation,QueryResult result){
                         return Opacity(
