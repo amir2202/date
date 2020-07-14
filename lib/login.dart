@@ -55,7 +55,8 @@ class LogInPageState extends State<LogInPage> {
         GraphQLClient client = new GraphQLClient(link:HttpLink(uri:'http://192.168.0.14:8090/graphql'), cache: InMemoryCache());
         client.mutate(MutationOptions(documentNode: gql(GraphQLHandler.facebookLinked),variables: {'fbid':profile['id'].toString()},onCompleted: (dynamic result){
           if(result['FacebookLinked'] == null){
-            //LINK the acc
+           //DO FACEBOOK stuff here
+            
           }
           else{
 

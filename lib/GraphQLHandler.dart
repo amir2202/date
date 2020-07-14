@@ -13,10 +13,10 @@ class GraphQLHandler {
   static ValueNotifier<GraphQLClient> getClient(){
     return client;
   }
-   static const String registerUser = r"""mutation AddUserManual($name: String!, $password: String!, $premium:Boolean!,$email:String!,$gender: Boolean!, $birthday:String!, $country: String!,$haircolor:String,$eyecolor:String,$body:String,$height:Int, $ethnicity:String,$religion:String,$state:String!,$facebook:String) {
-  addUser(name:$name,password:$password,premium:$premium,email:$email,gender:$gender,birthday:$birthday,country:$country,haircolor:$haircolor,eyecolor:$eyecolor,body:$body,height:$height,ethnicity:$ethnicity,religion:$religion,state:$state,facebook:$facebook){
-    userid
-  }
+   static const String registerUser = r"""mutation AddUserManual($name: String!,$password: String!, $premium:Boolean!,$email:String!,$gender: Boolean!, $birthday:String!, $country: String!,$haircolor:String,$eyecolor:String,$body:String,$height:Int, $ethnicity:String,$religion:String,$state:String!,$facebook:String) {
+      addUser(name:$name,gender:$gender,password:$password,premium:$premium,email:$email,birthday:$birthday,country:$country,haircolor:$haircolor,eyecolor:$eyecolor,body:$body,height:$height,ethnicity:$ethnicity,religion:$religion,state:$state,facebook:$facebook){
+      userid
+      }
 }
 """;
 
