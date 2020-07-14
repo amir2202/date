@@ -120,15 +120,16 @@ class PreviewPageState extends State<PreviewPage> {
                   child: Mutation(options: MutationOptions(
                     documentNode: gql(GraphQLHandler.registerUser),
                       onCompleted: (dynamic result) {
+                        print(result);
                         storeImage(result['addUser']['userid'],true);
-                        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => HomePage(name: Common.fullName)), (r) => false);
+                        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => HomePage(name: Common.fullName,totallikes: 0,totalviews: 0,imageUrl: null,pictureUrls: ["https://images.unsplash.com/photo-1516374348294-ce51573b0fb5?ixlib=rb-1.2.1&auto=format&fit=crop&w=1834&q=80"])), (r) => false);
                       })
                     ,builder: (RunMutation runMutation,QueryResult result){
                         return Opacity(
                           opacity: _image == null ? 0 : 1,
                           child: RawMaterialButton(
                             onPressed: () {
-                              runMutation({'name': Common.fullName, 'password': Common.password, 'premium':Common.premium,'email':Common.email,'gender': Common.gender, 'birthday':Common.birthday, 'country': Common.country,'haircolor':Common.haircolor,'eyecolor':Common.eyecolor,'body':Common.body,'height':Common.height, 'ethnicity':Common.ethnicity,'religion':Common.religion,'state':Common.state,'facebook':Common.facebook});
+                              runMutation({'name': Common.fullName,'password': Common.password,'premium':Common.premium,'email':Common.email,'gender': Common.gender,'birthday':Common.birthday,'country': Common.country,'haircolor':Common.haircolor,'eyecolor':Common.eyecolor,'body':Common.body,'height':Common.height,'ethnicity':Common.ethnicity,'religion':Common.religion,'state':Common.state,'facebook':Common.facebook});
                             },
                             elevation: 10,
                             fillColor: Color(0xFFCA436B),

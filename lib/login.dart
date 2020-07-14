@@ -47,11 +47,21 @@ class LogInPageState extends State<LogInPage> {
       //IF ALREADY AN ASSOSCIATION IT will continue to page
       case FacebookLoginStatus.loggedIn:
         final token = result.accessToken.token;
-        final graphResponse = await http.get('https://graph.facebook.com/v2.12/me?fields=name,picture,email&access_token=${token}');
+        final graphResponse = await http.get('https://graph.facebook.com/v2.12/me?fields=name,gender,picture,email&access_token=${token}');
         final profile = JSON.jsonDecode(graphResponse.body);
         print(profile);
         //IF TOKEN ASSOSCIATED WITH AN ACCOUNT GO TO PROFILE PAGE^^ WITH USERID
+        //UNTIL FACEBOOK grants permission default user is male currently
+        GraphQLClient client = new GraphQLClient(link:HttpLink(uri:'http://192.168.0.14:8090/graphql'), cache: InMemoryCache());
+        client.mutate(MutationOptions(documentNode: gql(GraphQLHandler.facebookLinked),variables: {'fbid':profile['id'].toString()},onCompleted: (dynamic result){
+          if(result['FacebookLinked'] == null){
+           //DO FACEBOOK stuff here
+            
+          }
+          else{
 
+          }
+        }));
         //ELSE COMPLETE REGISTRATION
 
         setState(() {
