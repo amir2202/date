@@ -38,6 +38,23 @@ class GraphQLHandler {
   }
   """;
 
+  static const String facebookLinked = r"""mutation FacebookLinked($fbid:String!){
+   FacebookLinked(fbid:$fbid){
+   userid
+   info{
+   name
+   stats{
+   totalviews
+   totallikes
+   }
+   }
+   profilepic
+   pictures{
+   filepath
+   }
+   }
+  }""";
+
   /*
   final AuthLink authLink = AuthLink(
     getToken: () async => 'Bearer <YOUR_PERSONAL_ACCESS_TOKEN>',

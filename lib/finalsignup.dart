@@ -311,76 +311,72 @@ class FinalsignupState extends State<Finalsignup>{
                   ),
                   SizedBox(
                     height: Common.screenHeight * 0.05,
-                  ),
-                  Hero(
-                    tag: 'preview_tag',
-                    child: SizedBox(
-                      width: 200,
-                      height: 50,
-                      child: RaisedButton(
-                        onPressed: () {
-                          if (_selectedHairColor == null ||
-                              _selectedEyeColor == null ||
-                              _bodyController.text.isEmpty ||
-                              _heightController.text.isEmpty ||
-                              _selectedEthnicity == null ||
-                              _selectedReligion == null ||
-                              _selectedCounty == null) {
+                  ), SizedBox(
+                    width: 200,
+                    height: 50,
+                    child: RaisedButton(
+                      onPressed: () {
+                        if (_selectedHairColor == null ||
+                            _selectedEyeColor == null ||
+                            _bodyController.text.isEmpty ||
+                            _heightController.text.isEmpty ||
+                            _selectedEthnicity == null ||
+                            _selectedReligion == null ||
+                            _selectedCounty == null) {
 
-                            setState(() {
-                              if (_selectedHairColor == null) {
-                                _hairEnabledBorder = _errorBorder;
-                                _hairFocusedBorder = _errorBorder;
-                                _hairCorrect = false;
-                              }
-                              if (_selectedEyeColor == null) {
-                                _eyeEnabledBorder = _errorBorder;
-                                _eyeFocusedBorder = _errorBorder;
-                                _eyeCorrect = false;
-                              }
-                              if (_bodyController.text.isEmpty) {
-                                _bodyEnabledBorder = _errorBorder;
-                                _bodyFocusedBorder = _errorBorder;
-                                _bodyCorrect = false;
-                              }
-                              if (_heightController.text.isEmpty) {
-                                _heightEnabledBorder = _errorBorder;
-                                _heightFocusedBorder = _errorBorder;
-                                _heightCorrect = false;
-                              }
-                              if (_selectedEthnicity == null) {
-                                _ethnicityEnabledBorder = _errorBorder;
-                                _ethnicityFocusedBorder = _errorBorder;
-                                _ethnicityCorrect = false;
-                              }
-                              if (_selectedReligion == null) {
-                                _religionEnabledBorder = _errorBorder;
-                                _religionFocusedBorder = _errorBorder;
-                                _religionCorrect = false;
-                              }
-                              if (_selectedCounty == null) {
-                                _countyEnabledBorder = _errorBorder;
-                                _countyFocusedBorder = _errorBorder;
-                                _countyCorrect = false;
-                              }
-                            });
-                          }
-                          else {
-                            Common.haircolor = _selectedHairColor;
-                            Common.eyecolor = _selectedEyeColor;
-                            Common.body = _bodyController.text;
-                            Common.height = int.parse(_heightController.text);
-                            Common.ethnicity = _selectedEthnicity;
-                            Common.religion = _selectedReligion;
-                            Common.state = _selectedCounty;
-                            Navigator.push(context, FadeRoute(page: PreviewPage()));
-                          }
-                        },
-                        elevation: 5,
-                        child: Text('NEXT'),
-                        color: Colors.white,
-                        shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
-                      ),
+                          setState(() {
+                            if (_selectedHairColor == null) {
+                              _hairEnabledBorder = _errorBorder;
+                              _hairFocusedBorder = _errorBorder;
+                              _hairCorrect = false;
+                            }
+                            if (_selectedEyeColor == null) {
+                              _eyeEnabledBorder = _errorBorder;
+                              _eyeFocusedBorder = _errorBorder;
+                              _eyeCorrect = false;
+                            }
+                            if (_bodyController.text.isEmpty) {
+                              _bodyEnabledBorder = _errorBorder;
+                              _bodyFocusedBorder = _errorBorder;
+                              _bodyCorrect = false;
+                            }
+                            if (_heightController.text.isEmpty) {
+                              _heightEnabledBorder = _errorBorder;
+                              _heightFocusedBorder = _errorBorder;
+                              _heightCorrect = false;
+                            }
+                            if (_selectedEthnicity == null) {
+                              _ethnicityEnabledBorder = _errorBorder;
+                              _ethnicityFocusedBorder = _errorBorder;
+                              _ethnicityCorrect = false;
+                            }
+                            if (_selectedReligion == null) {
+                              _religionEnabledBorder = _errorBorder;
+                              _religionFocusedBorder = _errorBorder;
+                              _religionCorrect = false;
+                            }
+                            if (_selectedCounty == null) {
+                              _countyEnabledBorder = _errorBorder;
+                              _countyFocusedBorder = _errorBorder;
+                              _countyCorrect = false;
+                            }
+                          });
+                        }
+                        else {
+                          Common.haircolor = _selectedHairColor;
+                          Common.eyecolor = _selectedEyeColor;
+                          Common.body = _bodyController.text;
+                          Common.height = int.parse(_heightController.text);
+                          Common.ethnicity = _selectedEthnicity;
+                          Common.religion = _selectedReligion;
+                          Common.state = _selectedCounty;
+                          Navigator.push(context, FadeRoute(page: PreviewPage()));
+                        }
+                      },
+                      elevation: 5,
+                      child: Text('NEXT'),
+                      color: Colors.white,
+                      shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
                     ),
                   )
                 ],
