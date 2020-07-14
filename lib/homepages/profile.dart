@@ -182,7 +182,7 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
             padding: EdgeInsets.fromLTRB(0, _containerPosition.dy + 140, 0, 0),
             primary: false,
             scrollDirection: Axis.vertical,
-            physics: BouncingScrollPhysics(),
+            physics: BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
             controller: _scrollController,
           ),
         ),
