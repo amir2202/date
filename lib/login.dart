@@ -54,12 +54,20 @@ class LogInPageState extends State<LogInPage> {
         //UNTIL FACEBOOK grants permission default user is male currently
         GraphQLClient client = new GraphQLClient(link:HttpLink(uri:'http://192.168.0.14:8090/graphql'), cache: InMemoryCache());
         client.mutate(MutationOptions(documentNode: gql(GraphQLHandler.facebookLinked),variables: {'fbid':profile['id'].toString()},onCompleted: (dynamic result){
+          print(result);
           if(result['FacebookLinked'] == null){
            //DO FACEBOOK stuff here
-            
+
+            client.mutate(MutationOptions(documentNode: gql(GraphQLHandler.addFacebookUser),variables: {'name':profile['name'],'premium':false,'gender':true,'profile':profile['picture']['data']['url'],'fbid':profile['id']},onCompleted: (dynamic result2){
+              print("SECOND RESULT");
+              //GO TO NEXT PAGE
+              Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => HomePage(name: result2['addFacebook']['info']['name'],totallikes: 0,totalviews: 0,imageUrl: profile['picture']['data']['url'],pictureUrls: [profile['picture']['data']['url']])), (r) => false);
+              print(result2);
+            }));
+
           }
           else{
-
+              //GET EXISTING FB login
           }
         }));
         //ELSE COMPLETE REGISTRATION

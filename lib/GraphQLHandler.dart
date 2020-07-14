@@ -20,6 +20,16 @@ class GraphQLHandler {
 }
 """;
 
+  static const String addFacebookUser = r"""mutation createFacebook($name:String!,$premium:Boolean!,$gender:Boolean!,$fbid:String!,$profile:String!){
+    addFacebook(name:$name,premium:$premium,gender:$gender,fbid:$fbid,profile:$profile){
+     userid
+     info{
+     name 
+     }
+    }
+    }
+  """;
+
   static const String loginUser = r"""mutation LoginM($email:String!, $password:String!){
   loginManual(email:$email,password:$password){
     userid
