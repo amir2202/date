@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:dating/common.dart';
+import 'package:flutter/rendering.dart';
 
 class CmScrollBehavior extends ScrollBehavior {
   @override
@@ -63,6 +64,8 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
   List<String> _pictures;
   int _pictureIndex;
 
+  bool _hideFab = false;
+
   double _containerHeight() {
     return Common.screenHeight * 0.2 +
                         (_scrollController.hasClients ?
@@ -80,6 +83,13 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
     _scrollController.addListener(() {setState(() {
       widget.disownCallback(4);
       widget.notifier.value = _containerHeight();
+
+      if (_scrollController.position.userScrollDirection == ScrollDirection.forward) {
+        _hideFab = false;
+      } else if (_scrollController.position.userScrollDirection == ScrollDirection.reverse) {
+        _hideFab = true;
+      }
+
       if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
         // query more ?? idk
         if (_pictures.length - 1 > _pictureIndex) {
@@ -137,7 +147,8 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
 //        ),
 
         Positioned(
-          bottom: _scrollController.hasClients ? (_scrollController.position.pixels < 0 ? (400 + -_scrollController.position.pixels * 1.5 < Common.screenHeight * 0.3 ? -_scrollController.position.pixels * 1.5 : Common.screenHeight * 0.3) : 0) : 0,
+          top: _containerPosition.dy + _containerSize.height + Common.screenHeight * 0.1,
+          //bottom: _scrollController.hasClients ? (_scrollController.position.pixels < 0 ? (400 + -_scrollController.position.pixels * 1.5 < Common.screenHeight * 0.3 ? -_scrollController.position.pixels * 1.5 : Common.screenHeight * 0.3) : 0) : 0,
           //left: Common.screenWidth * 0.5,// +_scrollController.position.pixels* 0.125,
           child: Opacity(
             opacity: _scrollController.hasClients ? (-(_scrollController.position.pixels * 0.002) < 1 ? (_scrollController.position.pixels < 0 ? -(_scrollController.position.pixels * 0.002) : 0.0) : 1.0) : 1.0,
@@ -146,11 +157,12 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
               width: Common.screenWidth,
               child: Transform(
                   alignment: FractionalOffset.center,
-                  transform: Matrix4.rotationZ(10 - (_scrollController.hasClients ? _scrollController.position.pixels*0.1 : 0.0)),
+                  transform: Matrix4.rotationZ(-(_scrollController.hasClients ? 1.5*(100 / _scrollController.position.pixels)*(100 / _scrollController.position.pixels) : 0.0)),
                   child: Icon(
                     Icons.refresh,
                     color: Colors.grey,
-                    size: _scrollController.hasClients ? (-_scrollController.position.pixels*-_scrollController.position.pixels* 0.002 < 50 ? -_scrollController.position.pixels*-_scrollController.position.pixels* 0.002 : 50) : 0,
+                    size: 35,
+                    //size: _scrollController.hasClients ? (-_scrollController.position.pixels*-_scrollController.position.pixels* 0.002 < 50 ? -_scrollController.position.pixels*-_scrollController.position.pixels* 0.002 : 50) : 0,
                   ),
                 ),
             ),
@@ -342,6 +354,18 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
             ),
           ),
         ),
+
+        AnimatedPositioned(
+          duration: Duration(milliseconds: 200),
+          bottom: _hideFab ? -100 : Common.screenHeight * 0.02,
+          right: Common.screenWidth * 0.05,
+          child: FloatingActionButton(
+            onPressed: () {},
+            child: Icon(Icons.add_photo_alternate),
+            backgroundColor: Color(0xFFCA436B),
+            splashColor: Colors.white,
+          ),
+        )
 
 
       ],
