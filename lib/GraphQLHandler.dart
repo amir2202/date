@@ -30,6 +30,16 @@ class GraphQLHandler {
     }
   """;
 
+  static const String getProfile = r"""mutation getProfileUID($userid:String!){
+   getProfileUID(userid:$userid){
+   info{
+   name
+   }
+   profilepic
+   pictures
+   }
+  }""";
+
   static const String loginUser = r"""mutation LoginM($email:String!, $password:String!){
   loginManual(email:$email,password:$password){
     userid

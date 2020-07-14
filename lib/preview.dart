@@ -28,10 +28,11 @@ class PreviewPageState extends State<PreviewPage> {
     });
   }
 
-  void storeImage(String id,bool prof) async {
+  Future<String> storeImage(String id,bool prof) async {
     final String path = (await getApplicationDocumentsDirectory()).path;
     final File newImage = await _image.copy('$path/pfp.jpg');
-    ImageHandler.uploadImage(newImage,id,prof);
+    String r = await ImageHandler.uploadImage(newImage,id,prof);
+    return r;
   }
 
   @override
@@ -121,9 +122,9 @@ class PreviewPageState extends State<PreviewPage> {
                     documentNode: gql(GraphQLHandler.registerUser),
                       onCompleted: (dynamic result) {
                         print(result);
-                        storeImage(result['addUser']['userid'],true);
-                        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => HomePage(name: Common.fullName,totallikes: 0,totalviews: 0,imageUrl: null,pictureUrls: ["https://images.unsplash.com/photo-1516374348294-ce51573b0fb5?ixlib=rb-1.2.1&auto=format&fit=crop&w=1834&q=80"])), (r) => false);
-                      })
+                        Future<String> r = storeImage(result['addUser']['userid'],true);
+                        r.then((value) => print(value));
+                     })
                     ,builder: (RunMutation runMutation,QueryResult result){
                         return Opacity(
                           opacity: _image == null ? 0 : 1,

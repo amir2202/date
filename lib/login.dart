@@ -61,13 +61,19 @@ class LogInPageState extends State<LogInPage> {
             client.mutate(MutationOptions(documentNode: gql(GraphQLHandler.addFacebookUser),variables: {'name':profile['name'],'premium':false,'gender':true,'profile':profile['picture']['data']['url'],'fbid':profile['id']},onCompleted: (dynamic result2){
               print("SECOND RESULT");
               //GO TO NEXT PAGE
+              //TODO GO TO second
               Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => HomePage(name: result2['addFacebook']['info']['name'],totallikes: 0,totalviews: 0,imageUrl: profile['picture']['data']['url'],pictureUrls: [profile['picture']['data']['url']])), (r) => false);
               print(result2);
             }));
 
           }
           else{
-              //GET EXISTING FB login
+            List<dynamic> pics = result['FacebookLinked']['pictures'];
+            List<String> pics2 = List<String>();
+            for(dynamic el in pics){
+              pics2.add(el['filepath']);
+            }
+            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => HomePage(name: result['FacebookLinked']['info']['name'],totallikes: result['FacebookLinked']['info']['stats']['totallikes'],totalviews: result['FacebookLinked']['info']['stats']['totalviews'],imageUrl: result['FacebookLinked']['profilepic'],pictureUrls:pics2)), (r) => false);
           }
         }));
         //ELSE COMPLETE REGISTRATION
@@ -208,12 +214,12 @@ class LogInPageState extends State<LogInPage> {
                 List<dynamic> pics = resultData['loginManual']['pictures'];
                 List<String> pics2 = List<String>();
                 for(dynamic el in pics){
-                  pics2.add("http://"+el['filepath']);
+                  pics2.add(el['filepath']);
                   print(el['filepath']);
                 }
                 Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => HomePage(name:resultData['loginManual']['info']['name'],imageUrl:"http://"+resultData['loginManual']['profilepic'], pictureUrls:pics2,totalviews: resultData['loginManual']['info']['stats']['totalviews'],totallikes: resultData['loginManual']['info']['stats']['totallikes']),
+                MaterialPageRoute(builder: (context) => HomePage(name:resultData['loginManual']['info']['name'],imageUrl:resultData['loginManual']['profilepic'], pictureUrls:pics2,totalviews: resultData['loginManual']['info']['stats']['totalviews'],totallikes: resultData['loginManual']['info']['stats']['totallikes']),
               ));}
             }),builder: (RunMutation runMutation,QueryResult result){
               return RaisedButton(
