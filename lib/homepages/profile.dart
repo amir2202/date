@@ -45,8 +45,8 @@ class ProfilePage extends StatefulWidget {
   final String name;
   final String imageUrl;
   final List<String> pictureUrls;
-  final int totallikes;
-  final int totalviews;
+  int totallikes;
+  int totalviews;
   ProfilePage({Key key, @required this.callback, @required this.disownCallback, @required this.notifier, @required this.name, @required this.imageUrl, @required this.pictureUrls,@required this.totalviews, @required this.totallikes});
 
   @override
@@ -100,10 +100,12 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
         GraphQLClient client = GraphQLHandler.client2;
         client.mutate(MutationOptions(documentNode: gql(GraphQLHandler.refreshLikesViews),onCompleted:(dynamic result){
           setState(() {
-            print(result);
+            //TODO FIX THIS... totalviews final
+            widget.totalviews = result['getLikesViews']['info']['stats']['totalviews'];
+            widget.totallikes = result['getLikesViews']['info']['stats']['totallikes'];
           });
         },variables: {'userid':Common.userid}));
-        // 
+        //
         //LIKES/views update
         if (_pictures.length - 1 > _pictureIndex) {
           _pictureIndex = (_pictureIndex + 9 < _pictures.length ? _pictureIndex + 9 : _pictures.length - 1);
