@@ -10,6 +10,7 @@ import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as JSON;
 
+import 'common.dart';
 import 'home.dart';
 
 class LogInPage extends StatefulWidget {
@@ -217,6 +218,9 @@ class LogInPageState extends State<LogInPage> {
                   pics2.add(el['filepath']);
                   print(el['filepath']);
                 }
+                Common.userid = resultData['loginManual']['userid'].toString();
+                //TODO
+                // CHANGE TO PUSHJ AND REMOVE UNTIL
                 Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => HomePage(name:resultData['loginManual']['info']['name'],imageUrl:resultData['loginManual']['profilepic'], pictureUrls:pics2,totalviews: resultData['loginManual']['info']['stats']['totalviews'],totallikes: resultData['loginManual']['info']['stats']['totallikes']),
