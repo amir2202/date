@@ -9,6 +9,7 @@ class Common {
   static String fullName;
   static String password;
   static bool premium;
+  static String userid;
   static String email;
   static bool gender;
   static String birthday;

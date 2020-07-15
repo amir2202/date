@@ -125,6 +125,8 @@ class PreviewPageState extends State<PreviewPage> {
                           setState(() {
                             print(urlImageApi.data);
                             print(result);
+                            //TODO check if correct
+                            Common.userid = result['addUser']['userid'];
                             List<String> images = List<String>();
                             images.add(urlImageApi.data['upload']);
                             //IMAGES IS CORRECT LEAVE CAT FOR REGISTRATION NOW
