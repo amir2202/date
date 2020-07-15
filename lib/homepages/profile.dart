@@ -65,7 +65,7 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
 
   List<String> _pictures;
   int _pictureIndex;
-  
+
 
   bool _hideFab = false;
 
