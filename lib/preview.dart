@@ -128,7 +128,7 @@ class PreviewPageState extends State<PreviewPage> {
                             List<String> images = List<String>();
                             images.add(urlImageApi.data['upload']);
                             //IMAGES IS CORRECT LEAVE CAT FOR REGISTRATION NOW
-                            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => HomePage(name: Common.fullName,totallikes: 0,totalviews: 0,imageUrl: null,pictureUrls:['https://images.unsplash.com/photo-1511694009171-3cdddf4484ff?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80'])), (r) => false);
+                            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => HomePage(name: Common.fullName,totallikes: 0,totalviews: 0,imageUrl: null,pictureUrls:images)), (r) => false);
 
                           });
                         });
