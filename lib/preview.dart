@@ -123,6 +123,11 @@ class PreviewPageState extends State<PreviewPage> {
                         Timer.run(() async {
                           QueryResult urlImageApi = await storeImage(result['addUser']['userid'],true);
                           setState(() {
+                            print(urlImageApi.data);
+                            print(result);
+                            List<String> images = List<String>();
+                            images.add(urlImageApi.data['upload']);
+                            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => HomePage(name: Common.fullName,totallikes: 0,totalviews: 0,imageUrl: null,pictureUrls:images)), (r) => false);
 
                           });
                         });
