@@ -1,3 +1,4 @@
+import 'package:dating/homepages/profile_info_views.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import '../common.dart';
@@ -13,7 +14,8 @@ class CmScrollBehavior extends ScrollBehavior {
 class ViewEntry extends StatelessWidget {
   final String name;
   final String imageUrl;
-  ViewEntry({Key key, @required this.name, @required this.imageUrl});
+  final bool like;
+  ViewEntry({Key key, @required this.name, @required this.imageUrl, @required this.like});
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +41,7 @@ class ViewEntry extends StatelessWidget {
                 width: 20,
               ),
               Text('${this.name}', style: TextStyle(fontWeight: FontWeight.bold), overflow: TextOverflow.ellipsis),
-              Text(' viewed your profile.', overflow: TextOverflow.ellipsis),
+              Text(' ${this.like ? 'liked' : 'viewed'} your profile.', overflow: TextOverflow.ellipsis),
             ],
           ),
         ),
@@ -71,6 +73,8 @@ class ProfileInfoPageState extends State<ProfileInfoPage> with SingleTickerProvi
           : 0);
   }
 
+  double _tp = 0;
+
   double _topPosition() {
     if (_showTabBarLast != 0) {
       return -200.0 + (_showTabBarScroll < 200.0 ? _showTabBarScroll : 200.0);
@@ -87,6 +91,12 @@ class ProfileInfoPageState extends State<ProfileInfoPage> with SingleTickerProvi
   TabController _tabController;
   ScrollController _scrollController;
 
+  ValueNotifier<bool> _notifier;
+  double _sp1 = 0;
+  double _sp2 = 0;
+
+  List<Widget> _pages;
+
   bool _hideTabBar = false;
   bool _showTabBarLimit = false;
   double _showTabBarLast = 0;
@@ -97,9 +107,19 @@ class ProfileInfoPageState extends State<ProfileInfoPage> with SingleTickerProvi
     super.initState();
     _tabController = TabController(vsync: this, length: 2);
     _scrollController = ScrollController();
+
+    _notifier = ValueNotifier<bool>(false);
+
     _scrollController.addListener(() {
       setState(() {
         widget.disownCallback(3);
+
+        if (_notifier.value == false) {
+          _sp1 = _scrollController.position.pixels;
+        } else {
+          _sp2 = _scrollController.position.pixels;
+        }
+
         widget.notifier.value = _showTabBarLast != 0 ? ((Common.screenHeight * 0.12 - 200.0 + (_showTabBarScroll < 200.0 ? _showTabBarScroll : 200.0)) > 0 ? (Common.screenHeight * 0.12 - 200.0 + (_showTabBarScroll < 200.0 ? _showTabBarScroll : 200.0)) : 0) : _containerHeight();
 
         if (_scrollController.position.userScrollDirection == ScrollDirection.forward) {
@@ -135,30 +155,32 @@ class ProfileInfoPageState extends State<ProfileInfoPage> with SingleTickerProvi
 
           _hideTabBar = true;
         }
+
+        _tp = _topPosition();
       });
     });
+
   }
 
   @override
   Widget build(BuildContext context) {
 
+    _pages = <Widget>[
+      ProfileInfoViews(scrollController: _scrollController, notifier: _notifier, like: false),
+      ProfileInfoViews(scrollController: _scrollController, notifier: _notifier, like: true),
+    ];
+
     return Stack(
       children: <Widget>[
 
-        ScrollConfiguration(
-          behavior: CmScrollBehavior(),
-          child: ListView.builder(
-            controller: _scrollController,
-            itemBuilder: (BuildContext context, int index) {
-              return ViewEntry(name: 'Kvago', imageUrl: 'https://img.webmd.com/dtmcms/live/webmd/consumer_assets/site_images/article_thumbnails/other/cat_relaxing_on_patio_other/1800x1200_cat_relaxing_on_patio_other.jpg',);
-            },
-            padding: EdgeInsets.fromLTRB(0, Common.screenHeight * 0.12 + Common.screenHeight * 0.05, 0, 0),
-            physics: BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
-          ),
+        TabBarView(
+          controller: _tabController,
+          children: _pages,
+          physics: NeverScrollableScrollPhysics(),
         ),
 
         Positioned(
-          top: _topPosition(),
+          top: _tp,
           child: AnimatedContainer(
             duration: Duration(milliseconds: 200),
             width: Common.screenWidth,
@@ -178,6 +200,16 @@ class ProfileInfoPageState extends State<ProfileInfoPage> with SingleTickerProvi
                     child: Card(
                       elevation: 10,
                       child: TabBar(
+                        onTap: (index) {
+                          setState(() {
+                            print(_sp1);
+                            print(_sp2);
+                            _notifier.value = index == 0 ? false : true;
+                            _tabController.animateTo(index,
+                                duration: Duration(milliseconds: 200), curve: Curves.easeOut);
+                            _scrollController.animateTo(index == 0 ? _sp1 : _sp2, duration: Duration(milliseconds: 200), curve: Curves.ease);
+                          });
+                        },
                         controller: _tabController,
                         indicatorColor: Color(0xFFCA436B),
                         unselectedLabelColor: Colors.grey,
