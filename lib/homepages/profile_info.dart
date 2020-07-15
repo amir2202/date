@@ -1,6 +1,8 @@
+import 'package:dating/GraphQLHandler.dart';
 import 'package:dating/homepages/profile_info_views.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
 import '../common.dart';
 
 class CmScrollBehavior extends ScrollBehavior {
@@ -95,6 +97,9 @@ class ProfileInfoPageState extends State<ProfileInfoPage> with SingleTickerProvi
   double _sp1 = 0;
   double _sp2 = 0;
 
+  List<dynamic> _viewEntries;
+  List<dynamic> _likeEntries;
+
   List<Widget> _pages;
 
   bool _hideTabBar = false;
@@ -110,6 +115,12 @@ class ProfileInfoPageState extends State<ProfileInfoPage> with SingleTickerProvi
 
     _notifier = ValueNotifier<bool>(false);
 
+    //LOAD
+    GraphQLClient client = GraphQLHandler.client2;
+    client.mutate(MutationOptions(documentNode: gql(GraphQLHandler.getFullLikesViews),variables: {'userid':Common.userid},onCompleted:(dynamic result){
+      _likeEntries = result['getFullStats']['views'];
+      _viewEntries = result['getFullStats']['likes'];
+    }));
     _scrollController.addListener(() {
       setState(() {
         widget.disownCallback(3);
@@ -166,8 +177,8 @@ class ProfileInfoPageState extends State<ProfileInfoPage> with SingleTickerProvi
   Widget build(BuildContext context) {
 
     _pages = <Widget>[
-      ProfileInfoViews(scrollController: _scrollController, notifier: _notifier, like: false),
-      ProfileInfoViews(scrollController: _scrollController, notifier: _notifier, like: true),
+      ProfileInfoViews(scrollController: _scrollController, notifier: _notifier, like: false,entries: _viewEntries,),
+      ProfileInfoViews(scrollController: _scrollController, notifier: _notifier, like: true,entries: _likeEntries,),
     ];
 
     return Stack(
