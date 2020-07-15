@@ -1,6 +1,8 @@
+import 'package:dating/imagelogic/ImageHandler.dart';
 import 'package:flutter/material.dart';
 import 'package:dating/common.dart';
 import 'package:flutter/rendering.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
 
 class CmScrollBehavior extends ScrollBehavior {
   @override
@@ -360,7 +362,16 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
           bottom: _hideFab ? -100 : Common.screenHeight * 0.02,
           right: Common.screenWidth * 0.05,
           child: FloatingActionButton(
-            onPressed: () {},
+            onPressed: () {
+              Future<QueryResult> r = ImageHandler.openGallery(Common.userid,false);
+              r.then((value) {
+                setState(() {
+                  print(value.data);
+                  _pictures.insert(0, value.data['upload']);
+                  _pictureIndex++;
+                });
+              });
+            },
             child: Icon(Icons.add_photo_alternate),
             backgroundColor: Color(0xFFCA436B),
             splashColor: Colors.white,

@@ -6,7 +6,7 @@ class GraphQLHandler {
   static ValueNotifier<GraphQLClient> client = ValueNotifier(
     GraphQLClient(
       cache: InMemoryCache(),
-      link: HttpLink(uri:'http://192.168.0.14:8090/graphql'),
+      link: HttpLink(uri:'http://192.168.56.1:8090/graphql'),
     ),
   );
 
@@ -19,6 +19,26 @@ class GraphQLHandler {
       }
 }
 """;
+
+  static const String addFacebookUser = r"""mutation createFacebook($name:String!,$premium:Boolean!,$gender:Boolean!,$fbid:String!,$profile:String!){
+    addFacebook(name:$name,premium:$premium,gender:$gender,fbid:$fbid,profile:$profile){
+     userid
+     info{
+     name 
+     }
+    }
+    }
+  """;
+
+  static const String getProfile = r"""mutation getProfileUID($userid:String!){
+   getProfileUID(userid:$userid){
+   info{
+   name
+   }
+   profilepic
+   pictures
+   }
+  }""";
 
   static const String loginUser = r"""mutation LoginM($email:String!, $password:String!){
   loginManual(email:$email,password:$password){
