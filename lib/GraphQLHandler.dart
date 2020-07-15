@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:flutter/foundation.dart';
 class GraphQLHandler {
-
+  static GraphQLClient client2 = GraphQLClient(link: HttpLink(uri:'http://192.168.56.1:8090/graphql'), cache: InMemoryCache());
   static ValueNotifier<GraphQLClient> client = ValueNotifier(
     GraphQLClient(
       cache: InMemoryCache(),
@@ -19,6 +19,18 @@ class GraphQLHandler {
       }
 }
 """;
+
+  static const String refreshLikesViews = r"""mutation refreshLikesViews($userid:String!){
+	getLikesViews(userid:$userid){
+	info{
+	stats{
+	totallikes
+	totalviews
+	}
+	}
+	}
+}
+  """;
 
   static const String addFacebookUser = r"""mutation createFacebook($name:String!,$premium:Boolean!,$gender:Boolean!,$fbid:String!,$profile:String!){
     addFacebook(name:$name,premium:$premium,gender:$gender,fbid:$fbid,profile:$profile){

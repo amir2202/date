@@ -1,3 +1,4 @@
+import 'package:dating/GraphQLHandler.dart';
 import 'package:dating/imagelogic/ImageHandler.dart';
 import 'package:flutter/material.dart';
 import 'package:dating/common.dart';
@@ -94,7 +95,16 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
       }
 
       if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
-        // query more ?? idk
+
+        //TODO THIS IS WHERE LOGIC IS
+        GraphQLClient client = GraphQLHandler.client2;
+        client.mutate(MutationOptions(documentNode: gql(GraphQLHandler.refreshLikesViews),onCompleted:(dynamic result){
+          setState(() {
+            print(result);
+          });
+        },variables: {'userid':Common.userid}));
+        // 
+        //LIKES/views update
         if (_pictures.length - 1 > _pictureIndex) {
           _pictureIndex = (_pictureIndex + 9 < _pictures.length ? _pictureIndex + 9 : _pictures.length - 1);
         }
