@@ -52,7 +52,7 @@ class LogInPageState extends State<LogInPage> {
         print(profile);
         //IF TOKEN ASSOSCIATED WITH AN ACCOUNT GO TO PROFILE PAGE^^ WITH USERID
         //UNTIL FACEBOOK grants permission default user is male currently
-        GraphQLClient client = new GraphQLClient(link:HttpLink(uri:'http://192.168.0.14:8090/graphql'), cache: InMemoryCache());
+        GraphQLClient client = new GraphQLClient(link:HttpLink(uri:'http://localhost:8090/graphql'), cache: InMemoryCache());
         client.mutate(MutationOptions(documentNode: gql(GraphQLHandler.facebookLinked),variables: {'fbid':profile['id'].toString()},onCompleted: (dynamic result){
           print(result);
           if(result['FacebookLinked'] == null){

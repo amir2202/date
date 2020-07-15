@@ -6,7 +6,7 @@ class GraphQLHandler {
   static ValueNotifier<GraphQLClient> client = ValueNotifier(
     GraphQLClient(
       cache: InMemoryCache(),
-      link: HttpLink(uri:'http://192.168.0.14:8090/graphql'),
+      link: HttpLink(uri:'http://localhost:8090/graphql'),
     ),
   );
 

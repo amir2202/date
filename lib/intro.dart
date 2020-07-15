@@ -25,7 +25,7 @@ class intro extends StatefulWidget {
 
 class _introState extends State<intro>{
   static final HttpLink api = HttpLink(
-    uri: 'http://192.168.0.14:8090/graphiql',
+    uri: 'http://localhost:8090/graphiql',
   );
   String dropdownValue = "English";
   @override
