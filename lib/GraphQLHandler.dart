@@ -32,6 +32,19 @@ class GraphQLHandler {
 }
   """;
 
+  static const String getFullLikesViews = r"""mutation getLikesandViewsFully($userid:String!){
+	getFullStats(userid:$userid){
+	views{
+    byName
+    byPicture
+  }
+	likes{
+    byName
+    byPicture
+  }
+}
+}""";
+
   static const String addFacebookUser = r"""mutation createFacebook($name:String!,$premium:Boolean!,$gender:Boolean!,$fbid:String!,$profile:String!){
     addFacebook(name:$name,premium:$premium,gender:$gender,fbid:$fbid,profile:$profile){
      userid

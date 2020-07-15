@@ -5,10 +5,11 @@ import 'package:dating/common.dart';
 class ProfileInfoViews extends StatefulWidget {
 //  final ValueNotifier<double> notifier;
 //  final Function(int) disownCallback;
+  final List<dynamic> entries;
   final ScrollController scrollController;
   final ValueNotifier<bool> notifier;
   final bool like;
-  ProfileInfoViews({Key key, @required this.scrollController, @required this.notifier, @required this.like});
+  ProfileInfoViews({Key key, @required this.scrollController, @required this.notifier, @required this.like,@required this.entries});
 
   @override
   ProfileInfoViewsState createState() => ProfileInfoViewsState();
@@ -27,13 +28,14 @@ class ProfileInfoViewsState extends State<ProfileInfoViews> with AutomaticKeepAl
   @override
   Widget build(BuildContext context) {
     super.build(context);
-
+///GET LIST LENGTH for item count
     return ScrollConfiguration(
       behavior: CmScrollBehavior(),
       child: ListView.builder(
+        itemCount: widget.entries.length,
         controller: widget.notifier.value == widget.like ? widget.scrollController : null,
         itemBuilder: (BuildContext context, int index) {
-          return ViewEntry(name: 'Test User', imageUrl: 'https://img.webmd.com/dtmcms/live/webmd/consumer_assets/site_images/article_thumbnails/other/cat_relaxing_on_patio_other/1800x1200_cat_relaxing_on_patio_other.jpg', like: widget.like);
+          return ViewEntry(name:widget.entries[index]['byName'] , imageUrl: widget.entries[index]['byPicture'], like: widget.like);
         },
         padding: EdgeInsets.fromLTRB(0, Common.screenHeight * 0.12 + Common.screenHeight * 0.05, 0, 0),
         physics: BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
