@@ -38,11 +38,11 @@ class Finalsignup extends StatefulWidget {
 }
 
 class FinalsignupState extends State<Finalsignup>{
-  String _selectedHairColor;
-  String _selectedEyeColor;
-  String _selectedEthnicity;
-  String _selectedReligion;
-  String _selectedCounty;
+  String _selectedHairColor = '';
+  String _selectedEyeColor = '';
+  String _selectedEthnicity = '';
+  String _selectedReligion = '';
+  String _selectedCounty = '';
 
   FocusNode _bodyFocusNode = new FocusNode();
   FocusNode _heightFocusNode = new FocusNode();
@@ -322,8 +322,8 @@ class FinalsignupState extends State<Finalsignup>{
                           onPressed: () {
                             Common.haircolor = _selectedHairColor;
                             Common.eyecolor = _selectedEyeColor;
-                            Common.body = _bodyController.text.isEmpty ? null : _bodyController.text;
-                            Common.height = _heightController.text.isEmpty ? null : int.parse(_heightController.text);
+                            Common.body = _bodyController.text;
+                            Common.height = _heightController.text.isEmpty ? '' : int.parse(_heightController.text);
                             Common.ethnicity = _selectedEthnicity;
                             Common.religion = _selectedReligion;
                             Common.state = _selectedCounty;
