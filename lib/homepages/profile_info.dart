@@ -205,111 +205,85 @@ class ProfileInfoPageState extends State<ProfileInfoPage> with SingleTickerProvi
     return FutureBuilder(
       future: r,
       builder: (context,snapshot) {
-        if(snapshot.data != null){
-        return Stack(
-        children: <Widget>[
+        if (snapshot.data != null) {
+          return Stack(
+            children: <Widget>[
 
-          TabBarView(
-            controller: _tabController,
-            children: _pages,
-            physics: NeverScrollableScrollPhysics(),
-          ),
+              TabBarView(
+                controller: _tabController,
+                children: _pages,
+                physics: NeverScrollableScrollPhysics(),
+              ),
 
-          Positioned(
-            top: _tp,
-            child: AnimatedContainer(
-              duration: Duration(milliseconds: 200),
-              width: Common.screenWidth,
-              height: Common.screenHeight * 0.06 + Common.screenHeight * 0.1,
-              child: Stack(
-                children: <Widget>[
-                  Container(
-                    height: Common.screenHeight * 0.12,
-                    color: Color(0xFFCA436B),
-                  ),
-                  Positioned(
-                    left: Common.screenWidth * 0.05,
-                    top: Common.screenHeight * 0.06,
-                    child: Container(
-                      width: Common.screenWidth * 0.9,
-                      height: Common.screenHeight * 0.1,
-                      child: Card(
-                        elevation: 10,
-                        child: TabBar(
-                          onTap: (index) {
-                            setState(() {
-                              print(_sp1);
-                              print(_sp2);
-                              _notifier.value = index == 0 ? false : true;
-                              _tabController.animateTo(index,
-                                  duration: Duration(milliseconds: 200), curve: Curves.easeOut);
-                              _scrollController.animateTo(index == 0 ? _sp1 : _sp2, duration: Duration(milliseconds: 200), curve: Curves.ease);
-                            });
-                          },
-                          controller: _tabController,
-                          indicatorColor: Color(0xFFCA436B),
-                          unselectedLabelColor: Colors.grey,
-                          labelColor: Color(0xFFCA436B),
-                          tabs: <Widget>[
-                            Tab(
-                              icon: Icon(Icons.remove_red_eye),
-                              text: 'Views',
-                            ),
-                            Tab(
-                              icon: Icon(Icons.favorite),
-                              text: 'Likes',
-                            ),
-                          ],
-                        ),
+              Positioned(
+                top: _tp,
+                child: AnimatedContainer(
+                  duration: Duration(milliseconds: 200),
+                  width: Common.screenWidth,
+                  height: Common.screenHeight * 0.06 + Common.screenHeight * 0.1,
+                  child: Stack(
+                    children: <Widget>[
+                      Container(
+                        height: Common.screenHeight * 0.12,
+                        color: Color(0xFFCA436B),
                       ),
-                    ),
-                  )
-                ],
+                      Positioned(
+                        left: Common.screenWidth * 0.05,
+                        top: Common.screenHeight * 0.06,
+                        child: Container(
+                          width: Common.screenWidth * 0.9,
+                          height: Common.screenHeight * 0.1,
+                          child: Card(
+                            elevation: 10,
+                            child: TabBar(
+                              onTap: (index) {
+                                setState(() {
+                                  print(_sp1);
+                                  print(_sp2);
+                                  _notifier.value = index == 0 ? false : true;
+                                  _tabController.animateTo(index,
+                                      duration: Duration(milliseconds: 200), curve: Curves.easeOut);
+                                  _scrollController.animateTo(index == 0 ? _sp1 : _sp2, duration: Duration(milliseconds: 200), curve: Curves.ease);
+                                });
+                              },
+                              controller: _tabController,
+                              indicatorColor: Color(0xFFCA436B),
+                              unselectedLabelColor: Colors.grey,
+                              labelColor: Color(0xFFCA436B),
+                              tabs: <Widget>[
+                                Tab(
+                                  icon: Icon(Icons.remove_red_eye),
+                                  text: 'Views',
+                                ),
+                                Tab(
+                                  icon: Icon(Icons.favorite),
+                                  text: 'Likes',
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+
+            ],
+          );
+        } else {
+          return Center(
+            child: Container(
+              width: 100,
+              height: 100,
+              child: CircularProgressIndicator(
+                backgroundColor: Colors.grey.withOpacity(0.5),
+                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFCA436B))
               ),
             ),
-          ),
-
-//        Positioned(
-//          child: Container(
-//            color: Color(0xFFCA436B),
-//          ),
-//        )
-
-//        AnimatedPositioned(
-//          duration: Duration(milliseconds: 200),
-//          left: Common.screenWidth * 0.05,
-//          top: _hideTabBar ? -100 : Common.screenHeight * 0.06,
-//          child: Container(
-//            width: Common.screenWidth * 0.9,
-//            child: Card(
-//              elevation: 10,
-//              child: TabBar(
-//                controller: _tabController,
-//                indicatorColor: Color(0xFFCA436B),
-//                unselectedLabelColor: Colors.grey,
-//                labelColor: Color(0xFFCA436B),
-//                tabs: <Widget>[
-//                  Tab(
-//                    icon: Icon(Icons.remove_red_eye),
-//                    text: 'Views',
-//                  ),
-//                  Tab(
-//                    icon: Icon(Icons.favorite),
-//                    text: 'Likes',
-//                  ),
-//                ],
-//              ),
-//            ),
-//          ),
-//        )
-
-
-
-        ],
-      );}
-      else{
-        return CircularProgressIndicator();
-        }},
+          );
+        }
+      },
     );
 
   }

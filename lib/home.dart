@@ -122,18 +122,18 @@ class HomePageState extends State<HomePage> {
       body: Stack(
         children: [
           Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                Container(
-                  height: _containerHeight(),
-                  color: Color(0xFFCA436B),
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Container(
+                height: _containerHeight(),
+                color: Color(0xFFCA436B),
+              ),
+              Expanded(
+                child: Container(
+                  color: Colors.white,
                 ),
-                Expanded(
-                  child: Container(
-                    color: Colors.white,
-                  ),
-                ),
-              ]
+              ),
+            ]
           ),
 
 //          Positioned(
