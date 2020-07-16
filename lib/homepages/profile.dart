@@ -55,21 +55,31 @@ class ProfilePage extends StatefulWidget {
 
 class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientMixin<ProfilePage> {
 
+  // always save the state when the page is switched
   @override
   bool get wantKeepAlive => true;
 
+  // stuff that just needs to be here for layout calculations
   GlobalKey _bioKey = GlobalKey();
   Offset _containerPosition = Offset(0, 0);
   Size _containerSize = Size(0, 0);
 
   ScrollController _scrollController;
 
+  // list of the user's picture urls
   List<String> _pictures;
   int _pictureIndex;
 
+  // views and likes variables for the profile box
+  int _views = 0;
+  int _likes = 0;
+
+  bool _refreshing = false;
+  bool _finishedRefreshing = true;
 
   bool _hideFab = false;
 
+  // pink container's height when this page is controlling it
   double _containerHeight() {
     return Common.screenHeight * 0.2 +
                         (_scrollController.hasClients ?
@@ -83,50 +93,85 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
   @override
   void initState() {
     super.initState();
+
     _scrollController = ScrollController();
+
+    // initialize local views and likes variables
+    _views = widget.totalviews;
+    _likes = widget.totallikes;
+
+    // when the image grid is scrolled in any direction...
     _scrollController.addListener(() {setState(() {
+      // this page owns control over the pink container's size
       widget.disownCallback(4);
       widget.notifier.value = _containerHeight();
 
+      // hide and show the "add picture" floating action button
       if (_scrollController.position.userScrollDirection == ScrollDirection.forward) {
         _hideFab = false;
       } else if (_scrollController.position.userScrollDirection == ScrollDirection.reverse) {
         _hideFab = true;
       }
 
-      if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+      // refreshing views and likes (maybe add picture refreshing too)
+      // scroll threshold fixed to -100 maybe to be based on screen height but should be ok
+      if (_scrollController.position.pixels <= -100) {
+        if (!_refreshing && _finishedRefreshing) {
+          _refreshing = true;
+          _finishedRefreshing = false;
+          print('im refreshing bro wtf');
+          GraphQLClient client = GraphQLHandler.client2;
+          client.mutate(MutationOptions(documentNode: gql(GraphQLHandler.refreshLikesViews), onCompleted: (dynamic result) {
+            setState(() {
+              try {
+                _views = result['getLikesViews']['info']['stats']['totalviews'];
+                _likes = result['getLikesViews']['info']['stats']['totallikes'];
+              } finally {
+                _finishedRefreshing = true;
+              }
 
-        //TODO THIS IS WHERE LOGIC IS
-        GraphQLClient client = GraphQLHandler.client2;
-        client.mutate(MutationOptions(documentNode: gql(GraphQLHandler.refreshLikesViews),onCompleted:(dynamic result){
-          setState(() {
-            //TODO FIX THIS... totalviews final
-            widget.totalviews = result['getLikesViews']['info']['stats']['totalviews'];
-            widget.totallikes = result['getLikesViews']['info']['stats']['totallikes'];
-          });
-        },variables: {'userid':Common.userid}));
-        //
-        //LIKES/views update
+              print('yes i refreshed yes i did it omg');
+            });
+          }, variables: {'userid': Common.userid}));
+        }
+      }
+
+      if (_refreshing) {
+        if (_scrollController.position.pixels >= -10) {
+          _refreshing = false;
+        }
+      }
+
+      // when the image grid is scrolled all the way to the bottom
+      if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+        // query more pictures maybe ? xd
+
+        // after the picture list is supposedly updated from the query do some index calc
         if (_pictures.length - 1 > _pictureIndex) {
           _pictureIndex = (_pictureIndex + 9 < _pictures.length ? _pictureIndex + 9 : _pictures.length - 1);
         }
       }
     });});
 
+    // initialize the picture index based on how many picture urls we have (max index 9)
     _pictureIndex = widget.pictureUrls.length < 9 ? widget.pictureUrls.length - 1 : 8;
+
+    // copy the picture urls over
     _pictures = List<String>();
 
     for (int i = 0; i <= _pictureIndex; i++) {
       _pictures.add(widget.pictureUrls[i]);
     }
 
+    // do some layout stuff after the first build is completed
     WidgetsBinding.instance.addPostFrameCallback(_onBuildCompleted);
   }
 
+  // layout stuff
   _onBuildCompleted(Duration timestamp) {
     final RenderBox containerRenderBox = _bioKey.currentContext.findRenderObject();
     final containerPosition = containerRenderBox.localToGlobal(Offset.zero);
-    //while (!_scrollController.hasClients) {}
+
     setState(() {
       _containerPosition = containerPosition;
       _containerSize = containerRenderBox.size;
@@ -140,49 +185,29 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
     return Stack(
       children: <Widget>[
 
-//        Column(
-//            mainAxisAlignment: MainAxisAlignment.start,
-//            children: <Widget>[
-//              Container(
-//                height: Common.screenHeight * 0.2 +
-//                        (_scrollController.hasClients ?
-//                          (_scrollController.position.pixels > 0 ? -1 : 0.5) *
-//                          (Common.screenHeight * 0.2 - (_scrollController.position.pixels * _scrollController.position.pixels * 0.001) >= 0 ?
-//                          (_scrollController.position.pixels * _scrollController.position.pixels * 0.001)
-//                          : Common.screenHeight * 0.2)
-//                        : 0),
-//                color: Color(0xFFCA436B),
-//              ),
-//              Expanded(
-//                child: Container(
-//                  color: Colors.white,
-//                ),
-//              ),
-//            ]
-//        ),
+        // REFRESH ICON
 
         Positioned(
           top: _containerPosition.dy + _containerSize.height + Common.screenHeight * 0.1,
-          //bottom: _scrollController.hasClients ? (_scrollController.position.pixels < 0 ? (400 + -_scrollController.position.pixels * 1.5 < Common.screenHeight * 0.3 ? -_scrollController.position.pixels * 1.5 : Common.screenHeight * 0.3) : 0) : 0,
-          //left: Common.screenWidth * 0.5,// +_scrollController.position.pixels* 0.125,
           child: Opacity(
-            opacity: _scrollController.hasClients ? (-(_scrollController.position.pixels * 0.002) < 1 ? (_scrollController.position.pixels < 0 ? -(_scrollController.position.pixels * 0.002) : 0.0) : 1.0) : 1.0,
+            opacity: _scrollController.hasClients ? (-(_scrollController.position.pixels * 0.003) < 1 ? (_scrollController.position.pixels < 0 ? -(_scrollController.position.pixels * 0.003) : 0.0) : 1.0) : 1.0,
             child: Container(
               alignment: Alignment.center,
               width: Common.screenWidth,
               child: Transform(
-                  alignment: FractionalOffset.center,
-                  transform: Matrix4.rotationZ(-(_scrollController.hasClients ? 1.5*(100 / _scrollController.position.pixels)*(100 / _scrollController.position.pixels) : 0.0)),
-                  child: Icon(
-                    Icons.refresh,
-                    color: Colors.grey,
-                    size: 35,
-                    //size: _scrollController.hasClients ? (-_scrollController.position.pixels*-_scrollController.position.pixels* 0.002 < 50 ? -_scrollController.position.pixels*-_scrollController.position.pixels* 0.002 : 50) : 0,
-                  ),
+                alignment: FractionalOffset.center,
+                transform: Matrix4.rotationZ(-(_scrollController.hasClients ? 1.5*(100 / _scrollController.position.pixels)*(100 / _scrollController.position.pixels) : 0.0)),
+                child: Icon(
+                  Icons.refresh,
+                  color: _scrollController.hasClients ? (_scrollController.position.pixels < -100 ? Color(0xFFCA436B) : Colors.grey) : Colors.grey,
+                  size: 35,
                 ),
+              ),
             ),
           ),
         ),
+
+        // IMAGE GRID
 
         ScrollConfiguration(
           behavior: CmScrollBehavior(),
@@ -201,6 +226,8 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
             controller: _scrollController,
           ),
         ),
+
+        // BIO / DESCRIPTION BOX
 
         Positioned(
           top: Common.screenHeight * 0.1 + 175 +
@@ -230,6 +257,8 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
           ),
         ),
 
+        // BIO / DESCRIPTION EDIT BUTTON
+
         Positioned(
           top: _containerPosition.dy + _containerSize.height - 27.5 +
               (_scrollController.hasClients ?
@@ -254,7 +283,7 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
           ),
         ),
 
-
+        // PROFILE BOX
 
         Positioned(
           top: Common.screenHeight * 0.1 +
@@ -336,7 +365,7 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
                                     children: <Widget>[
                                       Icon(Icons.remove_red_eye, size: 20),
                                       SizedBox(width: 5,),
-                                      Text(widget.totalviews.toString(), style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+                                      Text(_views.toString(), style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
                                     ],
                                   )
                               ),
@@ -354,7 +383,7 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
                                     children: <Widget>[
                                       Icon(Icons.favorite, size: 20),
                                       SizedBox(width: 5,),
-                                      Text(widget.totallikes.toString(), style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+                                      Text(_likes.toString(), style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
                                     ],
                                   )
                               ),
@@ -369,6 +398,8 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
             ),
           ),
         ),
+
+        // ADD PICTURE BUTTON
 
         AnimatedPositioned(
           duration: Duration(milliseconds: 200),
@@ -390,7 +421,6 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
             splashColor: Colors.white,
           ),
         )
-
 
       ],
     );

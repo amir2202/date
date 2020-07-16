@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
         'https://media.architecturaldigest.com/photos/5c01b23c2226412d33ca7725/16:9/w_2560%2Cc_limit/GettyImages-702612761.jpg',
         'https://news.cgtn.com/news/77416a4e3145544d326b544d354d444d3355444f31457a6333566d54/img/37d598e5a04344da81c76621ba273915/37d598e5a04344da81c76621ba273915.jpg',
         'https://static.scientificamerican.com/blogs/cache/file/1379B8E0-9602-42D5-9602278C1F21FAF2_source.jpg?w=590&h=800&AF11F83F-A202-49A5-948C06206102FF92',
-      ],),
+      ], totallikes: 123, totalviews: 420),
     );
   }
 }
