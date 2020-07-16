@@ -40,10 +40,12 @@ class GraphQLHandler {
   static const String getFullLikesViews = r"""mutation getLikesandViewsFully($userid:String!){
 	getFullStats(userid:$userid){
 	views{
+	  by
     byName
     byPicture
   }
 	likes{
+	  by
     byName
     byPicture
   }
@@ -61,14 +63,20 @@ class GraphQLHandler {
   """;
 
   static const String getProfile = r"""mutation getProfileUID($userid:String!){
-   getProfileUID(userid:$userid){
-   info{
-   name
-   }
-   profilepic
-   pictures
-   }
-  }""";
+	getProfileUID(userid:$userid){
+	profilepic
+	pictures{
+	filepath
+	}
+	info{
+	name
+	stats{
+	totalviews
+	totallikes
+	}
+	}
+	}
+}""";
 
   static const String loginUser = r"""mutation LoginM($email:String!, $password:String!){
   loginManual(email:$email,password:$password){

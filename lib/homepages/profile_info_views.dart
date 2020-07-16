@@ -35,7 +35,7 @@ class ProfileInfoViewsState extends State<ProfileInfoViews> with AutomaticKeepAl
         itemCount: widget.entries.length,
         controller: widget.notifier.value == widget.like ? widget.scrollController : null,
         itemBuilder: (BuildContext context, int index) {
-          return ViewEntry(name:widget.entries[index]['byName'] , imageUrl: widget.entries[index]['byPicture'], like: widget.like);
+          return ViewEntry(name:widget.entries[index]['byName'] , imageUrl: widget.entries[index]['byPicture'], like: widget.like,id:widget.entries[index]['by'].toString());
         },
         padding: EdgeInsets.fromLTRB(0, Common.screenHeight * 0.12 + Common.screenHeight * 0.05, 0, 0),
         physics: BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),

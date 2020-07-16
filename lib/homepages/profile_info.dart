@@ -1,4 +1,5 @@
 import 'package:dating/GraphQLHandler.dart';
+import 'package:dating/home.dart';
 import 'package:dating/homepages/profile_info_views.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -17,7 +18,8 @@ class ViewEntry extends StatelessWidget {
   final String name;
   final String imageUrl;
   final bool like;
-  ViewEntry({Key key, @required this.name, @required this.imageUrl, @required this.like});
+  final String id;
+  ViewEntry({Key key, @required this.name, @required this.imageUrl, @required this.like,@required this.id});
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +27,20 @@ class ViewEntry extends StatelessWidget {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: () {},
+        onTap: () {
+          print(this.id);
+          GraphQLHandler.client2.mutate(MutationOptions(documentNode: gql(GraphQLHandler.getProfile),variables: {'userid':this.id},onCompleted: (dynamic resultData) {
+            print(resultData);
+            List<dynamic> pics = resultData['getProfileUID']['pictures'];
+            List<String> pics2 = List<String>();
+            for(dynamic el in pics){
+              pics2.add(el['filepath']);
+              print(el['filepath']);
+            }
+            Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage(name:resultData['getProfileUID']['info']['name'],imageUrl:resultData['getProfileUID']['profilepic'], pictureUrls:pics2,totalviews: resultData['getProfileUID']['info']['stats']['totalviews'],totallikes: resultData['getProfileUID']['info']['stats']['totallikes'])));
+
+          }));
+        },
         splashColor: Colors.grey.withOpacity(0.5),
         child: Container(
           height: Common.screenHeight * 0.1,
