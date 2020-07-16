@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:flutter/foundation.dart';
+
+import 'common.dart';
 class GraphQLHandler {
   static GraphQLClient client2 = GraphQLClient(link: HttpLink(uri:'http://192.168.56.1:8090/graphql'), cache: InMemoryCache());
   static ValueNotifier<GraphQLClient> client = ValueNotifier(
@@ -31,6 +33,9 @@ class GraphQLHandler {
 	}
 }
   """;
+  static Future<QueryResult> getLists() {
+    return client2.mutate(MutationOptions(documentNode: gql(GraphQLHandler.getFullLikesViews),variables: {'userid':Common.userid}));
+  }
 
   static const String getFullLikesViews = r"""mutation getLikesandViewsFully($userid:String!){
 	getFullStats(userid:$userid){
