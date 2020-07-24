@@ -139,13 +139,13 @@ class ProfileInfoPageState extends State<ProfileInfoPage> with SingleTickerProvi
     _likeEntries = [
       {
         "byName": "LOADING",
-        "byPicture": "http://192.168.56.1/ImageStorage/73/1.png"
+        "byPicture": "http://54.37.205.205/ImageStorage/73/1.png"
       },
     ];
     _viewEntries = [
       {
         "byName": "LOADING",
-        "byPicture": "http://192.168.56.1/ImageStorage/73/1.png"
+        "byPicture": "http://54.37.205.205/ImageStorage/73/1.png"
       },
     ];
 
