@@ -1,3 +1,4 @@
+import 'package:dating/homepages/ChatPage.dart';
 import 'package:dating/homepages/profile_info.dart';
 import 'package:flutter/material.dart';
 import 'package:dating/homepages/profile.dart';
@@ -113,7 +114,7 @@ class HomePageState extends State<HomePage> {
     _pages = <Widget>[
       Text('a'),
       Text('a'),
-      Text('a'),
+      ChatPage(),
       ProfileInfoPage(disownCallback: disownCallback, notifier: _n3),
       ProfilePage(callback: callback, disownCallback: disownCallback, notifier: _n4, name: widget.name, imageUrl: widget.imageUrl, pictureUrls: widget.pictureUrls,totalviews: widget.totalviews,totallikes: widget.totallikes,),
     ];

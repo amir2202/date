@@ -10,6 +10,7 @@ class Common {
   static String password;
   static bool premium;
   static String userid;
+  static String serverIP="54.37.205.205";
   static String email;
   static bool gender;
   static String birthday;

@@ -130,7 +130,7 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
                 _finishedRefreshing = true;
               }
 
-              print('yes i refreshed yes i did it omg');
+              print('yes i refreshed yes i did it omgölöpöö');
             });
           }, variables: {'userid': Common.userid}));
         }
