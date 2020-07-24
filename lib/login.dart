@@ -47,10 +47,13 @@ class LogInPageState extends State<LogInPage> {
 
       //IF ALREADY AN ASSOSCIATION IT will continue to page
       case FacebookLoginStatus.loggedIn:
+
         final token = result.accessToken.token;
         final graphResponse = await http.get('https://graph.facebook.com/v2.12/me?fields=name,gender,picture,email&access_token=${token}');
         final profile = JSON.jsonDecode(graphResponse.body);
+
         print(profile);
+
         //IF TOKEN ASSOSCIATED WITH AN ACCOUNT GO TO PROFILE PAGE^^ WITH USERID
         //UNTIL FACEBOOK grants permission default user is male currently
         GraphQLClient client = new GraphQLClient(link:HttpLink(uri:'http://54.37.205.205/graphql'), cache: InMemoryCache());
@@ -63,21 +66,50 @@ class LogInPageState extends State<LogInPage> {
               print("SECOND RESULT");
               //GO TO NEXT PAGE
               //TODO GO TO second
-              Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => HomePage(name: result2['addFacebook']['info']['name'],totallikes: 0,totalviews: 0,imageUrl: profile['picture']['data']['url'],pictureUrls: [profile['picture']['data']['url']])), (r) => false);
+
+              // WHY ARE VIEWS AND LIKES SET TO 0 ???
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => HomePage(
+                    name: result2['addFacebook']['info']['name'],
+                    totalLikes: 0,
+                    totalViews: 0,
+                    imageUrl: profile['picture']['data']['url'],
+                    pictureUrls: [profile['picture']['data']['url']]
+                  )
+                ),
+                (Route<dynamic> route) => false
+              );
+
               print(result2);
             }));
 
-          }
-          else{
+          } else{
+            //ELSE COMPLETE REGISTRATION
             List<dynamic> pics = result['FacebookLinked']['pictures'];
             List<String> pics2 = List<String>();
+
             for(dynamic el in pics){
               pics2.add(el['filepath']);
             }
-            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => HomePage(name: result['FacebookLinked']['info']['name'],totallikes: result['FacebookLinked']['info']['stats']['totallikes'],totalviews: result['FacebookLinked']['info']['stats']['totalviews'],imageUrl: result['FacebookLinked']['profilepic'],pictureUrls:pics2)), (r) => false);
+
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                builder: (context) => HomePage(
+                  name: result['FacebookLinked']['info']['name'],
+                  totalLikes: result['FacebookLinked']['info']['stats']['totallikes'],
+                  totalViews: result['FacebookLinked']['info']['stats']['totalviews'],
+                  imageUrl: result['FacebookLinked']['profilepic'],
+                  pictureUrls:pics2
+                )
+              ),
+              (Route<dynamic> route) => false
+            );
           }
         }));
-        //ELSE COMPLETE REGISTRATION
+
 
         setState(() {
           userProfile = profile;
@@ -106,140 +138,157 @@ class LogInPageState extends State<LogInPage> {
   @override
   Widget build(BuildContext context) {
     return new GraphQLProvider(
-        client: GraphQLHandler.getClient(),
+      client: GraphQLHandler.getClient(),
       child: Material(
-      child: Stack(
-        alignment:Alignment.center,
-        children: <Widget>[
-          Container(
-            decoration: BoxDecoration(
-                gradient: LinearGradient(
-                colors: [Color(0xFF915FB5), Color(0xFFCA436B)],
-                  begin: FractionalOffset.topLeft,
-                  end: FractionalOffset.bottomRight,
-                  stops: [0.0,1.0],
-                  tileMode: TileMode.clamp,
+        child: Stack(
+          alignment:Alignment.center,
+          children: <Widget>[
+            Container(
+              decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                  colors: [Color(0xFF915FB5), Color(0xFFCA436B)],
+                    begin: FractionalOffset.topLeft,
+                    end: FractionalOffset.bottomRight,
+                    stops: [0.0,1.0],
+                    tileMode: TileMode.clamp,
+                  ),
+              ),
+            ),
+            FractionallySizedBox(
+              widthFactor: 0.9,
+              heightFactor: 0.5,
+              child: Card(
+                elevation: 10,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30.0),
                 ),
-            ),
-          ),
-          FractionallySizedBox(
-            widthFactor: 0.9,
-            heightFactor: 0.5,
-            child: Card(
-              elevation: 10,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30.0),
-              ),
-              child: Padding(
-                padding: EdgeInsets.all(20),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Material(
-                      color: Colors.white,
-                      child: TextFormField(
-                        controller:_emailController,
-                        focusNode: textFocusNode1,
-                        decoration: InputDecoration(
-                          focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(30.0), borderSide: BorderSide(color: Color(0xFFCA436B))),
-                          enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(30.0), borderSide: BorderSide(color: Colors.grey)),
-                          labelText: 'Email',
-                          labelStyle: TextStyle(color: textFocusNode1.hasFocus ? Color(0xFFCA436B) : Colors.grey),
-                          contentPadding: EdgeInsets.all(20),
+                child: Padding(
+                  padding: EdgeInsets.all(20),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Material(
+                        color: Colors.white,
+                        child: TextFormField(
+                          controller:_emailController,
+                          focusNode: textFocusNode1,
+                          decoration: InputDecoration(
+                            focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(30.0), borderSide: BorderSide(color: Color(0xFFCA436B))),
+                            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(30.0), borderSide: BorderSide(color: Colors.grey)),
+                            labelText: 'Email',
+                            labelStyle: TextStyle(color: textFocusNode1.hasFocus ? Color(0xFFCA436B) : Colors.grey),
+                            contentPadding: EdgeInsets.all(20),
+                          ),
                         ),
                       ),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Material(
-                      color: Colors.white,
-                      child: TextFormField(
-                        controller: _passwordController,
-                        obscureText: true,
-                        focusNode: textFocusNode2,
-                        decoration: InputDecoration(
-                        suffix: GestureDetector(
-                        onTap: () {
-                        print('tapped');
-                        },
-                        child: Text(
-                        'Forgot Password?',
-                        style: TextStyle(fontSize: 12,
-                        color: Color(0xFFCA436B),fontWeight: FontWeight.bold),
-                        ),
-                        ),
-                          focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(30.0), borderSide: BorderSide(color: Color(0xFFCA436B))),
-                          enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(30.0), borderSide: BorderSide(color: Colors.grey)),
-                          labelText: 'Password',
-                          labelStyle: TextStyle(color: textFocusNode2.hasFocus ? Color(0xFFCA436B) : Colors.grey),
-                          contentPadding: EdgeInsets.all(20),
-                        ),
+                      SizedBox(
+                        height: 10,
                       ),
-                    ),
-                    Divider(
-                      color: Colors.transparent,
-                      height: 20,
-                      thickness: 1,
-                      indent: 50,
-                      endIndent: 50,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        SignInButton(
-                          Buttons.Facebook,
-                          text: "Sign in with Facebook",
-                          onPressed: () {
-                            _loginWithFB();
+                      Material(
+                        color: Colors.white,
+                        child: TextFormField(
+                          controller: _passwordController,
+                          obscureText: true,
+                          focusNode: textFocusNode2,
+                          decoration: InputDecoration(
+                          suffix: GestureDetector(
+                          onTap: () {
+                          print('tapped');
                           },
+                          child: Text(
+                          'Forgot Password?',
+                          style: TextStyle(fontSize: 12,
+                          color: Color(0xFFCA436B),fontWeight: FontWeight.bold),
+                          ),
+                          ),
+                            focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(30.0), borderSide: BorderSide(color: Color(0xFFCA436B))),
+                            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(30.0), borderSide: BorderSide(color: Colors.grey)),
+                            labelText: 'Password',
+                            labelStyle: TextStyle(color: textFocusNode2.hasFocus ? Color(0xFFCA436B) : Colors.grey),
+                            contentPadding: EdgeInsets.all(20),
+                          ),
                         ),
-                      ],
-                    )
-                  ],
-                )
+                      ),
+                      Divider(
+                        color: Colors.transparent,
+                        height: 20,
+                        thickness: 1,
+                        indent: 50,
+                        endIndent: 50,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          SignInButton(
+                            Buttons.Facebook,
+                            text: "Sign in with Facebook",
+                            onPressed: () {
+                              _loginWithFB();
+                            },
+                          ),
+                        ],
+                      )
+                    ],
+                  )
+                ),
               ),
             ),
-          ),Positioned (
-            bottom: 80,
-            width: 200,
-            height: 50,
-            child: Mutation(options: MutationOptions(documentNode: gql(GraphQLHandler.loginUser),onCompleted:(dynamic resultData){
-              print(resultData);
-              print(resultData['loginManual']['info']['name']);
-              if(resultData['loginManual']['userid'] == "LOGIN FAILED"){
-                print("login failed");
+            Positioned (
+              bottom: 80,
+              width: 200,
+              height: 50,
+              child: Mutation(
+                options: MutationOptions(
+                  documentNode: gql(GraphQLHandler.loginUser),
+                  onCompleted: (dynamic resultData) {
+                    print(resultData);
+                    print(resultData['loginManual']['info']['name']);
 
-              }
-              else{
-                List<dynamic> pics = resultData['loginManual']['pictures'];
-                List<String> pics2 = List<String>();
-                for(dynamic el in pics){
-                  pics2.add(el['filepath']);
-                  print(el['filepath']);
+                    // TODO: ADD A DIALOG OR SOMETHING FOR LOGIN FAILED
+                    if (resultData['loginManual']['userid'] == "LOGIN FAILED") {
+                      print("login failed");
+                    } else {
+                      List<dynamic> pics = resultData['loginManual']['pictures'];
+                      List<String> pics2 = List<String>();
+
+                      for (dynamic el in pics) {
+                        pics2.add(el['filepath']);
+                        print(el['filepath']);
+                      }
+
+                      Common.userid = resultData['loginManual']['userid'].toString();
+                      // TODO: CHANGE TO PUSH AND REMOVE UNTIL
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => HomePage(
+                              name:resultData['loginManual']['info']['name'],
+                              imageUrl:resultData['loginManual']['profilepic'],
+                              pictureUrls:pics2,totalViews: resultData['loginManual']['info']['stats']['totalviews'],
+                              totalLikes: resultData['loginManual']['info']['stats']['totallikes']
+                          ),
+                        ),
+                        (Route<dynamic> route) => false
+                      );
+                    }
+                  }
+                ),
+                builder: (RunMutation runMutation,QueryResult result) {
+                  return RaisedButton(
+                    elevation: 5,
+                    onPressed: () {
+                      // RETRIEVE INFO TO PASS ON
+                      runMutation({'email':_emailController.text,'password':_passwordController.text});
+                    },
+                    child: Text('LOG IN'),
+                    color: Colors.white,
+                    shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
+                  );
                 }
-                Common.userid = resultData['loginManual']['userid'].toString();
-                //TODO
-                // CHANGE TO PUSHJ AND REMOVE UNTIL
-                Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => HomePage(name:resultData['loginManual']['info']['name'],imageUrl:resultData['loginManual']['profilepic'], pictureUrls:pics2,totalviews: resultData['loginManual']['info']['stats']['totalviews'],totallikes: resultData['loginManual']['info']['stats']['totallikes']),
-              ));}
-            }),builder: (RunMutation runMutation,QueryResult result){
-              return RaisedButton(
-                elevation: 5,
-                onPressed: () {
-                  runMutation({'email':_emailController.text,'password':_passwordController.text});
-                  ///RETRIEVE INFO TO PASS ON
-                },
-                child: Text('LOG IN'),
-                color: Colors.white,
-                shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
-              );
-            })
-          ),
-        ]
-      ),
+              )
+            ),
+          ]
+        ),
       )
     );
   }

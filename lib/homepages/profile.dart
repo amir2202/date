@@ -45,9 +45,9 @@ class ProfilePage extends StatefulWidget {
   final String name;
   final String imageUrl;
   final List<String> pictureUrls;
-  int totallikes;
-  int totalviews;
-  ProfilePage({Key key, @required this.callback, @required this.disownCallback, @required this.notifier, @required this.name, @required this.imageUrl, @required this.pictureUrls,@required this.totalviews, @required this.totallikes});
+  final int totalLikes;
+  final int totalViews;
+  ProfilePage({Key key, @required this.callback, @required this.disownCallback, @required this.notifier, @required this.name, @required this.imageUrl, @required this.pictureUrls,@required this.totalViews, @required this.totalLikes});
 
   @override
   ProfilePageState createState() => ProfilePageState();
@@ -91,14 +91,15 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
   }
 
   @override
+  @override
   void initState() {
     super.initState();
 
     _scrollController = ScrollController();
 
     // initialize local views and likes variables
-    _views = widget.totalviews;
-    _likes = widget.totallikes;
+    _views = widget.totalViews;
+    _likes = widget.totalLikes;
 
     // when the image grid is scrolled in any direction...
     _scrollController.addListener(() {setState(() {
@@ -190,13 +191,13 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
         Positioned(
           top: _containerPosition.dy + _containerSize.height + Common.screenHeight * 0.1,
           child: Opacity(
-            opacity: _scrollController.hasClients ? (-(_scrollController.position.pixels * 0.003) < 1 ? (_scrollController.position.pixels < 0 ? -(_scrollController.position.pixels * 0.003) : 0.0) : 1.0) : 1.0,
+            opacity: _scrollController.hasClients ? (_scrollController.position.pixels < 0 ? ((_scrollController.position.pixels * _scrollController.position.pixels * 0.00002) < 1 ? (_scrollController.position.pixels * _scrollController.position.pixels * 0.00002) : 1.0) : 0.0) : 0.0,
             child: Container(
               alignment: Alignment.center,
               width: Common.screenWidth,
               child: Transform(
                 alignment: FractionalOffset.center,
-                transform: Matrix4.rotationZ(-(_scrollController.hasClients ? 1.5*(100 / _scrollController.position.pixels)*(100 / _scrollController.position.pixels) : 0.0)),
+                transform: Matrix4.rotationZ(-(_scrollController.hasClients ? 1.5*(100 / _scrollController.position.pixels)*(50 / _scrollController.position.pixels) : 0.0)),
                 child: Icon(
                   Icons.refresh,
                   color: _scrollController.hasClients ? (_scrollController.position.pixels < -100 ? Color(0xFFCA436B) : Colors.grey) : Colors.grey,
