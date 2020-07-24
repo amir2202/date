@@ -11,9 +11,9 @@ class HomePage extends StatefulWidget {
   final String name;
   final String imageUrl;
   final List<String> pictureUrls;
-  final int totalviews;
-  final int totallikes;
-  HomePage({Key key, @required this.name, @required this.imageUrl, @required this.pictureUrls, @required this.totalviews, @required this.totallikes,});
+  final int totalViews;
+  final int totalLikes;
+  HomePage({Key key, @required this.name, @required this.imageUrl, @required this.pictureUrls, @required this.totalViews, @required this.totalLikes,});
 
   @override
   HomePageState createState() => HomePageState();
@@ -83,8 +83,11 @@ class HomePageState extends State<HomePage> {
       Common.screenWidth = MediaQuery.of(context).size.width;
       Common.screenHeight = MediaQuery.of(context).size.height;
     }
-    _cHeight = Common.screenHeight * 0.2;
-    _c3Height = Common.screenHeight * 0.12;
+
+    setState(() {
+      _cHeight = Common.screenHeight * 0.2;
+      _c3Height = Common.screenHeight * 0.12;
+    });
   }
 
   @override
@@ -116,7 +119,7 @@ class HomePageState extends State<HomePage> {
       Text('a'),
       ChatPage(),
       ProfileInfoPage(disownCallback: disownCallback, notifier: _n3),
-      ProfilePage(callback: callback, disownCallback: disownCallback, notifier: _n4, name: widget.name, imageUrl: widget.imageUrl, pictureUrls: widget.pictureUrls,totalviews: widget.totalviews,totallikes: widget.totallikes,),
+      ProfilePage(callback: callback, disownCallback: disownCallback, notifier: _n4, name: widget.name, imageUrl: widget.imageUrl, pictureUrls: widget.pictureUrls, totalViews: widget.totalViews, totalLikes: widget.totalLikes),
     ];
 
     return Scaffold(

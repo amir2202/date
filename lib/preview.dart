@@ -130,7 +130,7 @@ class PreviewPageState extends State<PreviewPage> {
                             List<String> images = List<String>();
                             images.add(urlImageApi.data['upload']);
                             //IMAGES IS CORRECT LEAVE CAT FOR REGISTRATION NOW
-                            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => HomePage(name: Common.fullName,totallikes: 0,totalviews: 0,imageUrl: null,pictureUrls:images)), (r) => false);
+                            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => HomePage(name: Common.fullName,totalLikes: 0,totalViews: 0,imageUrl: null,pictureUrls:images)), (r) => false);
 
                           });
                         });

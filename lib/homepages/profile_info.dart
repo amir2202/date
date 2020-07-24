@@ -37,7 +37,7 @@ class ViewEntry extends StatelessWidget {
               pics2.add(el['filepath']);
               print(el['filepath']);
             }
-            Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage(name:resultData['getProfileUID']['info']['name'],imageUrl:resultData['getProfileUID']['profilepic'], pictureUrls:pics2,totalviews: resultData['getProfileUID']['info']['stats']['totalviews'],totallikes: resultData['getProfileUID']['info']['stats']['totallikes'])));
+            Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage(name:resultData['getProfileUID']['info']['name'],imageUrl:resultData['getProfileUID']['profilepic'], pictureUrls:pics2,totalViews: resultData['getProfileUID']['info']['stats']['totalviews'],totalLikes: resultData['getProfileUID']['info']['stats']['totallikes'])));
 
           }));
         },
