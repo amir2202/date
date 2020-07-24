@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 
 import 'common.dart';
 class GraphQLHandler {
-  static GraphQLClient client2 = GraphQLClient(link: HttpLink(uri:'http://192.168.56.1:8090/graphql'), cache: InMemoryCache());
+  static GraphQLClient client2 = GraphQLClient(link: HttpLink(uri:'http://54.37.205.205:8090/graphql'), cache: InMemoryCache());
   static ValueNotifier<GraphQLClient> client = ValueNotifier(
     GraphQLClient(
       cache: InMemoryCache(),
