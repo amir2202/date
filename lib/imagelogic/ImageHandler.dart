@@ -18,7 +18,7 @@ class ImageHandler {
   }
   """;
     GraphQLClient client = GraphQLClient(cache: InMemoryCache(),
-        link: HttpLink(uri: 'http://192.168.56.1:8090/graphql'));
+        link: HttpLink(uri: 'http://54.37.205.205:8090/graphql'));
     return client.mutate(MutationOptions(documentNode: gql(mutation),
         variables: {'img': img64, 'userid': userid, 'pfp': profile}));
   }
