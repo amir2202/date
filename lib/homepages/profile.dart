@@ -193,6 +193,8 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
     setState(() {
       _containerPosition = containerPosition;
       _containerSize = containerRenderBox.size;
+      widget.notifier.value = Common.screenHeight * 0.2;
+      widget.disownCallback(widget.myProfile ? 4 : -1);
     });
   }
 
@@ -312,7 +314,7 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
               : 0),
           left: Common.screenWidth * 0.05,
           child: Hero(
-            tag: 'preview_tag',
+            tag: widget.myProfile ? 'preview_tag' : 'external_tag',
             child: SizedBox(
               width: Common.screenWidth * 0.9,
               height: 150,

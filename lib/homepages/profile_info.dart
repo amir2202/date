@@ -1,5 +1,6 @@
 import 'package:dating/GraphQLHandler.dart';
 import 'package:dating/home.dart';
+import 'package:dating/homepages/profile_external.dart';
 import 'package:dating/homepages/profile_info_views.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -29,20 +30,37 @@ class ViewEntry extends StatelessWidget {
       child: InkWell(
         onTap: () {
           print(this.id);
+
           GraphQLHandler.client2.mutate(
             MutationOptions(
               documentNode: gql(GraphQLHandler.getProfile),
               variables: { 'userid':this.id },
               onCompleted: (dynamic resultData) {
                 print(resultData);
+
                 List<dynamic> pics = resultData['getProfileUID']['pictures'];
                 List<String> pics2 = List<String>();
+
                 for(dynamic el in pics){
                   pics2.add(el['filepath']);
                   print(el['filepath']);
                 }
-                Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage(name:resultData['getProfileUID']['info']['name'],imageUrl:resultData['getProfileUID']['profilepic'], pictureUrls:pics2,totalViews: resultData['getProfileUID']['info']['stats']['totalviews'],totalLikes: resultData['getProfileUID']['info']['stats']['totallikes'])));
 
+                Navigator.push(
+                  context,
+                  PageRouteBuilder(
+                    pageBuilder: (context, animation, secondaryAnimation) => ProfileExternalPage(
+                      name: resultData['getProfileUID']['info']['name'],
+                      imageUrl: resultData['getProfileUID']['profilepic'],
+                      pictureUrls: pics2,
+                      totalViews: resultData['getProfileUID']['info']['stats']['totalviews'],
+                      totalLikes: resultData['getProfileUID']['info']['stats']['totallikes']
+                    ),
+                    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                      return SlideTransition(position: animation.drive(Tween(begin: Offset(0,1), end: Offset.zero).chain(CurveTween(curve: Curves.ease))), child: child);
+                    }
+                  ),
+                );
               }
             )
           );
@@ -295,8 +313,8 @@ class ProfileInfoPageState extends State<ProfileInfoPage> with SingleTickerProvi
         } else {
           return Center(
             child: Container(
-              width: 100,
-              height: 100,
+              width: 75,
+              height: 75,
               child: CircularProgressIndicator(
                 backgroundColor: Colors.grey.withOpacity(0.5),
                 valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFCA436B))
