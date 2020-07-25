@@ -9,8 +9,7 @@ class ProfileInfoViews extends StatefulWidget {
   final ScrollController scrollController;
   final ValueNotifier<bool> notifier;
   final bool like;
-  final Function(BuildContext, String, String, List<String>, int, int) onPush;
-  ProfileInfoViews({Key key, @required this.scrollController, @required this.notifier, @required this.like,@required this.entries, @required this.onPush});
+  ProfileInfoViews({Key key, @required this.scrollController, @required this.notifier, @required this.like,@required this.entries});
 
   @override
   ProfileInfoViewsState createState() => ProfileInfoViewsState();
@@ -36,7 +35,7 @@ class ProfileInfoViewsState extends State<ProfileInfoViews> with AutomaticKeepAl
         itemCount: widget.entries.length,
         controller: widget.notifier.value == widget.like ? widget.scrollController : null,
         itemBuilder: (BuildContext context, int index) {
-          return ViewEntry(name:widget.entries[index]['byName'] , imageUrl: widget.entries[index]['byPicture'], like: widget.like,id:widget.entries[index]['by'].toString(), onPush: widget.onPush);
+          return ViewEntry(name:widget.entries[index]['byName'] , imageUrl: widget.entries[index]['byPicture'], like: widget.like,id:widget.entries[index]['by'].toString());
         },
         padding: EdgeInsets.fromLTRB(0, Common.screenHeight * 0.12 + Common.screenHeight * 0.05, 0, 0),
         physics: BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),

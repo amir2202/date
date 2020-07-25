@@ -19,8 +19,7 @@ class ViewEntry extends StatelessWidget {
   final String imageUrl;
   final bool like;
   final String id;
-  final Function(BuildContext, String, String, List<String>, int, int) onPush;
-  ViewEntry({Key key, @required this.name, @required this.imageUrl, @required this.like,@required this.id, @required this.onPush});
+  ViewEntry({Key key, @required this.name, @required this.imageUrl, @required this.like,@required this.id});
 
   @override
   Widget build(BuildContext context) {
@@ -36,17 +35,14 @@ class ViewEntry extends StatelessWidget {
               variables: { 'userid':this.id },
               onCompleted: (dynamic resultData) {
                 print(resultData);
-
                 List<dynamic> pics = resultData['getProfileUID']['pictures'];
                 List<String> pics2 = List<String>();
-
                 for(dynamic el in pics){
                   pics2.add(el['filepath']);
                   print(el['filepath']);
                 }
+                Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage(name:resultData['getProfileUID']['info']['name'],imageUrl:resultData['getProfileUID']['profilepic'], pictureUrls:pics2,totalViews: resultData['getProfileUID']['info']['stats']['totalviews'],totalLikes: resultData['getProfileUID']['info']['stats']['totallikes'])));
 
-                //Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage(name:resultData['getProfileUID']['info']['name'],imageUrl:resultData['getProfileUID']['profilepic'], pictureUrls:pics2,totalViews: resultData['getProfileUID']['info']['stats']['totalviews'],totalLikes: resultData['getProfileUID']['info']['stats']['totallikes'])));
-                onPush(context, resultData['getProfileUID']['info']['name'], resultData['getProfileUID']['profilepic'], pics2, resultData['getProfileUID']['info']['stats']['totalviews'], resultData['getProfileUID']['info']['stats']['totallikes']);
               }
             )
           );
@@ -80,8 +76,7 @@ class ViewEntry extends StatelessWidget {
 class ProfileInfoPage extends StatefulWidget {
   final Function(int) disownCallback;
   final ValueNotifier<double> notifier;
-  final Function(BuildContext, String, String, List<String>, int, int) onPush;
-  ProfileInfoPage({Key key, @required this.disownCallback, @required this.notifier, @required this.onPush});
+  ProfileInfoPage({Key key, @required this.disownCallback, @required this.notifier});
 
   @override
   ProfileInfoPageState createState() => ProfileInfoPageState();
@@ -224,8 +219,8 @@ class ProfileInfoPageState extends State<ProfileInfoPage> with SingleTickerProvi
   Widget build(BuildContext context) {
 
     _pages = <Widget>[
-      ProfileInfoViews(scrollController: _scrollController, notifier: _notifier, like: false,entries: _viewEntries, onPush: widget.onPush),
-      ProfileInfoViews(scrollController: _scrollController, notifier: _notifier, like: true,entries: _likeEntries, onPush: widget.onPush),
+      ProfileInfoViews(scrollController: _scrollController, notifier: _notifier, like: false,entries: _viewEntries,),
+      ProfileInfoViews(scrollController: _scrollController, notifier: _notifier, like: true,entries: _likeEntries,),
     ];
 
     return FutureBuilder(

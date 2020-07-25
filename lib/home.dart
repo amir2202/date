@@ -1,6 +1,5 @@
 import 'package:dating/homepages/ChatPage.dart';
 import 'package:dating/homepages/profile_info.dart';
-import 'package:dating/homepages/profile_info_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:dating/homepages/profile.dart';
 import 'package:dating/common.dart';
@@ -24,8 +23,6 @@ class HomePage extends StatefulWidget {
 
 
 class HomePageState extends State<HomePage> {
-
-  final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
 
   void getProfilePicture() async {
     final String path = (await getApplicationDocumentsDirectory()).path;
@@ -119,22 +116,12 @@ class HomePageState extends State<HomePage> {
 
     _pages = <Widget>[
       Text('a'),
-
       Text('a'),
-
       ChatPage(),
-
-//      ProfileInfoPage(
-//        disownCallback: disownCallback,
-//        notifier: _n3
-//      ),
-
-      ProfileInfoWrapper(
+      ProfileInfoPage(
         disownCallback: disownCallback,
-        notifier: _n3,
-        navigatorKey: _navigatorKey,
+        notifier: _n3
       ),
-
       ProfilePage(
         tabCallback: tabCallback,
         disownCallback: disownCallback,
@@ -148,25 +135,23 @@ class HomePageState extends State<HomePage> {
       ),
     ];
 
-    return WillPopScope(
-      onWillPop: () async => !await _navigatorKey.currentState.maybePop(),
-      child: Scaffold(
-        body: Stack(
-          children: [
-            Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                Container(
-                  height: _containerHeight(),
-                  color: Color(0xFFCA436B),
+    return Scaffold(
+      body: Stack(
+        children: [
+          Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Container(
+                height: _containerHeight(),
+                color: Color(0xFFCA436B),
+              ),
+              Expanded(
+                child: Container(
+                  color: Colors.white,
                 ),
-                Expanded(
-                  child: Container(
-                    color: Colors.white,
-                  ),
-                ),
-              ]
-            ),
+              ),
+            ]
+          ),
 
 //          Positioned(
 //            left: Common.screenWidth * 0.05,
@@ -180,47 +165,46 @@ class HomePageState extends State<HomePage> {
 //            ),
 //          ),
 
-            PageView(
-              controller: _pageController,
-              onPageChanged: (index) {
-                setState(() => _index = index);
-              },
-              children: _pages,
-            ),
+          PageView(
+            controller: _pageController,
+            onPageChanged: (index) {
+              setState(() => _index = index);
+            },
+            children: _pages,
+          ),
 
 
-          ]
-        ),
-        bottomNavigationBar: BottomNavigationBar(
-          items: <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Icon(Icons.language),
-              title: Text('Explore'),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.video_library),
-              title: Text('Stories'),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.message),
-              title: Text('Messages'),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.favorite),
-              title: Text('Views'),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person),
-              title: Text('Profile'),
-            ),
-          ],
-          selectedItemColor: Color(0xFFCA436B),
-          unselectedItemColor: Colors.grey,
-          currentIndex: _index,
-          onTap: (index) {
-            tabCallback(index, 0);
-          },
-        ),
+        ]
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.language),
+            title: Text('Explore'),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.video_library),
+            title: Text('Stories'),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.message),
+            title: Text('Messages'),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.favorite),
+            title: Text('Views'),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            title: Text('Profile'),
+          ),
+        ],
+        selectedItemColor: Color(0xFFCA436B),
+        unselectedItemColor: Colors.grey,
+        currentIndex: _index,
+        onTap: (index) {
+          tabCallback(index, 0);
+        },
       ),
     );
   }
