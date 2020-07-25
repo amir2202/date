@@ -54,18 +54,6 @@ class HomePageState extends State<HomePage> {
     });
   }
 
-  c2Callback(value) {
-    setState(() {
-      _c2Opacity = value;
-    });
-  }
-
-  c3HeightSavedCallback() {
-    setState(() {
-      _c3HeightSaved = _c3Height;
-    });
-  }
-
   void _onScroll() {
     setState(() {
       _ownership = -1;
@@ -74,7 +62,6 @@ class HomePageState extends State<HomePage> {
 
   double _cHeight = 0;
   double _c3Height = 0;
-  double _c3HeightSaved = 0;
 
   double _containerHeight() {
     if (Common.screenHeight == null || !_pageController.hasClients) {
@@ -93,8 +80,6 @@ class HomePageState extends State<HomePage> {
   }
 
   PageController _pageController;
-
-  bool _c2Opacity = false;
 
   void _onBuildCompleted(Duration duration) {
     if (Common.screenWidth == null || Common.screenHeight == null) {
@@ -146,8 +131,6 @@ class HomePageState extends State<HomePage> {
 
       ProfileInfoWrapper(
         disownCallback: disownCallback,
-        c2Callback: c2Callback,
-        c3HeightSavedCallback: c3HeightSavedCallback,
         notifier: _n3,
         navigatorKey: _navigatorKey,
       ),
@@ -155,7 +138,6 @@ class HomePageState extends State<HomePage> {
       ProfilePage(
         tabCallback: tabCallback,
         disownCallback: disownCallback,
-        c2Callback: c2Callback,
         notifier: _n4,
         myProfile: true,
         name: widget.name,
@@ -167,21 +149,10 @@ class HomePageState extends State<HomePage> {
     ];
 
     return WillPopScope(
-      onWillPop: () async {
-        setState(() {
-          _c2Opacity = false;
-          _n3.value = _c3HeightSaved;
-        });
-
-        if (_index == 3)
-          return !await _navigatorKey.currentState.maybePop();
-        else
-          return true;
-      },
+      onWillPop: () async => !await _navigatorKey.currentState.maybePop(),
       child: Scaffold(
         body: Stack(
           children: [
-
             Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
@@ -197,20 +168,17 @@ class HomePageState extends State<HomePage> {
               ]
             ),
 
-            Positioned(
-              top: 0,
-              left: 0,
-              child: Opacity(
-                opacity: _c2Opacity ? 1.0 : 0.0,
-                child: AnimatedContainer(
-                  duration: Duration(milliseconds: 200),
-                  curve: Curves.ease,
-                  height: _c2Opacity ? Common.screenHeight * 0.2 : _c3HeightSaved,
-                  width: Common.screenWidth,
-                  color: Color(0xFFCA436B),
-                ),
-              ),
-            ),
+//          Positioned(
+//            left: Common.screenWidth * 0.05,
+//            top: Common.screenHeight * 0.1,
+//            child: Container(
+//                width: Common.screenWidth * 0.9,
+//                height: 150,
+//                child: Card(
+//                  elevation: 10,
+//                )
+//            ),
+//          ),
 
             PageView(
               controller: _pageController,
@@ -219,6 +187,7 @@ class HomePageState extends State<HomePage> {
               },
               children: _pages,
             ),
+
 
           ]
         ),

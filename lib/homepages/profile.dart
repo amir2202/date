@@ -41,7 +41,6 @@ class ProfileImageBox extends StatelessWidget {
 class ProfilePage extends StatefulWidget {
   final Function(int, int) tabCallback;
   final Function(int) disownCallback;
-  final Function(bool) c2Callback;
   final ValueNotifier<double> notifier;
 
   final bool myProfile;
@@ -56,7 +55,6 @@ class ProfilePage extends StatefulWidget {
   ProfilePage({Key key,
     @required this.tabCallback,
     @required this.disownCallback,
-    @required this.c2Callback,
     @required this.notifier,
     @required this.myProfile,
     @required this.name,
@@ -119,8 +117,6 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
 
     // when the image grid is scrolled in any direction...
     _scrollController.addListener(() {setState(() {
-
-      widget.c2Callback(false);
 
       // this page owns control over the pink container's size
       if (_scrollController.position.userScrollDirection != ScrollDirection.idle) {
