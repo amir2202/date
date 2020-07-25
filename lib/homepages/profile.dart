@@ -121,7 +121,7 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
 
       // this page owns control over the pink container's size
       if (_scrollController.position.userScrollDirection != ScrollDirection.idle) {
-        widget.disownCallback(4);
+        widget.disownCallback(widget.myProfile ? 4 : 3);
       }
       widget.notifier.value = _containerHeight();
 
