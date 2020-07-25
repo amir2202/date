@@ -29,17 +29,23 @@ class ViewEntry extends StatelessWidget {
       child: InkWell(
         onTap: () {
           print(this.id);
-          GraphQLHandler.client2.mutate(MutationOptions(documentNode: gql(GraphQLHandler.getProfile),variables: {'userid':this.id},onCompleted: (dynamic resultData) {
-            print(resultData);
-            List<dynamic> pics = resultData['getProfileUID']['pictures'];
-            List<String> pics2 = List<String>();
-            for(dynamic el in pics){
-              pics2.add(el['filepath']);
-              print(el['filepath']);
-            }
-            Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage(name:resultData['getProfileUID']['info']['name'],imageUrl:resultData['getProfileUID']['profilepic'], pictureUrls:pics2,totalViews: resultData['getProfileUID']['info']['stats']['totalviews'],totalLikes: resultData['getProfileUID']['info']['stats']['totallikes'])));
+          GraphQLHandler.client2.mutate(
+            MutationOptions(
+              documentNode: gql(GraphQLHandler.getProfile),
+              variables: { 'userid':this.id },
+              onCompleted: (dynamic resultData) {
+                print(resultData);
+                List<dynamic> pics = resultData['getProfileUID']['pictures'];
+                List<String> pics2 = List<String>();
+                for(dynamic el in pics){
+                  pics2.add(el['filepath']);
+                  print(el['filepath']);
+                }
+                Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage(name:resultData['getProfileUID']['info']['name'],imageUrl:resultData['getProfileUID']['profilepic'], pictureUrls:pics2,totalViews: resultData['getProfileUID']['info']['stats']['totalviews'],totalLikes: resultData['getProfileUID']['info']['stats']['totallikes'])));
 
-          }));
+              }
+            )
+          );
         },
         splashColor: Colors.grey.withOpacity(0.5),
         child: Container(

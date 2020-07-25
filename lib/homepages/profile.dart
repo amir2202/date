@@ -39,15 +39,30 @@ class ProfileImageBox extends StatelessWidget {
 }
 
 class ProfilePage extends StatefulWidget {
-  final Function(int) callback;
+  final Function(int, int) tabCallback;
   final Function(int) disownCallback;
   final ValueNotifier<double> notifier;
+
+  final bool myProfile;
+
   final String name;
   final String imageUrl;
   final List<String> pictureUrls;
+
   final int totalLikes;
   final int totalViews;
-  ProfilePage({Key key, @required this.callback, @required this.disownCallback, @required this.notifier, @required this.name, @required this.imageUrl, @required this.pictureUrls,@required this.totalViews, @required this.totalLikes});
+
+  ProfilePage({Key key,
+    @required this.tabCallback,
+    @required this.disownCallback,
+    @required this.notifier,
+    @required this.myProfile,
+    @required this.name,
+    @required this.imageUrl,
+    @required this.pictureUrls,
+    @required this.totalViews,
+    @required this.totalLikes
+  });
 
   @override
   ProfilePageState createState() => ProfilePageState();
@@ -103,8 +118,11 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
 
     // when the image grid is scrolled in any direction...
     _scrollController.addListener(() {setState(() {
+
       // this page owns control over the pink container's size
-      widget.disownCallback(4);
+      if (_scrollController.position.userScrollDirection != ScrollDirection.idle) {
+        widget.disownCallback(4);
+      }
       widget.notifier.value = _containerHeight();
 
       // hide and show the "add picture" floating action button
@@ -120,7 +138,7 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
         if (!_refreshing && _finishedRefreshing) {
           _refreshing = true;
           _finishedRefreshing = false;
-          print('im refreshing bro wtf');
+
           GraphQLClient client = GraphQLHandler.client2;
           client.mutate(MutationOptions(documentNode: gql(GraphQLHandler.refreshLikesViews), onCompleted: (dynamic result) {
             setState(() {
@@ -131,7 +149,6 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
                 _finishedRefreshing = true;
               }
 
-              print('yes i refreshed yes i did it omgölöpöö');
             });
           }, variables: {'userid': Common.userid}));
         }
@@ -260,7 +277,8 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
 
         // BIO / DESCRIPTION EDIT BUTTON
 
-        Positioned(
+        if (widget.myProfile)
+          Positioned(
           top: _containerPosition.dy + _containerSize.height - 27.5 +
               (_scrollController.hasClients ?
               (_scrollController.position.pixels > 0 ? -1 : 0.5) *
@@ -356,11 +374,16 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: <Widget>[
                               RawMaterialButton(
-                                onPressed: () { widget.callback(3); },
+                                onPressed: () {
+                                    if (widget.myProfile)
+                                      widget.tabCallback(3, 0);
+                                    else
+                                      return;
+                                  },
                                   constraints: BoxConstraints(),
                                   shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
                                   splashColor: Color(0xFFCA436B),
-                                  padding: EdgeInsets.all(10.0), // optional, in order to add additional space around text if needed
+                                  padding: EdgeInsets.all(10.0),
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: <Widget>[
@@ -374,11 +397,17 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
                                 width: 10,
                               ),
                               RawMaterialButton(
-                                  onPressed: () { widget.callback(3); },
+                                  onPressed: () {
+                                    if (widget.myProfile)
+                                      widget.tabCallback(3, 1);
+                                    else
+                                      // TODO: MUTATION FOR LIKING A PROFILE
+                                      return;
+                                  },
                                   constraints: BoxConstraints(),
                                   shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
                                   splashColor: Color(0xFFCA436B),
-                                  padding: EdgeInsets.all(10.0), // optional, in order to add additional space around text if needed
+                                  padding: EdgeInsets.all(10.0),
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: <Widget>[
@@ -402,26 +431,27 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
 
         // ADD PICTURE BUTTON
 
-        AnimatedPositioned(
-          duration: Duration(milliseconds: 200),
-          bottom: _hideFab ? -100 : Common.screenHeight * 0.02,
-          right: Common.screenWidth * 0.05,
-          child: FloatingActionButton(
-            onPressed: () {
-              Future<QueryResult> r = ImageHandler.openGallery(Common.userid,false);
-              r.then((value) {
-                setState(() {
-                  print(value.data);
-                  _pictures.insert(0,value.data['upload']);
-                  _pictureIndex++;
+        if (widget.myProfile)
+          AnimatedPositioned(
+            duration: Duration(milliseconds: 200),
+            bottom: _hideFab ? -100 : Common.screenHeight * 0.02,
+            right: Common.screenWidth * 0.05,
+            child: FloatingActionButton(
+              onPressed: () {
+                Future<QueryResult> r = ImageHandler.openGallery(Common.userid,false);
+                r.then((value) {
+                  setState(() {
+                    print(value.data);
+                    _pictures.insert(0,value.data['upload']);
+                    _pictureIndex++;
+                  });
                 });
-              });
-            },
-            child: Icon(Icons.add_photo_alternate),
-            backgroundColor: Color(0xFFCA436B),
-            splashColor: Colors.white,
-          ),
-        )
+              },
+              child: Icon(Icons.add_photo_alternate),
+              backgroundColor: Color(0xFFCA436B),
+              splashColor: Colors.white,
+            ),
+          )
 
       ],
     );

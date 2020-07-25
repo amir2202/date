@@ -37,7 +37,7 @@ class HomePageState extends State<HomePage> {
   ValueNotifier<double> _n3;
   ValueNotifier<double> _n4;
 
-  callback(index) {
+  tabCallback(index, option) {
     setState(() {
       _index = index;
       _pageController.animateToPage(index,
@@ -118,8 +118,21 @@ class HomePageState extends State<HomePage> {
       Text('a'),
       Text('a'),
       ChatPage(),
-      ProfileInfoPage(disownCallback: disownCallback, notifier: _n3),
-      ProfilePage(callback: callback, disownCallback: disownCallback, notifier: _n4, name: widget.name, imageUrl: widget.imageUrl, pictureUrls: widget.pictureUrls, totalViews: widget.totalViews, totalLikes: widget.totalLikes),
+      ProfileInfoPage(
+        disownCallback: disownCallback,
+        notifier: _n3
+      ),
+      ProfilePage(
+        tabCallback: tabCallback,
+        disownCallback: disownCallback,
+        notifier: _n4,
+        myProfile: true,
+        name: widget.name,
+        imageUrl: widget.imageUrl,
+        pictureUrls: widget.pictureUrls,
+        totalViews: widget.totalViews,
+        totalLikes: widget.totalLikes
+      ),
     ];
 
     return Scaffold(
@@ -190,7 +203,7 @@ class HomePageState extends State<HomePage> {
         unselectedItemColor: Colors.grey,
         currentIndex: _index,
         onTap: (index) {
-          callback(index);
+          tabCallback(index, 0);
         },
       ),
     );
