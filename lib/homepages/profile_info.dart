@@ -1,5 +1,6 @@
 import 'package:dating/GraphQLHandler.dart';
 import 'package:dating/home.dart';
+import 'package:dating/homepages/profile_external.dart';
 import 'package:dating/homepages/profile_info_views.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -19,8 +20,7 @@ class ViewEntry extends StatelessWidget {
   final String imageUrl;
   final bool like;
   final String id;
-  final Function(BuildContext, String, String, List<String>, int, int) onPush;
-  ViewEntry({Key key, @required this.name, @required this.imageUrl, @required this.like,@required this.id, @required this.onPush});
+  ViewEntry({Key key, @required this.name, @required this.imageUrl, @required this.like,@required this.id});
 
   @override
   Widget build(BuildContext context) {
@@ -30,6 +30,7 @@ class ViewEntry extends StatelessWidget {
       child: InkWell(
         onTap: () {
           print(this.id);
+
           GraphQLHandler.client2.mutate(
             MutationOptions(
               documentNode: gql(GraphQLHandler.getProfile),
@@ -45,8 +46,21 @@ class ViewEntry extends StatelessWidget {
                   print(el['filepath']);
                 }
 
-                //Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage(name:resultData['getProfileUID']['info']['name'],imageUrl:resultData['getProfileUID']['profilepic'], pictureUrls:pics2,totalViews: resultData['getProfileUID']['info']['stats']['totalviews'],totalLikes: resultData['getProfileUID']['info']['stats']['totallikes'])));
-                onPush(context, resultData['getProfileUID']['info']['name'], resultData['getProfileUID']['profilepic'], pics2, resultData['getProfileUID']['info']['stats']['totalviews'], resultData['getProfileUID']['info']['stats']['totallikes']);
+                Navigator.push(
+                  context,
+                  PageRouteBuilder(
+                    pageBuilder: (context, animation, secondaryAnimation) => ProfileExternalPage(
+                      name: resultData['getProfileUID']['info']['name'],
+                      imageUrl: resultData['getProfileUID']['profilepic'],
+                      pictureUrls: pics2,
+                      totalViews: resultData['getProfileUID']['info']['stats']['totalviews'],
+                      totalLikes: resultData['getProfileUID']['info']['stats']['totallikes']
+                    ),
+                    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                      return SlideTransition(position: animation.drive(Tween(begin: Offset(0,1), end: Offset.zero).chain(CurveTween(curve: Curves.ease))), child: child);
+                    }
+                  ),
+                );
               }
             )
           );
@@ -80,8 +94,7 @@ class ViewEntry extends StatelessWidget {
 class ProfileInfoPage extends StatefulWidget {
   final Function(int) disownCallback;
   final ValueNotifier<double> notifier;
-  final Function(BuildContext, String, String, List<String>, int, int) onPush;
-  ProfileInfoPage({Key key, @required this.disownCallback, @required this.notifier, @required this.onPush});
+  ProfileInfoPage({Key key, @required this.disownCallback, @required this.notifier});
 
   @override
   ProfileInfoPageState createState() => ProfileInfoPageState();
@@ -224,8 +237,8 @@ class ProfileInfoPageState extends State<ProfileInfoPage> with SingleTickerProvi
   Widget build(BuildContext context) {
 
     _pages = <Widget>[
-      ProfileInfoViews(scrollController: _scrollController, notifier: _notifier, like: false,entries: _viewEntries, onPush: widget.onPush),
-      ProfileInfoViews(scrollController: _scrollController, notifier: _notifier, like: true,entries: _likeEntries, onPush: widget.onPush),
+      ProfileInfoViews(scrollController: _scrollController, notifier: _notifier, like: false,entries: _viewEntries,),
+      ProfileInfoViews(scrollController: _scrollController, notifier: _notifier, like: true,entries: _likeEntries,),
     ];
 
     return FutureBuilder(
@@ -300,8 +313,8 @@ class ProfileInfoPageState extends State<ProfileInfoPage> with SingleTickerProvi
         } else {
           return Center(
             child: Container(
-              width: 100,
-              height: 100,
+              width: 75,
+              height: 75,
               child: CircularProgressIndicator(
                 backgroundColor: Colors.grey.withOpacity(0.5),
                 valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFCA436B))

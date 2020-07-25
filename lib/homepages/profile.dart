@@ -41,7 +41,6 @@ class ProfileImageBox extends StatelessWidget {
 class ProfilePage extends StatefulWidget {
   final Function(int, int) tabCallback;
   final Function(int) disownCallback;
-  final Function(bool) c2Callback;
   final ValueNotifier<double> notifier;
 
   final bool myProfile;
@@ -56,7 +55,6 @@ class ProfilePage extends StatefulWidget {
   ProfilePage({Key key,
     @required this.tabCallback,
     @required this.disownCallback,
-    @required this.c2Callback,
     @required this.notifier,
     @required this.myProfile,
     @required this.name,
@@ -78,6 +76,7 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
 
   // stuff that just needs to be here for layout calculations
   GlobalKey _bioKey = GlobalKey();
+  Offset _containerPosition = Offset(0, 0);
   Size _containerSize = Size(0, 0);
 
   ScrollController _scrollController;
@@ -120,11 +119,9 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
     // when the image grid is scrolled in any direction...
     _scrollController.addListener(() {setState(() {
 
-      widget.c2Callback(false);
-
       // this page owns control over the pink container's size
       if (_scrollController.position.userScrollDirection != ScrollDirection.idle) {
-        widget.disownCallback(widget.myProfile ? 4 : 3);
+        widget.disownCallback(4);
       }
       widget.notifier.value = _containerHeight();
 
@@ -191,9 +188,13 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
   // layout stuff
   _onBuildCompleted(Duration timestamp) {
     final RenderBox containerRenderBox = _bioKey.currentContext.findRenderObject();
+    final containerPosition = containerRenderBox.localToGlobal(Offset.zero);
 
     setState(() {
+      _containerPosition = containerPosition;
       _containerSize = containerRenderBox.size;
+      widget.notifier.value = Common.screenHeight * 0.2;
+      widget.disownCallback(widget.myProfile ? 4 : -1);
     });
   }
 
@@ -207,7 +208,7 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
         // REFRESH ICON
 
         Positioned(
-          top: Common.screenHeight * 0.1 + 175 + _containerSize.height + Common.screenHeight * 0.1,
+          top: _containerPosition.dy + _containerSize.height + Common.screenHeight * 0.1,
           child: Opacity(
             opacity: _scrollController.hasClients ? (_scrollController.position.pixels < 0 ? ((_scrollController.position.pixels * _scrollController.position.pixels * 0.00002) < 1 ? (_scrollController.position.pixels * _scrollController.position.pixels * 0.00002) : 1.0) : 0.0) : 0.0,
             child: Container(
@@ -238,7 +239,7 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
             itemBuilder: (BuildContext context, int index) {
               return ProfileImageBox(imageUrl: _pictures[index]);
             },
-            padding: EdgeInsets.fromLTRB(0, Common.screenHeight * 0.1 + 175 + 140, 0, 0),
+            padding: EdgeInsets.fromLTRB(0, _containerPosition.dy + 140, 0, 0),
             primary: false,
             scrollDirection: Axis.vertical,
             physics: BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
@@ -280,7 +281,7 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
 
         if (widget.myProfile)
           Positioned(
-          top: Common.screenHeight * 0.1 + 175 + _containerSize.height - 27.5 +
+          top: _containerPosition.dy + _containerSize.height - 27.5 +
               (_scrollController.hasClients ?
               (_scrollController.position.pixels > 0 ? -1 : 0.5) *
                   (_scrollController.position.pixels * _scrollController.position.pixels * 0.0015 +
@@ -313,7 +314,7 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
               : 0),
           left: Common.screenWidth * 0.05,
           child: Hero(
-            tag: 'preview_tag',
+            tag: widget.myProfile ? 'preview_tag' : 'external_tag',
             child: SizedBox(
               width: Common.screenWidth * 0.9,
               height: 150,
