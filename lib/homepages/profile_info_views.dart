@@ -33,7 +33,7 @@ class ProfileInfoViewsState extends State<ProfileInfoViews> with AutomaticKeepAl
       behavior: CmScrollBehavior(),
       child: ListView.builder(
         itemCount: widget.entries.length,
-        controller: widget.notifier.value == widget.like ? widget.scrollController : null,
+        controller: widget.scrollController,
         itemBuilder: (BuildContext context, int index) {
           return ViewEntry(name:widget.entries[index]['byName'] , imageUrl: widget.entries[index]['byPicture'], like: widget.like,id:widget.entries[index]['by'].toString());
         },

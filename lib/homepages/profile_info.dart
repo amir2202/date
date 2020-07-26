@@ -96,24 +96,26 @@ class ViewEntry extends StatelessWidget {
 class ProfileInfoPage extends StatefulWidget {
   final Function(int) disownCallback;
   final ValueNotifier<double> notifier;
+  final ValueNotifier<double> notifier2;
+  final ValueNotifier<bool> forceForward;
   final TabController tabController;
-  ProfileInfoPage({Key key, @required this.disownCallback, @required this.notifier, @required this.tabController});
+  ProfileInfoPage({Key key, @required this.disownCallback, @required this.notifier, @required this.notifier2, @required this.forceForward, @required this.tabController});
 
   @override
   ProfileInfoPageState createState() => ProfileInfoPageState();
 }
 
-class ProfileInfoPageState extends State<ProfileInfoPage> with AutomaticKeepAliveClientMixin<ProfileInfoPage> {
+class ProfileInfoPageState extends State<ProfileInfoPage> with AutomaticKeepAliveClientMixin<ProfileInfoPage>, SingleTickerProviderStateMixin {
 
   @override
   bool get wantKeepAlive => true;
 
   double _containerHeight() {
     return Common.screenHeight * 0.12 +
-        (_scrollController.hasClients ?
-        (_scrollController.position.pixels > 0 ?
-          (Common.screenHeight * 0.12 - _scrollController.position.pixels > 0 ? -_scrollController.position.pixels : -Common.screenHeight * 0.12) :
-          (_scrollController.position.pixels * _scrollController.position.pixels * 0.001))
+        (_scNotifier.value.hasClients ?
+        (_scNotifier.value.position.pixels > 0 ?
+          (Common.screenHeight * 0.12 - _scNotifier.value.position.pixels > 0 ? -_scNotifier.value.position.pixels : -Common.screenHeight * 0.12) :
+          (_scNotifier.value.position.pixels * _scNotifier.value.position.pixels * 0.001))
           : 0);
   }
 
@@ -124,19 +126,80 @@ class ProfileInfoPageState extends State<ProfileInfoPage> with AutomaticKeepAliv
       return -200.0 + (_showTabBarScroll < 200.0 ? _showTabBarScroll : 200.0);
     } else {
       return 0.0 -
-          (_scrollController.hasClients ?
-            (_scrollController.position.pixels > 0 ?
-              _scrollController.position.pixels
-            : -(_scrollController.position.pixels * _scrollController.position.pixels * 0.001))
+          (_scNotifier.value.hasClients ?
+            (_scNotifier.value.position.pixels > 0 ?
+            _scNotifier.value.position.pixels
+            : -(_scNotifier.value.position.pixels * _scNotifier.value.position.pixels * 0.001))
           : 0.0);
     }
   }
 
-  ScrollController _scrollController;
+  void _onScroll() {
+    setState(() {
+
+      _swapping = -1;
+      widget.forceForward.value = false;
+
+      if (_notifier.value == false) {
+        _tp0 = -_scNotifier.value.position.pixels;
+      } else {
+        _tp1 = -_scNotifier.value.position.pixels;
+      }
+
+      // this page owns control over the pink container's size
+      if (_scNotifier.value.position.userScrollDirection != ScrollDirection.idle) {
+        widget.disownCallback(3);
+      }
+
+      widget.notifier.value = _showTabBarLast != 0 ? ((Common.screenHeight * 0.12 - 200.0 + (_showTabBarScroll < 200.0 ? _showTabBarScroll : 200.0)) > 0 ? (Common.screenHeight * 0.12 - 200.0 + (_showTabBarScroll < 200.0 ? _showTabBarScroll : 200.0)) : 0) : _containerHeight();
+
+      // code for managing the tab bar position
+      if (_scNotifier.value.position.userScrollDirection == ScrollDirection.forward) {
+        if (_scNotifier.value.position.pixels <= 0) {
+          _showTabBarLast = 0;
+        }
+
+        if (_hideTabBar && !_showTabBarLimit && _scNotifier.value.position.pixels > Common.screenHeight * 0.5) {
+          _showTabBarLast = _scNotifier.value.position.pixels;
+        }
+
+        _showTabBarScroll = _showTabBarLast - _scNotifier.value.position.pixels;
+
+        if (_showTabBarScroll > 200 && _scNotifier.value.position.pixels > 0) {
+          _showTabBarLimit = false;
+        } else {
+          _showTabBarLimit = true;
+        }
+
+        _hideTabBar = false;
+      } else if (_scNotifier.value.position.userScrollDirection == ScrollDirection.reverse) {
+        if (!_hideTabBar && !_showTabBarLimit) {
+          _showTabBarLast = _scNotifier.value.position.pixels + 200;
+        }
+
+        _showTabBarScroll = _showTabBarLast - _scNotifier.value.position.pixels;
+
+        if (_showTabBarScroll < 0) {
+          _showTabBarLimit = false;
+        } else {
+          _showTabBarLimit = true;
+        }
+
+        _hideTabBar = true;
+      }
+
+      _tp = _topPosition();
+    });
+  }
+
+  ScrollController _scrollController0;
+  ScrollController _scrollController1;
+  ValueNotifier<ScrollController> _scNotifier;
+
+  AnimationController _animationController;
+  Animation<double> _animation;
 
   ValueNotifier<bool> _notifier;
-  double _sp1 = 0;
-  double _sp2 = 0;
 
   List<dynamic> _viewEntries;
   List<dynamic> _likeEntries;
@@ -148,6 +211,10 @@ class ProfileInfoPageState extends State<ProfileInfoPage> with AutomaticKeepAliv
   double _showTabBarLast = 0;
   double _showTabBarScroll = 0;
 
+  int _swapping = -1;
+  double _tp0 = 0;
+  double _tp1 = 0;
+
   //LOAD
   GraphQLClient client = GraphQLHandler.client2;
   Future<QueryResult> r;
@@ -155,77 +222,37 @@ class ProfileInfoPageState extends State<ProfileInfoPage> with AutomaticKeepAliv
   Future<QueryResult> doStuff() async {
     return await client.mutate(MutationOptions(documentNode: gql(GraphQLHandler.getFullLikesViews),variables: {'userid':Common.userid}));
   }
+
   @override
   void initState() {
     super.initState();
-    _scrollController = ScrollController();
+    _scrollController0 = ScrollController();
+    _scrollController1 = ScrollController();
+    _scNotifier = ValueNotifier<ScrollController>(_scrollController0);
+
+    _animationController = AnimationController(
+      duration: Duration(milliseconds: 200),
+      vsync: this,
+    );
 
     _notifier = ValueNotifier<bool>(false);
 
     _likeEntries = null;
     _viewEntries = null;
 
-      r = doStuff();
-      r.then((value) {
-        setState(() {
-          _likeEntries = value.data['getFullStats']['likes'];
-          _viewEntries = value.data['getFullStats']['views'];
-        });
-      });
-
-    _scrollController.addListener(() {
+    r = doStuff();
+    r.then((value) {
       setState(() {
-        // this page owns control over the pink container's size
-        if (_scrollController.position.userScrollDirection != ScrollDirection.idle) {
-          widget.disownCallback(3);
-        }
-
-        // manage tab bar positions for views / likes pages
-        if (_notifier.value == false) {
-          _sp1 = _scrollController.position.pixels;
-        } else {
-          _sp2 = _scrollController.position.pixels;
-        }
-
-        widget.notifier.value = _showTabBarLast != 0 ? ((Common.screenHeight * 0.12 - 200.0 + (_showTabBarScroll < 200.0 ? _showTabBarScroll : 200.0)) > 0 ? (Common.screenHeight * 0.12 - 200.0 + (_showTabBarScroll < 200.0 ? _showTabBarScroll : 200.0)) : 0) : _containerHeight();
-
-        // code for managing the tab bar position
-        if (_scrollController.position.userScrollDirection == ScrollDirection.forward) {
-          if (_scrollController.position.pixels <= 0) {
-            _showTabBarLast = 0;
-          }
-
-          if (_hideTabBar && !_showTabBarLimit && _scrollController.position.pixels > Common.screenHeight * 0.5) {
-            _showTabBarLast = _scrollController.position.pixels;
-          }
-
-          _showTabBarScroll = _showTabBarLast - _scrollController.position.pixels;
-
-          if (_showTabBarScroll > 200) {
-            _showTabBarLimit = false;
-          } else {
-            _showTabBarLimit = true;
-          }
-
-          _hideTabBar = false;
-        } else if (_scrollController.position.userScrollDirection == ScrollDirection.reverse) {
-          if (!_hideTabBar && !_showTabBarLimit) {
-            _showTabBarLast = _scrollController.position.pixels + 200;
-          }
-
-          _showTabBarScroll = _showTabBarLast - _scrollController.position.pixels;
-
-          if (_showTabBarScroll < 0) {
-            _showTabBarLimit = false;
-          } else {
-            _showTabBarLimit = true;
-          }
-
-          _hideTabBar = true;
-        }
-
-        _tp = _topPosition();
+        _likeEntries = value.data['getFullStats']['likes'];
+        _viewEntries = value.data['getFullStats']['views'];
       });
+    });
+
+    _scrollController0.addListener(_onScroll);
+    _scrollController1.addListener(_onScroll);
+
+    widget.tabController.addListener(() {
+      _scNotifier.value = widget.tabController.index == 0 ? _scrollController0 : _scrollController1;
     });
 
   }
@@ -234,8 +261,8 @@ class ProfileInfoPageState extends State<ProfileInfoPage> with AutomaticKeepAliv
   Widget build(BuildContext context) {
 
     _pages = <Widget>[
-      ProfileInfoViews(scrollController: _scrollController, notifier: _notifier, like: false, entries: _viewEntries),
-      ProfileInfoViews(scrollController: _scrollController, notifier: _notifier, like: true, entries: _likeEntries),
+      ProfileInfoViews(scrollController: _scrollController0, notifier: _notifier, like: false, entries: _viewEntries),
+      ProfileInfoViews(scrollController: _scrollController1, notifier: _notifier, like: true, entries: _likeEntries),
     ];
 
     return FutureBuilder(
@@ -252,7 +279,17 @@ class ProfileInfoPageState extends State<ProfileInfoPage> with AutomaticKeepAliv
               ),
 
               Positioned(
-                top: _tp,
+                top: 0,
+                left: 0,
+                child: Container(
+                  width: Common.screenWidth,
+                  height: !widget.forceForward.value ? (Common.screenHeight * 0.12 + _tp > 0 ? Common.screenHeight * 0.12 + _tp : 0) : widget.notifier2.value,
+                  color: Color(0xFFCA436B),
+                ),
+              ),
+
+              Positioned(
+                top: _swapping >= 0 ? _animation.value : _tp,
                 child: AnimatedContainer(
                   duration: Duration(milliseconds: 200),
                   width: Common.screenWidth,
@@ -261,7 +298,7 @@ class ProfileInfoPageState extends State<ProfileInfoPage> with AutomaticKeepAliv
                     children: <Widget>[
                       Container(
                         height: Common.screenHeight * 0.12,
-                        color: Color(0xFFCA436B),
+                        color: Color(0xFFCA436B).withOpacity(0.6),
                       ),
                       Positioned(
                         left: Common.screenWidth * 0.05,
@@ -274,10 +311,24 @@ class ProfileInfoPageState extends State<ProfileInfoPage> with AutomaticKeepAliv
                             child: TabBar(
                               onTap: (index) {
                                 setState(() {
-                                  _notifier.value = index == 0 ? false : true;
+                                  _notifier.value = index == 1;
+                                  _swapping = widget.tabController.index;
+
+                                  widget.forceForward.value = false;
+
+                                  if (widget.tabController.indexIsChanging) {
+                                    _animation = Tween<double>(
+                                        begin: index == 0 ? _tp1 : _tp0,
+                                        end: index == 0 ? _tp0 : _tp1)
+                                        .chain(CurveTween(curve: Curves.ease)).animate(_animationController)..addListener(() {setState(() {
+                                      widget.notifier.value = Common.screenHeight * 0.12 + _animation.value;
+                                      widget.disownCallback(3);
+                                    });});
+                                    _animationController.forward(from: 0);
+                                  }
+
                                   widget.tabController.animateTo(index,
                                       duration: Duration(milliseconds: 200), curve: Curves.easeOut);
-                                  _scrollController.animateTo(index == 0 ? _sp1 : _sp2, duration: Duration(milliseconds: 200), curve: Curves.ease);
                                 });
                               },
                               controller: widget.tabController,

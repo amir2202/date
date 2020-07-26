@@ -53,6 +53,9 @@ class HomePageState extends State<HomePage> with SingleTickerProviderStateMixin 
   ValueNotifier<double> _n3;
   ValueNotifier<double> _n4;
 
+  ValueNotifier<double> _forwardNotifier3;
+  ValueNotifier<bool> _forceForward3;
+
   double _cHeight = 0;
   double _c3Height = 0;
 
@@ -81,6 +84,7 @@ class HomePageState extends State<HomePage> with SingleTickerProviderStateMixin 
       return 0;
     } else if (_ownership == -1) {
       double t = _pageController.hasClients ? _cHeight - (4 - _pageController.page) * (_cHeight - _c3Height) : 0;
+      _forwardNotifier3.value = t > _c3Height ? t : _c3Height;
       return t > _c3Height ? t : _c3Height;
     } else if (_ownership == HomePageIndices.profile) {
       _cHeight = _n4.value;
@@ -117,11 +121,14 @@ class HomePageState extends State<HomePage> with SingleTickerProviderStateMixin 
     _pageController.addListener(() {
       setState(() {
         _ownership = -1;
+        _forceForward3.value = true;
       });
     });
 
     _n3 = ValueNotifier<double>(0);
     _n4 = ValueNotifier<double>(0);
+    _forwardNotifier3 = ValueNotifier<double>(0);
+    _forceForward3 = ValueNotifier<bool>(true);
 
     WidgetsBinding.instance.addPostFrameCallback(_onBuildCompleted);
   }
@@ -150,6 +157,8 @@ class HomePageState extends State<HomePage> with SingleTickerProviderStateMixin 
       ProfileInfoPage(
         disownCallback: disownCallback,
         notifier: _n3,
+        notifier2: _forwardNotifier3,
+        forceForward: _forceForward3,
         tabController: _infoTabController,
       ),
 
