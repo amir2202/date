@@ -297,7 +297,7 @@ class ProfileInfoPageState extends State<ProfileInfoPage> with AutomaticKeepAliv
                     children: <Widget>[
                       Container(
                         height: Common.screenHeight * 0.12,
-                        color: Color(0xFFCA436B).withOpacity(0.6),
+                        color: Color(0xFFCA436B),
                       ),
                       Positioned(
                         left: Common.screenWidth * 0.05,
