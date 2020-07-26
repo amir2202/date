@@ -1,15 +1,12 @@
-import 'dart:collection';
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/button_list.dart';
 import 'package:flutter_signin_button/button_view.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'GraphQLHandler.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as JSON;
 
+import 'GraphQLHandler.dart';
 import 'common.dart';
 import 'home.dart';
 
@@ -20,6 +17,7 @@ class LogInPage extends StatefulWidget {
 }
 
 class LogInPageState extends State<LogInPage> {
+
   bool isLoggedIn = false;
   FocusNode textFocusNode1 = new FocusNode();
   FocusNode textFocusNode2 = new FocusNode();
@@ -49,7 +47,7 @@ class LogInPageState extends State<LogInPage> {
       case FacebookLoginStatus.loggedIn:
 
         final token = result.accessToken.token;
-        final graphResponse = await http.get('https://graph.facebook.com/v2.12/me?fields=name,gender,picture,email&access_token=${token}');
+        final graphResponse = await http.get('https://graph.facebook.com/v2.12/me?fields=name,gender,picture,email&access_token=$token');
         final profile = JSON.jsonDecode(graphResponse.body);
 
         print(profile);
@@ -57,69 +55,84 @@ class LogInPageState extends State<LogInPage> {
         //IF TOKEN ASSOSCIATED WITH AN ACCOUNT GO TO PROFILE PAGE^^ WITH USERID
         //UNTIL FACEBOOK grants permission default user is male currently
         GraphQLClient client = new GraphQLClient(link:HttpLink(uri:'http://54.37.205.205/graphql'), cache: InMemoryCache());
-        client.mutate(MutationOptions(documentNode: gql(GraphQLHandler.facebookLinked),variables: {'fbid':profile['id'].toString()},onCompleted: (dynamic result){
-          print(result);
-          if(result['FacebookLinked'] == null){
-           //DO FACEBOOK stuff here
 
-            client.mutate(MutationOptions(documentNode: gql(GraphQLHandler.addFacebookUser),variables: {'name':profile['name'],'premium':false,'gender':true,'profile':profile['picture']['data']['url'],'fbid':profile['id']},onCompleted: (dynamic result2){
-              print("SECOND RESULT");
-              //GO TO NEXT PAGE
-              //TODO GO TO second
+        client.mutate(
+          MutationOptions(
+            documentNode: gql(GraphQLHandler.facebookLinked),
+            variables: {'fbid': profile['id'].toString()},
+            onCompleted: (dynamic result) {
+              print(result);
+              if (result['FacebookLinked'] == null) {
 
-              // WHY ARE VIEWS AND LIKES SET TO 0 ???
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => HomePage(
-                    name: result2['addFacebook']['info']['name'],
-                    totalLikes: 0,
-                    totalViews: 0,
-                    imageUrl: profile['picture']['data']['url'],
-                    pictureUrls: [profile['picture']['data']['url']]
+                client.mutate(
+                  MutationOptions(
+                    documentNode: gql(GraphQLHandler.addFacebookUser),
+                    variables: {'name': profile['name'], 'premium': false, 'gender': true, 'profile': profile['picture']['data']['url'], 'fbid': profile['id']},
+                    onCompleted: (dynamic result2) {
+                      print("SECOND RESULT");
+
+                      // WHY ARE VIEWS AND LIKES SET TO 0 ???
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => HomePage(
+                            userId: result2['addFacebook']['userid'].toString(),
+                            name: result2['addFacebook']['info']['name'],
+                            totalLikes: 0,
+                            totalViews: 0,
+                            imageUrl: profile['picture']['data']['url'],
+                            pictureUrls: [profile['picture']['data']['url']]
+                          )
+                        ),
+                        (Route<dynamic> route) => false
+                      );
+
+                      print(result2);
+                    }
                   )
-                ),
-                (Route<dynamic> route) => false
-              );
+                );
 
-              print(result2);
-            }));
+              } else {
 
-          } else{
-            //ELSE COMPLETE REGISTRATION
-            List<dynamic> pics = result['FacebookLinked']['pictures'];
-            List<String> pics2 = List<String>();
+                //ELSE COMPLETE REGISTRATION
+                List<dynamic> pics = result['FacebookLinked']['pictures'];
+                List<String> pics2 = List<String>();
 
-            for(dynamic el in pics){
-              pics2.add(el['filepath']);
+                for(dynamic el in pics){
+                  pics2.add(el['filepath']);
+                }
+
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => HomePage(
+                      userId: result['FacebookLinked']['userid'].toString(),
+                      name: result['FacebookLinked']['info']['name'],
+                      totalLikes: result['FacebookLinked']['info']['stats']['totallikes'],
+                      totalViews: result['FacebookLinked']['info']['stats']['totalviews'],
+                      imageUrl: result['FacebookLinked']['profilepic'],
+                      pictureUrls:pics2
+                    )
+                  ),
+                  (Route<dynamic> route) => false
+                );
+
+              }
             }
-
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(
-                builder: (context) => HomePage(
-                  name: result['FacebookLinked']['info']['name'],
-                  totalLikes: result['FacebookLinked']['info']['stats']['totallikes'],
-                  totalViews: result['FacebookLinked']['info']['stats']['totalviews'],
-                  imageUrl: result['FacebookLinked']['profilepic'],
-                  pictureUrls:pics2
-                )
-              ),
-              (Route<dynamic> route) => false
-            );
-          }
-        }));
-
+          )
+        );
 
         setState(() {
           userProfile = profile;
           _isLoggedIn = true;
         });
+
         break;
 
       case FacebookLoginStatus.cancelledByUser:
         setState(() => _isLoggedIn = false );
         break;
+
       case FacebookLoginStatus.error:
         setState(() => _isLoggedIn = false );
         break;
@@ -145,13 +158,13 @@ class LogInPageState extends State<LogInPage> {
           children: <Widget>[
             Container(
               decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                  colors: [Color(0xFF915FB5), Color(0xFFCA436B)],
-                    begin: FractionalOffset.topLeft,
-                    end: FractionalOffset.bottomRight,
-                    stops: [0.0,1.0],
-                    tileMode: TileMode.clamp,
-                  ),
+                gradient: LinearGradient(
+                colors: [Color(0xFF915FB5), Color(0xFFCA436B)],
+                  begin: FractionalOffset.topLeft,
+                  end: FractionalOffset.bottomRight,
+                  stops: [0.0,1.0],
+                  tileMode: TileMode.clamp,
+                ),
               ),
             ),
             FractionallySizedBox(
@@ -159,9 +172,7 @@ class LogInPageState extends State<LogInPage> {
               heightFactor: 0.5,
               child: Card(
                 elevation: 10,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30.0),
-                ),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
                 child: Padding(
                   padding: EdgeInsets.all(20),
                   child: Column(
@@ -191,16 +202,19 @@ class LogInPageState extends State<LogInPage> {
                           obscureText: true,
                           focusNode: textFocusNode2,
                           decoration: InputDecoration(
-                          suffix: GestureDetector(
-                          onTap: () {
-                          print('tapped');
-                          },
-                          child: Text(
-                          'Forgot Password?',
-                          style: TextStyle(fontSize: 12,
-                          color: Color(0xFFCA436B),fontWeight: FontWeight.bold),
-                          ),
-                          ),
+                            suffix: GestureDetector(
+                              onTap: () {
+                                print('tapped');
+                              },
+                              child: Text(
+                                'Forgot Password?',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Color(0xFFCA436B),
+                                  fontWeight: FontWeight.bold
+                                ),
+                              ),
+                            ),
                             focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(30.0), borderSide: BorderSide(color: Color(0xFFCA436B))),
                             enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(30.0), borderSide: BorderSide(color: Colors.grey)),
                             labelText: 'Password',
@@ -257,15 +271,18 @@ class LogInPageState extends State<LogInPage> {
                       }
 
                       Common.userid = resultData['loginManual']['userid'].toString();
-                      // TODO: CHANGE TO PUSH AND REMOVE UNTIL
+
                       Navigator.pushAndRemoveUntil(
                         context,
                         MaterialPageRoute(
                           builder: (context) => HomePage(
-                              name:resultData['loginManual']['info']['name'],
-                              imageUrl:resultData['loginManual']['profilepic'],
-                              pictureUrls:pics2,totalViews: resultData['loginManual']['info']['stats']['totalviews'],
-                              totalLikes: resultData['loginManual']['info']['stats']['totallikes']
+                            userId: resultData['loginManual']['userid'].toString(),
+                            name:resultData['loginManual']['info']['name'],
+                            imageUrl:resultData['loginManual']['profilepic'],
+                            pictureUrls:pics2,
+
+                            totalViews: resultData['loginManual']['info']['stats']['totalviews'],
+                            totalLikes: resultData['loginManual']['info']['stats']['totallikes'],
                           ),
                         ),
                         (Route<dynamic> route) => false
@@ -278,7 +295,7 @@ class LogInPageState extends State<LogInPage> {
                     elevation: 5,
                     onPressed: () {
                       // RETRIEVE INFO TO PASS ON
-                      runMutation({'email':_emailController.text,'password':_passwordController.text});
+                      runMutation({'email': _emailController.text, 'password': _passwordController.text});
                     },
                     child: Text('LOG IN'),
                     color: Colors.white,

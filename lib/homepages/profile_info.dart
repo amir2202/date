@@ -34,7 +34,7 @@ class ViewEntry extends StatelessWidget {
           GraphQLHandler.client2.mutate(
             MutationOptions(
               documentNode: gql(GraphQLHandler.getProfile),
-              variables: { 'userid':this.id },
+              variables: {'userid': this.id},
               onCompleted: (dynamic resultData) {
                 print(resultData);
 
@@ -50,9 +50,11 @@ class ViewEntry extends StatelessWidget {
                   context,
                   PageRouteBuilder(
                     pageBuilder: (context, animation, secondaryAnimation) => ProfileExternalPage(
+                      userId: this.id,
                       name: resultData['getProfileUID']['info']['name'],
                       imageUrl: resultData['getProfileUID']['profilepic'],
                       pictureUrls: pics2,
+
                       totalViews: resultData['getProfileUID']['info']['stats']['totalviews'],
                       totalLikes: resultData['getProfileUID']['info']['stats']['totallikes']
                     ),

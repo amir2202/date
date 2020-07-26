@@ -45,6 +45,7 @@ class ProfilePage extends StatefulWidget {
 
   final bool myProfile;
 
+  final String userId;
   final String name;
   final String imageUrl;
   final List<String> pictureUrls;
@@ -56,12 +57,16 @@ class ProfilePage extends StatefulWidget {
     @required this.tabCallback,
     @required this.disownCallback,
     @required this.notifier,
+
     @required this.myProfile,
+
+    @required this.userId,
     @required this.name,
     @required this.imageUrl,
     @required this.pictureUrls,
+
     @required this.totalViews,
-    @required this.totalLikes
+    @required this.totalLikes,
   });
 
   @override
@@ -97,12 +102,12 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
   // pink container's height when this page is controlling it
   double _containerHeight() {
     return Common.screenHeight * 0.2 +
-                        (_scrollController.hasClients ?
-                          (_scrollController.position.pixels > 0 ? -1 : 0.5) *
-                          (Common.screenHeight * 0.2 - (_scrollController.position.pixels * _scrollController.position.pixels * 0.001) >= 0 ?
-                          (_scrollController.position.pixels * _scrollController.position.pixels * 0.001)
-                          : Common.screenHeight * 0.2)
-                        : 0);
+            (_scrollController.hasClients ?
+              (_scrollController.position.pixels > 0 ? -1 : 0.5) *
+              (Common.screenHeight * 0.2 - (_scrollController.position.pixels * _scrollController.position.pixels * 0.001) >= 0 ?
+              (_scrollController.position.pixels * _scrollController.position.pixels * 0.001)
+              : Common.screenHeight * 0.2)
+            : 0);
   }
 
   @override
@@ -136,10 +141,12 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
       // scroll threshold fixed to -100 maybe to be based on screen height but should be ok
       if (_scrollController.position.pixels <= -100) {
         if (!_refreshing && _finishedRefreshing) {
+
           _refreshing = true;
           _finishedRefreshing = false;
 
           GraphQLClient client = GraphQLHandler.client2;
+
           client.mutate(MutationOptions(documentNode: gql(GraphQLHandler.refreshLikesViews), onCompleted: (dynamic result) {
             setState(() {
               try {
@@ -148,9 +155,8 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
               } finally {
                 _finishedRefreshing = true;
               }
-
             });
-          }, variables: {'userid': Common.userid}));
+          }, variables: {'userid': widget.userId}));
         }
       }
 

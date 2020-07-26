@@ -8,12 +8,23 @@ import 'dart:io';
 
 class HomePage extends StatefulWidget {
 
+  final String userId;
   final String name;
   final String imageUrl;
   final List<String> pictureUrls;
+
   final int totalViews;
   final int totalLikes;
-  HomePage({Key key, @required this.name, @required this.imageUrl, @required this.pictureUrls, @required this.totalViews, @required this.totalLikes,});
+
+  HomePage({Key key,
+    @required this.userId,
+    @required this.name,
+    @required this.imageUrl,
+    @required this.pictureUrls,
+
+    @required this.totalViews,
+    @required this.totalLikes,
+  });
 
   @override
   HomePageState createState() => HomePageState();
@@ -114,25 +125,36 @@ class HomePageState extends State<HomePage> {
       getProfilePicture();
     }
 
+    // bottom navigation bar pages
     _pages = <Widget>[
+
       Text('a'),
+
       Text('a'),
+
       ChatPage(),
+
       ProfileInfoPage(
         disownCallback: disownCallback,
         notifier: _n3
       ),
+
       ProfilePage(
         tabCallback: tabCallback,
         disownCallback: disownCallback,
         notifier: _n4,
+
         myProfile: true,
+
+        userId: widget.userId,
         name: widget.name,
         imageUrl: widget.imageUrl,
         pictureUrls: widget.pictureUrls,
+
         totalViews: widget.totalViews,
         totalLikes: widget.totalLikes
       ),
+
     ];
 
     return Scaffold(

@@ -3,15 +3,20 @@ import 'package:flutter/material.dart';
 import 'package:dating/homepages/profile.dart';
 
 class ProfileExternalPage extends StatefulWidget {
+  final String userId;
   final String name;
   final String imageUrl;
   final List<String> pictureUrls;
+
   final int totalViews;
   final int totalLikes;
+
   ProfileExternalPage({Key key,
+    @required this.userId,
     @required this.name,
     @required this.imageUrl,
     @required this.pictureUrls,
+
     @required this.totalViews,
     @required this.totalLikes
   });
@@ -55,10 +60,14 @@ class ProfileExternalPageState extends State<ProfileExternalPage> {
             tabCallback: (a, b) {},
             disownCallback: (a) { setState(() {}); },
             notifier: _notifier,
+
             myProfile: false,
+
+            userId: widget.userId,
             name: widget.name,
             imageUrl: widget.imageUrl,
             pictureUrls: widget.pictureUrls,
+
             totalViews: widget.totalViews,
             totalLikes: widget.totalLikes,
           )
