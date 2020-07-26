@@ -91,15 +91,19 @@ class GraphQLHandler {
   """;
 
   static const recentChats = r"""
-    mutation recentChats($userid: String!) {
-      getRecentChats(userid: $userid) {
-        userid
-        profilepic
-        info{
-          name
-        }
+mutation recentChats($caller:String!){
+	getRecentChats(caller:$caller){
+  		userid
+  		profilepic
+    	latestMessage{
+    	  date
+        message
       }
-    }
+    info{
+    		name
+  	}
+}
+}
   """;
 
   static const String getProfile = r"""

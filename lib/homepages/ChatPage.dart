@@ -18,12 +18,12 @@ class ChatPage extends StatefulWidget {
 }
 
 class ChatPageState extends State<ChatPage> {
-  dynamic data;
+  dynamic input;
   Future<QueryResult> result;
   @override
   GraphQLClient client = GraphQLHandler.client2;
   Future<QueryResult> getChats() async {
-    return await client.mutate(MutationOptions(documentNode: gql(GraphQLHandler.recentChats),variables: {'userid':Common.userid}));
+    return await client.mutate(MutationOptions(documentNode: gql(GraphQLHandler.recentChats),variables: {'caller':Common.userid}));
   }
 
   void initState(){
@@ -33,7 +33,7 @@ class ChatPageState extends State<ChatPage> {
       setState(() {
         print(value.data);
         print(value.data["getRecentChats"][0]);
-        data = value;
+        input = value;
       });
     });
   }
@@ -91,10 +91,10 @@ class ChatPageState extends State<ChatPage> {
         return ScrollConfiguration(
           behavior: CmScrollBehavior(),
           child: ListView.builder(
-            itemCount: data.data["getRecentChats"].length,
+            itemCount: input.data["getRecentChats"].length,
             //controller: widget.notifier.value == widget.like ? widget.scrollController : null,
             itemBuilder: (BuildContext context, int index) {
-              return ChatRow(name:data.data["getRecentChats"][index]["info"]["name"], imageUrl:data.data["getRecentChats"][index]["profilepic"], lastmessage:"ANANI",lastdate: "23:59",);
+              return ChatRow(name:input.data["getRecentChats"][index]["info"]["name"], imageUrl:input.data["getRecentChats"][index]["profilepic"], lastmessage:input.data["getRecentChats"][index]["latestMessage"]["message"],lastdate: "23:59",);
             },
             padding: EdgeInsets.fromLTRB(0, Common.screenHeight * 0.12 + Common.screenHeight * 0.05, 0, 0),
             physics: BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
@@ -183,7 +183,7 @@ class ChatRow extends StatelessWidget {
                   Text('${this.name}', style: TextStyle(fontWeight: FontWeight.bold), overflow: TextOverflow.ellipsis),SizedBox(
                     width: 5,
                   ),
-                  Text('EXAMPLE MESSAGE', overflow: TextOverflow.ellipsis),
+                  Text(this.lastmessage, overflow: TextOverflow.ellipsis),
                 ],
               ), SizedBox(
                 width: 100,
