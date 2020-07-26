@@ -18,13 +18,26 @@ class ChatPage extends StatefulWidget {
 }
 
 class ChatPageState extends State<ChatPage> {
-
+  dynamic data;
   Future<QueryResult> result;
   @override
-  void initState(){
-    //DO IT here then->
-    test();
+  GraphQLClient client = GraphQLHandler.client2;
+  Future<QueryResult> getChats() async {
+    return await client.mutate(MutationOptions(documentNode: gql(GraphQLHandler.recentChats),variables: {'userid':Common.userid}));
   }
+
+  void initState(){
+    print(Common.userid);
+    result = getChats();
+    result.then((value) {
+      setState(() {
+        print(value.data);
+        print(value.data["getRecentChats"][0]);
+        data = value;
+      });
+    });
+  }
+
   Socket socket;
   void test() async {
     final client = await Socket.connect('192.168.0.30', 9999);
@@ -45,7 +58,7 @@ class ChatPageState extends State<ChatPage> {
         onDone: () { print('Done'); client.close(); },
         onError: (e) { print('Got error $e'); client.close(); });
     print('main done');
-    await Future.delayed(Duration(seconds: 30));
+    await Future.delayed(Duration(seconds: 1000));
   }
 
   void dataHandler(data){
@@ -73,18 +86,26 @@ class ChatPageState extends State<ChatPage> {
   Widget build(BuildContext context) {
     //TODO
     //CHANGE THIS TO future builder
-    return ScrollConfiguration(
-      behavior: CmScrollBehavior(),
-      child: ListView.builder(
-        itemCount: 1,
-        //controller: widget.notifier.value == widget.like ? widget.scrollController : null,
-        itemBuilder: (BuildContext context, int index) {
-          return ChatRow(name:"Amir", imageUrl:"http://54.37.205.205/ImageStorage/87//2.png", lastmessage:"ANANI",lastdate: "23:59",);
-        },
-        padding: EdgeInsets.fromLTRB(0, Common.screenHeight * 0.12 + Common.screenHeight * 0.05, 0, 0),
-        physics: BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
-      ),
-    );
+    return FutureBuilder(future: result,builder: (context,snapshot){
+      if(snapshot.data != null){
+        return ScrollConfiguration(
+          behavior: CmScrollBehavior(),
+          child: ListView.builder(
+            itemCount: data.data["getRecentChats"].length,
+            //controller: widget.notifier.value == widget.like ? widget.scrollController : null,
+            itemBuilder: (BuildContext context, int index) {
+              return ChatRow(name:data.data["getRecentChats"][index]["info"]["name"], imageUrl:data.data["getRecentChats"][index]["profilepic"], lastmessage:"ANANI",lastdate: "23:59",);
+            },
+            padding: EdgeInsets.fromLTRB(0, Common.screenHeight * 0.12 + Common.screenHeight * 0.05, 0, 0),
+            physics: BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+          ),
+        );
+      }
+      else{
+        return CircularProgressIndicator();
+      }
+    });
+
   }
   
 }
