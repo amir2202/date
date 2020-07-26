@@ -85,6 +85,7 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
   Size _containerSize = Size(0, 0);
 
   ScrollController _scrollController;
+  TabController _viewsLikesTabController;
 
   // list of the user's picture urls
   List<String> _pictures;

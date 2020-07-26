@@ -6,6 +6,14 @@ import 'package:dating/common.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 
+class HomePageIndices {
+  static const int explore = 0;
+  static const int stories = 1;
+  static const int chat = 2;
+  static const int info = 3;
+  static const int profile = 4;
+}
+
 class HomePage extends StatefulWidget {
 
   final String userId;
@@ -30,10 +38,7 @@ class HomePage extends StatefulWidget {
   HomePageState createState() => HomePageState();
 }
 
-
-
-
-class HomePageState extends State<HomePage> {
+class HomePageState extends State<HomePage> with SingleTickerProviderStateMixin {
 
   void getProfilePicture() async {
     final String path = (await getApplicationDocumentsDirectory()).path;
@@ -42,15 +47,24 @@ class HomePageState extends State<HomePage> {
 
   List<Widget> _pages;
 
-  int _index = 4;
+  int _index = HomePageIndices.profile;
   int _ownership = -1;
 
   ValueNotifier<double> _n3;
   ValueNotifier<double> _n4;
 
+  double _cHeight = 0;
+  double _c3Height = 0;
+
   tabCallback(index, option) {
     setState(() {
       _index = index;
+
+      if (index == HomePageIndices.info) {
+        _infoTabController.animateTo(option,
+            duration: Duration(milliseconds: 200), curve: Curves.easeOut);
+      }
+
       _pageController.animateToPage(index,
           duration: Duration(milliseconds: 200), curve: Curves.easeOut);
     });
@@ -62,24 +76,15 @@ class HomePageState extends State<HomePage> {
     });
   }
 
-  void _onScroll() {
-    setState(() {
-      _ownership = -1;
-    });
-  }
-
-  double _cHeight = 0;
-  double _c3Height = 0;
-
   double _containerHeight() {
     if (Common.screenHeight == null || !_pageController.hasClients) {
       return 0;
     } else if (_ownership == -1) {
       double t = _pageController.hasClients ? _cHeight - (4 - _pageController.page) * (_cHeight - _c3Height) : 0;
       return t > _c3Height ? t : _c3Height;
-    } else if (_ownership == 4) {
+    } else if (_ownership == HomePageIndices.profile) {
       _cHeight = _n4.value;
-    } else if (_ownership == 3) {
+    } else if (_ownership == HomePageIndices.info) {
       _c3Height = _n3.value;
       return _c3Height;
     }
@@ -88,6 +93,7 @@ class HomePageState extends State<HomePage> {
   }
 
   PageController _pageController;
+  TabController _infoTabController;
 
   void _onBuildCompleted(Duration duration) {
     if (Common.screenWidth == null || Common.screenHeight == null) {
@@ -106,7 +112,14 @@ class HomePageState extends State<HomePage> {
     super.initState();
 
     _pageController = PageController(initialPage: _index);
-    _pageController.addListener(_onScroll);
+    _infoTabController = TabController(vsync: this, length: 2);
+
+    _pageController.addListener(() {
+      setState(() {
+        _ownership = -1;
+      });
+    });
+
     _n3 = ValueNotifier<double>(0);
     _n4 = ValueNotifier<double>(0);
 
@@ -136,7 +149,8 @@ class HomePageState extends State<HomePage> {
 
       ProfileInfoPage(
         disownCallback: disownCallback,
-        notifier: _n3
+        notifier: _n3,
+        tabController: _infoTabController,
       ),
 
       ProfilePage(

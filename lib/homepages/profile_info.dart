@@ -96,13 +96,14 @@ class ViewEntry extends StatelessWidget {
 class ProfileInfoPage extends StatefulWidget {
   final Function(int) disownCallback;
   final ValueNotifier<double> notifier;
-  ProfileInfoPage({Key key, @required this.disownCallback, @required this.notifier});
+  final TabController tabController;
+  ProfileInfoPage({Key key, @required this.disownCallback, @required this.notifier, @required this.tabController});
 
   @override
   ProfileInfoPageState createState() => ProfileInfoPageState();
 }
 
-class ProfileInfoPageState extends State<ProfileInfoPage> with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin<ProfileInfoPage> {
+class ProfileInfoPageState extends State<ProfileInfoPage> with AutomaticKeepAliveClientMixin<ProfileInfoPage> {
 
   @override
   bool get wantKeepAlive => true;
@@ -131,7 +132,6 @@ class ProfileInfoPageState extends State<ProfileInfoPage> with SingleTickerProvi
     }
   }
 
-  TabController _tabController;
   ScrollController _scrollController;
 
   ValueNotifier<bool> _notifier;
@@ -158,7 +158,6 @@ class ProfileInfoPageState extends State<ProfileInfoPage> with SingleTickerProvi
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(vsync: this, length: 2);
     _scrollController = ScrollController();
 
     _notifier = ValueNotifier<bool>(false);
@@ -247,7 +246,7 @@ class ProfileInfoPageState extends State<ProfileInfoPage> with SingleTickerProvi
             children: <Widget>[
 
               TabBarView(
-                controller: _tabController,
+                controller: widget.tabController,
                 children: _pages,
                 physics: NeverScrollableScrollPhysics(),
               ),
@@ -276,12 +275,12 @@ class ProfileInfoPageState extends State<ProfileInfoPage> with SingleTickerProvi
                               onTap: (index) {
                                 setState(() {
                                   _notifier.value = index == 0 ? false : true;
-                                  _tabController.animateTo(index,
+                                  widget.tabController.animateTo(index,
                                       duration: Duration(milliseconds: 200), curve: Curves.easeOut);
                                   _scrollController.animateTo(index == 0 ? _sp1 : _sp2, duration: Duration(milliseconds: 200), curve: Curves.ease);
                                 });
                               },
-                              controller: _tabController,
+                              controller: widget.tabController,
                               indicatorColor: Color(0xFFCA436B),
                               unselectedLabelColor: Colors.grey,
                               labelColor: Color(0xFFCA436B),
