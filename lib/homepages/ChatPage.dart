@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:dash_chat/dash_chat.dart';
 import 'package:dating/homepages/IndividualChat.dart';
 import 'package:dating/homepages/profile.dart';
 import 'package:flutter/cupertino.dart';
@@ -107,7 +108,7 @@ class ChatPageState extends State<ChatPage> {
             itemCount: input.data["getRecentChats"].length,
             //controller: widget.notifier.value == widget.like ? widget.scrollController : null,
             itemBuilder: (BuildContext context, int index) {
-              return ChatRow(name:input.data["getRecentChats"][index]["info"]["name"], imageUrl:input.data["getRecentChats"][index]["profilepic"], lastmessage:input.data["getRecentChats"][index]["latestMessage"]["message"],lastdate: "23:59",socket: socket);
+              return ChatRow(name:input.data["getRecentChats"][index]["info"]["name"], imageUrl:input.data["getRecentChats"][index]["profilepic"], lastmessage:input.data["getRecentChats"][index]["latestMessage"]["message"],lastdate: "23:59",socket: socket,otherid: input.data["getRecentChats"][index]["userid"] ,);
             },
             padding: EdgeInsets.fromLTRB(0, Common.screenHeight * 0.12 + Common.screenHeight * 0.05, 0, 0),
             physics: BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
@@ -132,21 +133,35 @@ class ChatRow extends StatelessWidget {
   final String imageUrl;
   final Socket socket;
   final String id = Common.userid;
+  final String otherid;
   String lastdate;
   String lastmessage;
-  ChatRow({Key key, @required this.name, @required this.imageUrl, @required this.lastmessage,@required this.lastdate,@required this.socket});
+  ChatRow({Key key, @required this.name, @required this.imageUrl, @required this.lastmessage,@required this.lastdate,@required this.socket,@required this.otherid});
 
   Widget build(BuildContext context) {
     // TODO: implement build
     return Material(
       color: Colors.transparent,
+
+
       child: InkWell(
         onTap: () {
           print(this.socket);
+
+          ChatUser caller = ChatUser(
+            name: Common.fullName,
+            uid: Common.userid,
+            avatar: Common.profileLink,
+          );
+          ChatUser other = ChatUser(
+            name: name,
+            avatar: imageUrl,
+            uid: otherid,
+          );
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => IndividualChat(null, null, this.socket)
+                  builder: (context) => IndividualChat(caller, other, this.socket)
               )
           );
           //GO TO NEXT PAGE WITH SOCKET

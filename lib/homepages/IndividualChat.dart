@@ -82,10 +82,9 @@ class IndividualChatState extends State<IndividualChat>{
         }
         else{
           AsciiCodec code = new AsciiCodec();
-          return Container(
-            child: Center(child:
-              Text("RECEIVED"),
-          ));
+          print("NEW DATA");
+          print(snapshot.data);
+          return DashChat(messages: messages, user: widget.caller, onSend: null);
           print(snapshot.data);
         }
       })

@@ -19,6 +19,7 @@ class Common {
   static String birthday;
   static String country;
   static String haircolor;
+  static String profileLink;
   static StreamController<Uint8List> streamController = new StreamController.broadcast();
   static String eyecolor;
   static String body;
