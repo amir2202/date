@@ -62,11 +62,11 @@ class HomePageState extends State<HomePage> with SingleTickerProviderStateMixin 
 
       if (index == HomePageIndices.info) {
         _infoTabController.animateTo(option,
-            duration: Duration(milliseconds: 200), curve: Curves.easeOut);
+            duration: Duration(milliseconds: 0), curve: Curves.ease);
       }
 
       _pageController.animateToPage(index,
-          duration: Duration(milliseconds: 200), curve: Curves.easeOut);
+          duration: Duration(milliseconds: 200), curve: Curves.ease);
     });
   }
 
