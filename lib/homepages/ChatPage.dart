@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:dating/homepages/IndividualChat.dart';
 import 'package:dating/homepages/profile.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +20,7 @@ class ChatPage extends StatefulWidget {
 
 class ChatPageState extends State<ChatPage> {
   dynamic input;
+  bool nochats = false;
   Future<QueryResult> result;
   @override
   GraphQLClient client = GraphQLHandler.client2;
@@ -27,36 +29,47 @@ class ChatPageState extends State<ChatPage> {
   }
 
   void initState(){
+    test();
     print(Common.userid);
     result = getChats();
     result.then((value) {
       setState(() {
-        print(value.data);
-        print(value.data["getRecentChats"][0]);
-        input = value;
+        if(value == null){
+          print("this works");
+          nochats = true;
+        }
+        else {
+          print(value.data);
+          print(value.data["getRecentChats"][0]);
+          input = value;
+        }
       });
     });
+  }
+  String convertDate(){
+
   }
 
   Socket socket;
   void test() async {
-    final client = await Socket.connect('192.168.0.30', 9999);
+    socket = await Socket.connect('192.168.0.30', 9999);
     print("connected");
-    client.add(utf8.encode('14\n'));
-    await client.flush();
+    socket.add(utf8.encode('14\n'));
+    await socket.flush();
     //EQUIVALENT OF STRING BUILDER HERE
     //DATA Arrives in packets (thus each data instance is part of string)
     //BRACKET as indicator when its finished
     //USE STACK FOR THIS
-    client.listen(
+    Common.streamController.addStream(socket.asBroadcastStream());
+    Common.streamController.stream.listen(
             (var data) {
               print('Got $data');
               AsciiCodec code = new AsciiCodec();
               print(code.decode(data));
 
             },
-        onDone: () { print('Done'); client.close(); },
-        onError: (e) { print('Got error $e'); client.close(); });
+        onDone: () { print('Done'); socket.close(); },
+        onError: (e) { print('Got error $e'); socket.close(); });
     print('main done');
     await Future.delayed(Duration(seconds: 1000));
   }
@@ -87,19 +100,22 @@ class ChatPageState extends State<ChatPage> {
     //TODO
     //CHANGE THIS TO future builder
     return FutureBuilder(future: result,builder: (context,snapshot){
-      if(snapshot.data != null){
+      if(snapshot.data != null && nochats == false){
         return ScrollConfiguration(
           behavior: CmScrollBehavior(),
           child: ListView.builder(
             itemCount: input.data["getRecentChats"].length,
             //controller: widget.notifier.value == widget.like ? widget.scrollController : null,
             itemBuilder: (BuildContext context, int index) {
-              return ChatRow(name:input.data["getRecentChats"][index]["info"]["name"], imageUrl:input.data["getRecentChats"][index]["profilepic"], lastmessage:input.data["getRecentChats"][index]["latestMessage"]["message"],lastdate: "23:59",);
+              return ChatRow(name:input.data["getRecentChats"][index]["info"]["name"], imageUrl:input.data["getRecentChats"][index]["profilepic"], lastmessage:input.data["getRecentChats"][index]["latestMessage"]["message"],lastdate: "23:59",socket: socket);
             },
             padding: EdgeInsets.fromLTRB(0, Common.screenHeight * 0.12 + Common.screenHeight * 0.05, 0, 0),
             physics: BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
           ),
         );
+      }
+      else if(snapshot.data != null && nochats == true){
+        return Container(child: Text("you have no chats... TODO"));
       }
       else{
         return CircularProgressIndicator();
@@ -114,10 +130,11 @@ class ChatRow extends StatelessWidget {
   @override
   final String name;
   final String imageUrl;
+  final Socket socket;
   final String id = Common.userid;
   String lastdate;
   String lastmessage;
-  ChatRow({Key key, @required this.name, @required this.imageUrl, @required this.lastmessage,@required this.lastdate});
+  ChatRow({Key key, @required this.name, @required this.imageUrl, @required this.lastmessage,@required this.lastdate,@required this.socket});
 
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -125,7 +142,14 @@ class ChatRow extends StatelessWidget {
       color: Colors.transparent,
       child: InkWell(
         onTap: () {
-
+          print(this.socket);
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => IndividualChat(null, null, this.socket)
+              )
+          );
+          //GO TO NEXT PAGE WITH SOCKET
           /*GraphQLHandler.client2.mutate(
               MutationOptions(
                   documentNode: gql(GraphQLHandler.getProfile),

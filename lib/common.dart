@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'dart:io';
 
@@ -16,6 +19,7 @@ class Common {
   static String birthday;
   static String country;
   static String haircolor;
+  static StreamController<Uint8List> streamController = new StreamController.broadcast();
   static String eyecolor;
   static String body;
   static int height;
