@@ -147,7 +147,7 @@ class FinalsignupState extends State<Finalsignup>{
                                   width: 10,
                                 ),
                                 SizedBox(
-                                  width: 120,
+                                  width: 148,
                                   child: DropdownButtonFormField<String>(
                                     decoration: InputDecoration(
                                         enabledBorder: _eyeEnabledBorder,
@@ -323,7 +323,7 @@ class FinalsignupState extends State<Finalsignup>{
                             Common.haircolor = _selectedHairColor;
                             Common.eyecolor = _selectedEyeColor;
                             Common.body = _bodyController.text;
-                            Common.height = _heightController.text.isEmpty ? '' : int.parse(_heightController.text);
+                            Common.height = _heightController.text.isEmpty ? 0 : int.parse(_heightController.text);
                             Common.ethnicity = _selectedEthnicity;
                             Common.religion = _selectedReligion;
                             Common.state = _selectedCounty;
@@ -343,13 +343,13 @@ class FinalsignupState extends State<Finalsignup>{
                         height: 50,
                         child: OutlineButton(
                           onPressed: () {
-                            Common.haircolor = null;
-                            Common.eyecolor = null;
-                            Common.body = null;
-                            Common.height = null;
-                            Common.ethnicity = null;
-                            Common.religion = null;
-                            Common.state = null;
+                            Common.haircolor = '';
+                            Common.eyecolor = '';
+                            Common.body = '';
+                            Common.height = 0;
+                            Common.ethnicity = '';
+                            Common.religion = '';
+                            Common.state = '';
                             Navigator.push(context, FadeRoute(page: PreviewPage()));
                           },
                           child: Text('SKIP', style: TextStyle(color: Colors.white)),
