@@ -1,4 +1,5 @@
 import 'package:dating/GraphQLHandler.dart';
+import 'package:dating/home.dart';
 import 'package:dating/imagelogic/ImageHandler.dart';
 import 'package:flutter/material.dart';
 import 'package:dating/common.dart';
@@ -127,7 +128,7 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
 
       // this page owns control over the pink container's size
       if (_scrollController.position.userScrollDirection != ScrollDirection.idle) {
-        widget.disownCallback(4);
+        widget.disownCallback(HomePageIndices.profile);
       }
       widget.notifier.value = _containerHeight();
 
@@ -201,7 +202,7 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
       _containerPosition = containerPosition;
       _containerSize = containerRenderBox.size;
       widget.notifier.value = Common.screenHeight * 0.2;
-      widget.disownCallback(widget.myProfile ? 4 : -1);
+      widget.disownCallback(widget.myProfile ? HomePageIndices.profile : -1);
     });
   }
 
@@ -408,7 +409,7 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
                               RawMaterialButton(
                                   onPressed: () {
                                     if (widget.myProfile)
-                                      widget.tabCallback(3, 1);
+                                      widget.tabCallback(HomePageIndices.info, 1);
                                     else
                                       // TODO: MUTATION FOR LIKING A PROFILE
                                       return;

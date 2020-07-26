@@ -135,59 +135,58 @@ class ProfileInfoPageState extends State<ProfileInfoPage> with AutomaticKeepAliv
   }
 
   void _onScroll() {
-    setState(() {
+    _swapping = -1;
+    widget.forceForward.value = false;
 
-      _swapping = -1;
-      widget.forceForward.value = false;
+    if (_notifier.value == false) {
+      _tp0 = -_scNotifier.value.position.pixels;
+    } else {
+      _tp1 = -_scNotifier.value.position.pixels;
+    }
 
-      if (_notifier.value == false) {
-        _tp0 = -_scNotifier.value.position.pixels;
+    // this page owns control over the pink container's size
+    if (_scNotifier.value.position.userScrollDirection != ScrollDirection.idle) {
+      widget.disownCallback(HomePageIndices.info);
+    }
+
+    widget.notifier.value = _showTabBarLast != 0 ? ((Common.screenHeight * 0.12 - 200.0 + (_showTabBarScroll < 200.0 ? _showTabBarScroll : 200.0)) > 0 ? (Common.screenHeight * 0.12 - 200.0 + (_showTabBarScroll < 200.0 ? _showTabBarScroll : 200.0)) : 0) : _containerHeight();
+
+    // code for managing the tab bar position
+    if (_scNotifier.value.position.userScrollDirection == ScrollDirection.forward) {
+      if (_scNotifier.value.position.pixels <= 0) {
+        _showTabBarLast = 0;
+      }
+
+      if (_hideTabBar && !_showTabBarLimit && _scNotifier.value.position.pixels > Common.screenHeight * 0.5) {
+        _showTabBarLast = _scNotifier.value.position.pixels;
+      }
+
+      _showTabBarScroll = _showTabBarLast - _scNotifier.value.position.pixels;
+
+      if (_showTabBarScroll > 200 && _scNotifier.value.position.pixels > 0) {
+        _showTabBarLimit = false;
       } else {
-        _tp1 = -_scNotifier.value.position.pixels;
+        _showTabBarLimit = true;
       }
 
-      // this page owns control over the pink container's size
-      if (_scNotifier.value.position.userScrollDirection != ScrollDirection.idle) {
-        widget.disownCallback(3);
+      _hideTabBar = false;
+    } else if (_scNotifier.value.position.userScrollDirection == ScrollDirection.reverse) {
+      if (!_hideTabBar && !_showTabBarLimit) {
+        _showTabBarLast = _scNotifier.value.position.pixels + 200;
       }
 
-      widget.notifier.value = _showTabBarLast != 0 ? ((Common.screenHeight * 0.12 - 200.0 + (_showTabBarScroll < 200.0 ? _showTabBarScroll : 200.0)) > 0 ? (Common.screenHeight * 0.12 - 200.0 + (_showTabBarScroll < 200.0 ? _showTabBarScroll : 200.0)) : 0) : _containerHeight();
+      _showTabBarScroll = _showTabBarLast - _scNotifier.value.position.pixels;
 
-      // code for managing the tab bar position
-      if (_scNotifier.value.position.userScrollDirection == ScrollDirection.forward) {
-        if (_scNotifier.value.position.pixels <= 0) {
-          _showTabBarLast = 0;
-        }
-
-        if (_hideTabBar && !_showTabBarLimit && _scNotifier.value.position.pixels > Common.screenHeight * 0.5) {
-          _showTabBarLast = _scNotifier.value.position.pixels;
-        }
-
-        _showTabBarScroll = _showTabBarLast - _scNotifier.value.position.pixels;
-
-        if (_showTabBarScroll > 200 && _scNotifier.value.position.pixels > 0) {
-          _showTabBarLimit = false;
-        } else {
-          _showTabBarLimit = true;
-        }
-
-        _hideTabBar = false;
-      } else if (_scNotifier.value.position.userScrollDirection == ScrollDirection.reverse) {
-        if (!_hideTabBar && !_showTabBarLimit) {
-          _showTabBarLast = _scNotifier.value.position.pixels + 200;
-        }
-
-        _showTabBarScroll = _showTabBarLast - _scNotifier.value.position.pixels;
-
-        if (_showTabBarScroll < 0) {
-          _showTabBarLimit = false;
-        } else {
-          _showTabBarLimit = true;
-        }
-
-        _hideTabBar = true;
+      if (_showTabBarScroll < 0) {
+        _showTabBarLimit = false;
+      } else {
+        _showTabBarLimit = true;
       }
 
+      _hideTabBar = true;
+    }
+
+    setState(() {
       _tp = _topPosition();
     });
   }
