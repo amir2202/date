@@ -11,7 +11,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: _title,
-      home: HomePage(name: 'Matt', imageUrl: 'https://icatcare.org/app/uploads/2018/07/Thinking-of-getting-a-cat.png', pictureUrls: <String>[
+      home: HomePage(userId: '', name: 'Matt', imageUrl: 'https://icatcare.org/app/uploads/2018/07/Thinking-of-getting-a-cat.png', pictureUrls: <String>[
         'https://cdn.mos.cms.futurecdn.net/VSy6kJDNq2pSXsCzb6cvYF.jpg',
         'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Cat03.jpg/1200px-Cat03.jpg',
         'https://i.insider.com/5e2ef209ab49fd373f6ba714?width=1136&format=jpeg',

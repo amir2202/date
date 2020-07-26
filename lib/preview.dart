@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';
+import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 import 'dart:async';
-import 'package:path_provider/path_provider.dart';
 
 import 'home.dart';
 
@@ -126,11 +126,24 @@ class PreviewPageState extends State<PreviewPage> {
                             print(urlImageApi.data);
                             print(result);
                             //TODO check if correct
-                            Common.userid = result['addUser']['userid'];
+                            Common.userid = result['addUser']['userid'].toString();
                             List<String> images = List<String>();
                             images.add(urlImageApi.data['upload']);
+
                             //IMAGES IS CORRECT LEAVE CAT FOR REGISTRATION NOW
-                            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => HomePage(name: Common.fullName,totalLikes: 0,totalViews: 0,imageUrl: null,pictureUrls:images)), (r) => false);
+                            Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => HomePage(
+                                  userId: Common.userid,
+                                  name: Common.fullName,
+                                  imageUrl: null,
+                                  pictureUrls: images,
+
+                                  totalLikes: 0,
+                                  totalViews: 0,
+                                )
+                              ), (r) => false);
 
                           });
                         });

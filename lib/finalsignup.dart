@@ -342,7 +342,16 @@ class FinalsignupState extends State<Finalsignup>{
                         width: 150,
                         height: 50,
                         child: OutlineButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Common.haircolor = null;
+                            Common.eyecolor = null;
+                            Common.body = null;
+                            Common.height = null;
+                            Common.ethnicity = null;
+                            Common.religion = null;
+                            Common.state = null;
+                            Navigator.push(context, FadeRoute(page: PreviewPage()));
+                          },
                           child: Text('SKIP', style: TextStyle(color: Colors.white)),
                           highlightedBorderColor: Colors.white,
                           borderSide: BorderSide(color: Colors.white,width:1.0),
