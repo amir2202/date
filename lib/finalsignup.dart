@@ -147,7 +147,7 @@ class FinalsignupState extends State<Finalsignup>{
                                   width: 10,
                                 ),
                                 SizedBox(
-                                  width: 120,
+                                  width: 148,
                                   child: DropdownButtonFormField<String>(
                                     decoration: InputDecoration(
                                         enabledBorder: _eyeEnabledBorder,
