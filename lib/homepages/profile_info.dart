@@ -147,6 +147,7 @@ class ProfileInfoPageState extends State<ProfileInfoPage> with SingleTickerProvi
   bool _showTabBarLimit = false;
   double _showTabBarLast = 0;
   double _showTabBarScroll = 0;
+
   //LOAD
   GraphQLClient client = GraphQLHandler.client2;
   Future<QueryResult> r;
@@ -162,18 +163,8 @@ class ProfileInfoPageState extends State<ProfileInfoPage> with SingleTickerProvi
 
     _notifier = ValueNotifier<bool>(false);
 
-    _likeEntries = [
-      {
-        "byName": "LOADING",
-        "byPicture": "http://54.37.205.205/ImageStorage/73/1.png"
-      },
-    ];
-    _viewEntries = [
-      {
-        "byName": "LOADING",
-        "byPicture": "http://54.37.205.205/ImageStorage/73/1.png"
-      },
-    ];
+    _likeEntries = null;
+    _viewEntries = null;
 
       r = doStuff();
       r.then((value) {
@@ -185,8 +176,12 @@ class ProfileInfoPageState extends State<ProfileInfoPage> with SingleTickerProvi
 
     _scrollController.addListener(() {
       setState(() {
-        widget.disownCallback(3);
+        // this page owns control over the pink container's size
+        if (_scrollController.position.userScrollDirection != ScrollDirection.idle) {
+          widget.disownCallback(3);
+        }
 
+        // manage tab bar positions for views / likes pages
         if (_notifier.value == false) {
           _sp1 = _scrollController.position.pixels;
         } else {
@@ -195,6 +190,7 @@ class ProfileInfoPageState extends State<ProfileInfoPage> with SingleTickerProvi
 
         widget.notifier.value = _showTabBarLast != 0 ? ((Common.screenHeight * 0.12 - 200.0 + (_showTabBarScroll < 200.0 ? _showTabBarScroll : 200.0)) > 0 ? (Common.screenHeight * 0.12 - 200.0 + (_showTabBarScroll < 200.0 ? _showTabBarScroll : 200.0)) : 0) : _containerHeight();
 
+        // code for managing the tab bar position
         if (_scrollController.position.userScrollDirection == ScrollDirection.forward) {
           if (_scrollController.position.pixels <= 0) {
             _showTabBarLast = 0;
@@ -239,8 +235,8 @@ class ProfileInfoPageState extends State<ProfileInfoPage> with SingleTickerProvi
   Widget build(BuildContext context) {
 
     _pages = <Widget>[
-      ProfileInfoViews(scrollController: _scrollController, notifier: _notifier, like: false,entries: _viewEntries,),
-      ProfileInfoViews(scrollController: _scrollController, notifier: _notifier, like: true,entries: _likeEntries,),
+      ProfileInfoViews(scrollController: _scrollController, notifier: _notifier, like: false, entries: _viewEntries),
+      ProfileInfoViews(scrollController: _scrollController, notifier: _notifier, like: true, entries: _likeEntries),
     ];
 
     return FutureBuilder(
@@ -279,8 +275,6 @@ class ProfileInfoPageState extends State<ProfileInfoPage> with SingleTickerProvi
                             child: TabBar(
                               onTap: (index) {
                                 setState(() {
-                                  print(_sp1);
-                                  print(_sp2);
                                   _notifier.value = index == 0 ? false : true;
                                   _tabController.animateTo(index,
                                       duration: Duration(milliseconds: 200), curve: Curves.easeOut);
