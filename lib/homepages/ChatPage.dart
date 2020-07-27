@@ -30,7 +30,6 @@ class ChatPageState extends State<ChatPage> {
   }
 
   void initState(){
-    test();
     print(Common.userid);
     result = getChats();
     result.then((value) {
@@ -51,29 +50,7 @@ class ChatPageState extends State<ChatPage> {
 
   }
 
-  Socket socket;
-  void test() async {
-    socket = await Socket.connect('192.168.0.30', 9999);
-    print("connected");
-    socket.add(utf8.encode('14\n'));
-    await socket.flush();
-    //EQUIVALENT OF STRING BUILDER HERE
-    //DATA Arrives in packets (thus each data instance is part of string)
-    //BRACKET as indicator when its finished
-    //USE STACK FOR THIS
-    Common.streamController.addStream(socket.asBroadcastStream());
-    Common.streamController.stream.listen(
-            (var data) {
-              print('Got $data');
-              AsciiCodec code = new AsciiCodec();
-              print(code.decode(data));
 
-            },
-        onDone: () { print('Done'); socket.close(); },
-        onError: (e) { print('Got error $e'); socket.close(); });
-    print('main done');
-    await Future.delayed(Duration(seconds: 1000));
-  }
 
   void dataHandler(data){
     print(new String.fromCharCodes(data).trim());
@@ -83,10 +60,7 @@ class ChatPageState extends State<ChatPage> {
     print(error);
   }
 
-  void doneHandler(){
-    socket.destroy();
-    exit(0);
-  }
+
   @override
  /* Widget build(BuildContext context) {
     return Container(
@@ -108,7 +82,7 @@ class ChatPageState extends State<ChatPage> {
             itemCount: input.data["getRecentChats"].length,
             //controller: widget.notifier.value == widget.like ? widget.scrollController : null,
             itemBuilder: (BuildContext context, int index) {
-              return ChatRow(name:input.data["getRecentChats"][index]["info"]["name"], imageUrl:input.data["getRecentChats"][index]["profilepic"], lastmessage:input.data["getRecentChats"][index]["latestMessage"]["message"],lastdate: "23:59",socket: socket,otherid: input.data["getRecentChats"][index]["userid"] ,);
+              return ChatRow(name:input.data["getRecentChats"][index]["info"]["name"], imageUrl:input.data["getRecentChats"][index]["profilepic"], lastmessage:input.data["getRecentChats"][index]["latestMessage"]["message"],lastdate: "23:59",otherid: input.data["getRecentChats"][index]["userid"] ,);
             },
             padding: EdgeInsets.fromLTRB(0, Common.screenHeight * 0.12 + Common.screenHeight * 0.05, 0, 0),
             physics: BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),

@@ -16,6 +16,9 @@ class IndividualChat extends StatefulWidget{
   Socket s;
   IndividualChat(this.caller,this.other,this.s);
 
+  List<ChatMessage> messages = List<ChatMessage>();
+  var m = List<ChatMessage>();
+
   @override
   IndividualChatState createState() => IndividualChatState();
 }
@@ -36,34 +39,44 @@ class IndividualChatState extends State<IndividualChat>{
     name: "Mrfatty",
     uid: "25649654",
   );
-  List<ChatMessage> messages = List<ChatMessage>();
-  var m = List<ChatMessage>();
+
 
   void onSend(ChatMessage message) async {
     print(message.toJson());
   }
 
+  List<ChatMessage> messages = List<ChatMessage>();
+  var m = List<ChatMessage>();
 
-
-  var i = 0;
-  void systemMessage() {
-    Timer(Duration(milliseconds: 300), () {
-      if (i < 6) {
-        setState(() {
-          messages = [...messages, m[i]];
-        });
-        i++;
-      }
-      Timer(Duration(milliseconds: 300), () {
-        _chatViewKey.currentState.scrollController
-          ..animateTo(
-            _chatViewKey.currentState.scrollController.position.maxScrollExtent,
-            curve: Curves.easeOut,
-            duration: const Duration(milliseconds: 300),
-          );
-      });
-    });
+  @override
+  void initState(){
+    test();
   }
+
+  Socket socket;
+  void test() async {
+    socket = await Socket.connect('192.168.0.30', 9999);
+    print("connected");
+    socket.add(utf8.encode('14\n'));
+    await socket.flush();
+    //EQUIVALENT OF STRING BUILDER HERE
+    //DATA Arrives in packets (thus each data instance is part of string)
+    //BRACKET as indicator when its finished
+    //USE STACK FOR THIS
+    Common.streamController.addStream(socket.asBroadcastStream());
+    Common.streamController.stream.listen(
+            (var data) {
+          print('Got $data');
+          AsciiCodec code = new AsciiCodec();
+          print(code.decode(data));
+
+        },
+        onDone: () { print('Done'); socket.close(); },
+        onError: (e) { print('Got error $e'); socket.close(); });
+    print('main done');
+    await Future.delayed(Duration(seconds: 1000));
+  }
+
   DataHandler handler = DataHandler();
 
   @override
@@ -87,13 +100,16 @@ class IndividualChatState extends State<IndividualChat>{
           print(js);
           handler.handleString(js);
           initialized = true;
-          dynamic c = json.decode(handler.getDone());
-          print(c);
           if(handler.complete()){
-            print(c["message"]);
-            messages.add(ChatMessage(text: c["message"], user: widget.other));
+              dynamic c = json.decode(handler.getDone());
+              print(c);
+              print(c["message"]);
+              this.messages.add(ChatMessage(text: c["message"], user: widget.other));
           }
-          return DashChat(messages: messages, user: widget.caller,onSend: null);
+          else {
+            this.messages.add(ChatMessage(text: "anani sikerim test", user: widget.other));
+          }
+          return DashChat(messages: widget.messages, user: widget.caller,onSend: null);
           //dynamic c = json.decode(js);
           
           print(snapshot.data);
