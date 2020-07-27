@@ -2,9 +2,10 @@ import 'dart:collection';
 
 class DataHandler {
   Queue stack = new Queue();
-  bool isComplete = false;
-
+  bool _isComplete = false;
+  String temp="";
   bool handleString(String data){
+    temp = temp + data;
     for(int i = 0; i < data.length;i++){
       if(data[i] == "{"){
         addBracket(true);
@@ -13,7 +14,7 @@ class DataHandler {
         addBracket(false);
       }
     }
-    return isComplete;
+    return _isComplete;
   }
 
   void addBracket(bool faceright){
@@ -31,17 +32,24 @@ class DataHandler {
     }
 
     if(stack.isEmpty == true){
-      isComplete = true;
+      _isComplete = true;
     }
   }
 
   bool complete(){
-    return isComplete;
+    bool temp = _isComplete;
+    if(temp == true){
+      print(this.stack.length);
+      _isComplete = false;
+    }
+    return temp;
   }
 
-
-
-
+  String getDone(){
+    String t = temp;
+    temp = "";
+    return t;
+  }
 
 
 }

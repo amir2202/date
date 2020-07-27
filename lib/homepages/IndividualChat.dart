@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dash_chat/dash_chat.dart';
+import 'package:dating/ChatLogic/DataHandler.dart';
 import 'package:dating/common.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -22,14 +23,13 @@ class IndividualChat extends StatefulWidget{
 class IndividualChatState extends State<IndividualChat>{
   final GlobalKey<DashChatState> _chatViewKey = GlobalKey<DashChatState>();
 
-
+  bool initialized = false;
   //FORMAT OF CHAT users
   final ChatUser user = ChatUser(
     name: "Fayeed",
     firstName: "Fayeed",
     lastName: "Pawaskar",
     uid: "12345678",
-    avatar: "https://www.wrappixel.com/ampleadmin/assets/images/users/4.jpg",
   );
 
   final ChatUser otherUser = ChatUser(
@@ -64,7 +64,7 @@ class IndividualChatState extends State<IndividualChat>{
       });
     });
   }
-
+  DataHandler handler = DataHandler();
 
   @override
   Widget build(BuildContext context) {
@@ -80,11 +80,22 @@ class IndividualChatState extends State<IndividualChat>{
             child: CircularProgressIndicator(),
           );
         }
+        //TODO verify that input is full message
         else{
           AsciiCodec code = new AsciiCodec();
-          print("NEW DATA");
-          print(snapshot.data);
-          return DashChat(messages: messages, user: widget.caller, onSend: null);
+          String js = code.decode(snapshot.data);
+          print(js);
+          handler.handleString(js);
+          initialized = true;
+          dynamic c = json.decode(handler.getDone());
+          print(c);
+          if(handler.complete()){
+            print(c["message"]);
+            messages.add(ChatMessage(text: c["message"], user: widget.other));
+          }
+          return DashChat(messages: messages, user: widget.caller,onSend: null);
+          //dynamic c = json.decode(js);
+          
           print(snapshot.data);
         }
       })
