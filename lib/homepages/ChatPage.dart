@@ -123,15 +123,20 @@ class ChatRow extends StatelessWidget {
           print(this.socket);
 
           ChatUser caller = ChatUser(
-            name: Common.fullName,
-            uid: Common.userid,
-            avatar: Common.profileLink,
+            //name: Common.fullName,
+            //uid: Common.userid,
+            //avatar: Common.profileLink,
+            name: "Donald trump",uid:"88",avatar:"http://54.37.205.205/ImageStorage/88//1.png"
           );
           ChatUser other = ChatUser(
             name: name,
             avatar: imageUrl,
             uid: otherid,
           );
+          print("other");
+          print(other.toJson());
+          print("caller");
+          print(caller.toJson());
           Navigator.push(
               context,
               MaterialPageRoute(

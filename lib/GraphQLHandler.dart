@@ -106,6 +106,11 @@ mutation recentChats($caller:String!){
 }
   """;
 
+  static const sendMessage = r"""
+  mutation addMsg($by: Int,$towards:Int,$message:String){
+	addMessage(by:$by,towards:$towards,message:$message)
+}""";
+
   static const String getProfile = r"""
     mutation getProfileUID($userid: String!) {
       getProfileUID(userid: $userid) {
