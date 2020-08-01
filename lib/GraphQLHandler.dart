@@ -6,8 +6,12 @@ import 'common.dart';
 class GraphQLHandler {
 
   static GraphQLClient client2 = GraphQLClient(
-    link: HttpLink(uri: 'http://54.37.205.205:8090/graphql'),
-    cache: InMemoryCache()
+      link: HttpLink(uri: 'http://54.37.205.205:8090/graphql'),
+      cache: InMemoryCache()
+  );
+  static GraphQLClient testingclient = GraphQLClient(
+      link: HttpLink(uri: 'http://192.168.0.30:8090/graphql'),
+      cache: InMemoryCache()
   );
 
   static ValueNotifier<GraphQLClient> client = ValueNotifier(
@@ -128,6 +132,14 @@ mutation recentChats($caller:String!){
       }
     }
   """;
+  static const String prevMessages=r"""mutation chats($by:Int,$towards:Int,$before:String,$after:String){
+	recentChats(by:$by,towards:$towards,before:$before,after:$after) {
+	  by
+	  towards
+	  message
+	  date
+	}
+}""";
 
   static const String loginUser = r"""
     mutation LoginM($email: String!, $password: String!) {

@@ -256,8 +256,10 @@ class LogInPageState extends State<LogInPage> {
                   documentNode: gql(GraphQLHandler.loginUser),
                   onCompleted: (dynamic resultData) {
                     print(resultData);
+                    //TODO also save name to the common
                     print(resultData['loginManual']['info']['name']);
-
+                    Common.fullName = resultData['loginManual']['info']['name'];
+                    Common.profileLink = resultData['loginManual']['profilepic'];
                     // TODO: ADD A DIALOG OR SOMETHING FOR LOGIN FAILED
                     if (resultData['loginManual']['userid'] == "LOGIN FAILED") {
                       print("login failed");

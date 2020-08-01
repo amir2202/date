@@ -5,11 +5,13 @@ import 'dart:io';
 import 'package:dash_chat/dash_chat.dart';
 import 'package:dating/ChatLogic/ChatCreator.dart';
 import 'package:dating/ChatLogic/DataHandler.dart';
+import 'package:dating/ChatLogic/MessageService.dart';
 import 'package:dating/GraphQLHandler.dart';
 import 'package:dating/common.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:provider/provider.dart';
 
 
 
@@ -36,24 +38,49 @@ class IndividualChatState extends State<IndividualChat>{
 
   List<ChatMessage> messages = List<ChatMessage>();
   var m = List<ChatMessage>();
-
+  Future<QueryResult> fut;
+  dynamic result;
+  bool completed = false;
   @override
   void initState(){
     ChatCreator creator = ChatCreator();
     //CHECK if previous messages already exist, if so create
     int id = int.parse(widget.caller.uid);
-    if(ChatCreator.chatSaved(id)){
+    fut = MessageService.previousMessages(widget.caller,int.parse(widget.caller.uid),int.parse(widget.other.uid));
+    fut.then((value) {
+      result = value.data;
+      completed = true;
+
+      List<ChatMessage> list = List<ChatMessage>();
+      print(result);
+      for(dynamic msgdata in result["recentChats"]){
+        //FIX this, make other or caller dependingf on UID
+        print(msgdata["by"]);
+        print(msgdata["by"]==widget.caller.uid);
+        ChatMessage message = ChatMessage(text: msgdata["message"], user: msgdata["by"] == int.parse(widget.caller.uid) ? widget.caller:widget.other,createdAt:DateTime.parse(msgdata["date"]));
+        list.add(message);
+      }
+      print(list.length);
+      for(int i = list.length -1;i>=0;i--){
+        MessageService.messages.add(list.elementAt(i));
+      }
+      setState(() {
+
+      });
+    });
+    /*if(ChatCreator.chatSaved(id)){
       print("attempting to get id");
       messages = ChatCreator.getMsg(id);
       print(messages);
       print("shouldnt execute");
-    }
-    test();
+    }*/
+    //test();
   }
 
   Socket socket;
   void test() async {
-    socket = await Socket.connect('54.37.205.205', 9999);
+    //54.37.205.205
+    socket = await Socket.connect('192.168.0.30', 9999);
     print("connected");
     socket.add(utf8.encode(Common.userid + '\n'));
     await socket.flush();
@@ -75,6 +102,9 @@ class IndividualChatState extends State<IndividualChat>{
             print(c);
             print(c["message"]);
             setState(() {
+              print("the var");
+              print(c["by"]);
+              print(c["by"] == widget.caller.uid);
               messages.add(ChatMessage(text: c["message"], user: widget.caller));
             });
             ChatCreator.addChat(c["by"],ChatMessage(text: c["message"], user: widget.caller));
@@ -91,12 +121,13 @@ class IndividualChatState extends State<IndividualChat>{
     print(message.toJson());
     setState(() {
       print("executes");
-      messages.add(message);
+      MessageService.messages.add(message);
     });
     dynamic msg = message.toJson();
     print(msg);
     GraphQLHandler.client2.mutate(MutationOptions(documentNode: gql(GraphQLHandler.sendMessage),variables:{'towards':widget.other.uid,'by':widget.caller.uid,'message':msg["text"]},onCompleted: (dynamic result){
-      print("Done");
+      print("got");
+      print(result);
     }));
   }
 
@@ -106,7 +137,52 @@ class IndividualChatState extends State<IndividualChat>{
   @override
   Widget build(BuildContext context){
     //DO A FUTURE builder later...
-    return Scaffold(
+    return FutureBuilder(future:fut,builder: (context,snapshot){
+      if(snapshot.hasData == null){
+        return CircularProgressIndicator();
+      }
+      //have a changenotifier within
+      else if(snapshot.hasData != null && completed){
+        print("messages length");
+        print(MessageService.messages.length);
+        return Scaffold(
+          appBar: AppBar(
+              title: Row(children: <Widget>[Material(
+                elevation: 4,
+                shape: CircleBorder(),
+                clipBehavior: Clip.hardEdge,
+                color: Colors.transparent,
+                child: Ink.image(
+                  image: NetworkImage(widget.caller.avatar),
+                  fit: BoxFit.cover,
+                  width:50,
+                  height: 75,
+                  child: InkWell(
+                    onTap: () {},
+                  ),
+                ),
+              ),SizedBox(
+                width: 5,
+              ),Text(widget.other.name)])
+          ),
+          body: ChangeNotifierProvider(
+            create: (context) => MessageService(widget.caller,widget.other),
+            child: Consumer<MessageService>(
+                builder:(context,MessageService,child) {
+                  return DashChat(messages: MessageService.getMsg(),showAvatarForEveryMessage: true, user: widget.other, onSend: onSend);
+
+                },
+                child: DashChat(messages: MessageService.messages,showAvatarForEveryMessage: true, user: widget.other, onSend: onSend),
+
+            )
+          )
+        );
+      }
+      else{
+        return CircularProgressIndicator();
+      }
+    });
+    Scaffold(
       appBar: AppBar(
 
         title: Row(children: <Widget>[Material(

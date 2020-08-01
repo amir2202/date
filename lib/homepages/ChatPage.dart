@@ -126,7 +126,7 @@ class ChatRow extends StatelessWidget {
             //name: Common.fullName,
             //uid: Common.userid,
             //avatar: Common.profileLink,
-            name: "Donald trump",uid:"88",avatar:"http://54.37.205.205/ImageStorage/88//1.png"
+            name: Common.fullName,uid:Common.userid,avatar:Common.profileLink
           );
           ChatUser other = ChatUser(
             name: name,
