@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dash_chat/dash_chat.dart';
+import 'package:dating/ChatLogic/ChatCreator.dart';
 import 'package:dating/ChatLogic/DataHandler.dart';
 import 'package:dating/GraphQLHandler.dart';
 import 'package:dating/common.dart';
@@ -38,6 +39,15 @@ class IndividualChatState extends State<IndividualChat>{
 
   @override
   void initState(){
+    ChatCreator creator = ChatCreator();
+    //CHECK if previous messages already exist, if so create
+    int id = int.parse(widget.caller.uid);
+    if(ChatCreator.chatSaved(id)){
+      print("attempting to get id");
+      messages = ChatCreator.getMsg(id);
+      print(messages);
+      print("shouldnt execute");
+    }
     test();
   }
 
@@ -67,6 +77,7 @@ class IndividualChatState extends State<IndividualChat>{
             setState(() {
               messages.add(ChatMessage(text: c["message"], user: widget.caller));
             });
+            ChatCreator.addChat(c["by"],ChatMessage(text: c["message"], user: widget.caller));
           }
 
         },
@@ -97,9 +108,26 @@ class IndividualChatState extends State<IndividualChat>{
     //DO A FUTURE builder later...
     return Scaffold(
       appBar: AppBar(
-        title: Text("My Chat"),
+
+        title: Row(children: <Widget>[Material(
+          elevation: 4,
+          shape: CircleBorder(),
+          clipBehavior: Clip.hardEdge,
+          color: Colors.transparent,
+          child: Ink.image(
+            image: NetworkImage(widget.caller.avatar),
+            fit: BoxFit.cover,
+            width:50,
+            height: 75,
+            child: InkWell(
+              onTap: () {},
+            ),
+          ),
+        ),SizedBox(
+          width: 5,
+        ),Text(widget.other.name)])
       ),
-      body: DashChat(messages: messages, user: widget.other, onSend: onSend),
+      body: DashChat(messages: messages,showAvatarForEveryMessage: true, user: widget.other, onSend: onSend),
     );
   }
 
