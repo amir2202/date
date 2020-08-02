@@ -8,6 +8,7 @@ import 'package:dating/ChatLogic/DataHandler.dart';
 import 'package:dating/ChatLogic/MessageService.dart';
 import 'package:dating/GraphQLHandler.dart';
 import 'package:dating/common.dart';
+import 'package:dating/homepages/profile_external.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
@@ -60,6 +61,7 @@ class IndividualChatState extends State<IndividualChat>{
         ChatMessage message = ChatMessage(text: msgdata["message"], user: msgdata["by"] == int.parse(widget.caller.uid) ? widget.caller:widget.other,createdAt:DateTime.parse(msgdata["date"]));
         list.add(message);
       }
+      //UPDATE LAST MSG
       print(list.length);
       for(int i = list.length -1;i>=0;i--){
         MessageService.messages.add(list.elementAt(i));
@@ -158,7 +160,44 @@ class IndividualChatState extends State<IndividualChat>{
                   width:50,
                   height: 75,
                   child: InkWell(
-                    onTap: () {},
+                    onTap: () {
+                      GraphQLHandler.client2.mutate(
+                          MutationOptions(
+                              documentNode: gql(GraphQLHandler.getProfile),
+                              variables: {'userid': widget.other.uid},
+                              onCompleted: (dynamic resultData) {
+                                print(resultData);
+
+                                List<dynamic> pics = resultData['getProfileUID']['pictures'];
+                                List<String> pics2 = List<String>();
+
+                                for(dynamic el in pics){
+                                  pics2.add(el['filepath']);
+                                  print(el['filepath']);
+                                }
+
+                                Navigator.push(
+                                  context,
+                                  PageRouteBuilder(
+                                      pageBuilder: (context, animation, secondaryAnimation) => ProfileExternalPage(
+                                          userId: widget.other.uid,
+                                          name: resultData['getProfileUID']['info']['name'],
+                                          imageUrl: resultData['getProfileUID']['profilepic'],
+                                          pictureUrls: pics2,
+
+                                          totalViews: resultData['getProfileUID']['info']['stats']['totalviews'],
+                                          totalLikes: resultData['getProfileUID']['info']['stats']['totallikes']
+                                      ),
+                                      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                        return SlideTransition(position: animation.drive(Tween(begin: Offset(0,1), end: Offset.zero).chain(CurveTween(curve: Curves.ease))), child: child);
+                                      }
+                                  ),
+                                );
+                              }
+                          )
+                      );
+
+                    },
                   ),
                 ),
               ),SizedBox(
@@ -169,10 +208,10 @@ class IndividualChatState extends State<IndividualChat>{
             create: (context) => MessageService(widget.caller,widget.other),
             child: Consumer<MessageService>(
                 builder:(context,MessageService,child) {
-                  return DashChat(messages: MessageService.getMsg(),showAvatarForEveryMessage: true, user: widget.other, onSend: onSend);
+                  return DashChat(messages: MessageService.getMsg(),showAvatarForEveryMessage: true, user: widget.caller, onSend: onSend);
 
                 },
-                child: DashChat(messages: MessageService.messages,showAvatarForEveryMessage: true, user: widget.other, onSend: onSend),
+                child: DashChat(messages: MessageService.messages,showAvatarForEveryMessage: true, user: widget.caller, onSend: onSend),
 
             )
           )

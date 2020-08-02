@@ -411,7 +411,7 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
                                     if (widget.myProfile)
                                       widget.tabCallback(HomePageIndices.info, 1);
                                     else
-                                      // TODO: MUTATION FOR LIKING A PROFILE
+                                      //TODO do later, check if page already liked
                                       return;
                                   },
                                   constraints: BoxConstraints(),

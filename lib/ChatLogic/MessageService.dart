@@ -63,7 +63,8 @@ class MessageService extends ChangeNotifier {
             dynamic c = json.decode(handler.getDone());
             print(c);
             print(c["message"]);
-            messages.add(ChatMessage(text: c["message"], user: caller));
+
+            messages.add(ChatMessage(text: c["message"], user: c["by"] == int.parse(caller.uid) ? caller:other));
             notifyListeners();
             //ChatCreator.addChat(c["by"],ChatMessage(text: c["message"], user: widget.caller));
           }
