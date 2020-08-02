@@ -211,6 +211,7 @@ class IndividualChatState extends State<IndividualChat>{
                   return DashChat(messages: MessageService.getMsg(),showAvatarForEveryMessage: true, user: widget.caller, onSend: onSend);
 
                 },
+              //TODO on quickreply?
                 child: DashChat(messages: MessageService.messages,showAvatarForEveryMessage: true, user: widget.caller, onSend: onSend),
 
             )

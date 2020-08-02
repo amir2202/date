@@ -34,7 +34,8 @@ class ChatPageState extends State<ChatPage> {
     result = getChats();
     result.then((value) {
       setState(() {
-        if(value == null){
+        print(value.data);
+        if(value.data["getRecentChats"] == null){
           print("this works");
           nochats = true;
         }
