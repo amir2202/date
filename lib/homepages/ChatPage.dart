@@ -113,7 +113,7 @@ class ChatRow extends StatelessWidget {
   ChatRow({Key key, @required this.name, @required this.imageUrl, @required this.lastmessage,@required this.lastdate,@required this.socket,@required this.otherid});
 
   Widget build(BuildContext context) {
-    // TODO: implement build
+    // TODO: fix for nulls..
     return Material(
       color: Colors.transparent,
 

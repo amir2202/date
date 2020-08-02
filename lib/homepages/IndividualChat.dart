@@ -127,7 +127,7 @@ class IndividualChatState extends State<IndividualChat>{
     print(msg);
     GraphQLHandler.client2.mutate(MutationOptions(documentNode: gql(GraphQLHandler.sendMessage),variables:{'towards':widget.other.uid,'by':widget.caller.uid,'message':msg["text"]},onCompleted: (dynamic result){
       print("got");
-      print(result);
+
     }));
   }
 
