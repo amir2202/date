@@ -101,15 +101,16 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
 
   bool _hideFab = false;
 
+  double _topBoxPadding = 75.0;
+  double _topBioPadding = 250.0;
+
   // pink container's height when this page is controlling it
   double _containerHeight() {
-    return Common.screenHeight * 0.2 +
-            (_scrollController.hasClients ?
+    return 150.0 +
               (_scrollController.position.pixels > 0 ? -1 : 0.5) *
-              (Common.screenHeight * 0.2 - (_scrollController.position.pixels * _scrollController.position.pixels * 0.001) >= 0 ?
+              (150.0 - (_scrollController.position.pixels * _scrollController.position.pixels * 0.001) >= 0 ?
               (_scrollController.position.pixels * _scrollController.position.pixels * 0.001)
-              : Common.screenHeight * 0.2)
-            : 0);
+              : 150.0);
   }
 
   @override
@@ -125,6 +126,15 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
 
     // when the image grid is scrolled in any direction...
     _scrollController.addListener(() {setState(() {
+
+      _topBoxPadding = 75.0 +
+          (_scrollController.position.pixels > 0 ? -1 : 0.5) *
+              (_scrollController.position.pixels * _scrollController.position.pixels * 0.002) + _scrollController.position.pixels;
+
+      _topBioPadding = 250.0 +
+          (_scrollController.position.pixels > 0 ? -1 : 0.5) *
+              (_scrollController.position.pixels * _scrollController.position.pixels * 0.0015 +
+                  (_scrollController.position.pixels > 0 ? _scrollController.position.pixels : 0)) + _scrollController.position.pixels;
 
       // this page owns control over the pink container's size
       if (_scrollController.position.userScrollDirection != ScrollDirection.idle) {
@@ -201,7 +211,7 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
     setState(() {
       _containerPosition = containerPosition;
       _containerSize = containerRenderBox.size;
-      widget.notifier.value = Common.screenHeight * 0.2;
+      widget.notifier.value = 150.0;
       widget.disownCallback(widget.myProfile ? HomePageIndices.profile : -1);
     });
   }
@@ -235,209 +245,421 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
           ),
         ),
 
-        // IMAGE GRID
+        CustomScrollView(
+          controller: _scrollController,
+          physics: BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+          slivers: <Widget>[
 
-        ScrollConfiguration(
-          behavior: CmScrollBehavior(),
-          child: GridView.builder(
-            itemCount: _pictures.length,
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-            ),
-            itemBuilder: (BuildContext context, int index) {
-              return ProfileImageBox(imageUrl: _pictures[index]);
-            },
-            padding: EdgeInsets.fromLTRB(0, _containerPosition.dy + 140, 0, 0),
-            primary: false,
-            scrollDirection: Axis.vertical,
-            physics: BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
-            controller: _scrollController,
-          ),
-        ),
+            SliverToBoxAdapter(
+              child: Container(
+                width: MediaQuery.of(context).size.width,
+                height: 400,
+                color: Colors.transparent,
+                child: Stack(
+                  overflow: Overflow.visible,
+                  children: <Widget>[
 
-        // BIO / DESCRIPTION BOX
+                    // BIO / DESCRIPTION BOX
 
-        Positioned(
-          top: Common.screenHeight * 0.1 + 175 +
-              (_scrollController.hasClients ?
-                (_scrollController.position.pixels > 0 ? -1 : 0.5) *
-                (_scrollController.position.pixels * _scrollController.position.pixels * 0.0015 +
-                (_scrollController.position.pixels > 0 ? _scrollController.position.pixels : 0))
-              : 0),
-          left: Common.screenWidth * 0.1,
-          child: Container(
-            key: _bioKey,
-            width: Common.screenWidth * 0.8,
-            child: Text(
-              'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean viverra suscipit risus, id dapibus velit egestas non plentesque consectetur, erat sit amet eleifend dictum, nibh sapien suscipit leo, nec elementum mi nunc in lacus.',
-              maxLines: 3,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(fontSize: 15),
-            ),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              border: Border.all(
-                color: Colors.grey,
-              ),
-              borderRadius: BorderRadius.all(Radius.circular(30)),
-            ),
-            padding: EdgeInsets.all(20),
-          ),
-        ),
+                    Positioned(
+                      top: _topBioPadding,
+                      left: Common.screenWidth * 0.1,
+                      child: Container(
+                        key: _bioKey,
+                        width: Common.screenWidth * 0.8,
+                        child: Text(
+                          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean viverra suscipit risus, id dapibus velit egestas non plentesque consectetur, erat sit amet eleifend dictum, nibh sapien suscipit leo, nec elementum mi nunc in lacus.',
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(fontSize: 15),
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(
+                            color: Colors.grey,
+                          ),
+                          borderRadius: BorderRadius.all(Radius.circular(30)),
+                        ),
+                        padding: EdgeInsets.all(20),
+                      ),
+                    ),
 
-        // BIO / DESCRIPTION EDIT BUTTON
+                    // BIO / DESCRIPTION EDIT BUTTON
 
-        if (widget.myProfile)
-          Positioned(
-          top: _containerPosition.dy + _containerSize.height - 27.5 +
-              (_scrollController.hasClients ?
-              (_scrollController.position.pixels > 0 ? -1 : 0.5) *
-                  (_scrollController.position.pixels * _scrollController.position.pixels * 0.0015 +
-                      (_scrollController.position.pixels > 0 ? _scrollController.position.pixels : 0))
-                  : 0),
-          right: Common.screenWidth * 0.05,
-          child: RawMaterialButton(
-            onPressed: () {
-            },
-            elevation: 2,
-            fillColor: Color(0xFFCA436B),
-            splashColor: Colors.white,
-            child: Icon(
-              Icons.edit,
-              color: Colors.white,
-              size: 20,
-            ),
-            padding: EdgeInsets.all(15.0),
-            shape: CircleBorder(),
-          ),
-        ),
-
-        // PROFILE BOX
-
-        Positioned(
-          top: Common.screenHeight * 0.1 +
-              (_scrollController.hasClients ?
-                (_scrollController.position.pixels > 0 ? -1 : 0.5) *
-                (_scrollController.position.pixels * _scrollController.position.pixels * 0.002)
-              : 0),
-          left: Common.screenWidth * 0.05,
-          child: Hero(
-            tag: widget.myProfile ? 'preview_tag' : 'external_tag',
-            child: SizedBox(
-              width: Common.screenWidth * 0.9,
-              height: 150,
-              child: Card(
-                elevation: 10,
-                color: Colors.white,
-                child: Container(
-                  padding: EdgeInsets.fromLTRB(40, 0, 20, 0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
-
-                      Common.profilePicture == null ?
-                      SizedBox(
-                        width: 75,
-                        height: 75,
-                        child: Material(
-                          elevation: 4,
-                          color: Colors.grey,
+                    if (widget.myProfile)
+                      Positioned(
+                        top: _containerPosition.dy + _containerSize.height - 27.5 +
+                            (_scrollController.hasClients ?
+                            (_scrollController.position.pixels > 0 ? -1 : 0.5) *
+                                (_scrollController.position.pixels * _scrollController.position.pixels * 0.0015 +
+                                    (_scrollController.position.pixels > 0 ? _scrollController.position.pixels : 0)) + _scrollController.position.pixels
+                                : 0),
+                        right: Common.screenWidth * 0.05,
+                        child: RawMaterialButton(
+                          onPressed: () {
+                          },
+                          elevation: 2,
+                          fillColor: Color(0xFFCA436B),
+                          splashColor: Colors.white,
+                          child: Icon(
+                            Icons.edit,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                          padding: EdgeInsets.all(15.0),
                           shape: CircleBorder(),
                         ),
-                      ) :
-                      Material(
-                        elevation: 4,
-                        shape: CircleBorder(),
-                        clipBehavior: Clip.hardEdge,
-                        color: Colors.transparent,
-                        child: Ink.image(
-                          image: widget.imageUrl == null ? FileImage(Common.profilePicture) : NetworkImage(widget.imageUrl),
-                          fit: BoxFit.cover,
-                          width: 75,
-                          height: 75,
-                          child: InkWell(
-                            onTap: () {},
+                      ),
+
+                    Positioned(
+                      top: _topBoxPadding,
+                      left: Common.screenWidth * 0.05,
+                      child: Hero(
+                        tag: widget.myProfile ? 'preview_tag' : 'external_tag',
+                        child: SizedBox(
+                          width: Common.screenWidth * 0.9,
+                          height: 150,
+                          child: Card(
+                            elevation: 10,
+                            color: Colors.white,
+                            child: Container(
+                              padding: EdgeInsets.fromLTRB(40, 0, 20, 0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: <Widget>[
+
+                                  Common.profilePicture == null ?
+                                  SizedBox(
+                                    width: 75,
+                                    height: 75,
+                                    child: Material(
+                                      elevation: 4,
+                                      color: Colors.grey,
+                                      shape: CircleBorder(),
+                                    ),
+                                  ) :
+                                  Material(
+                                    elevation: 4,
+                                    shape: CircleBorder(),
+                                    clipBehavior: Clip.hardEdge,
+                                    color: Colors.transparent,
+                                    child: Ink.image(
+                                      image: widget.imageUrl == null ? FileImage(Common.profilePicture) : NetworkImage(widget.imageUrl),
+                                      fit: BoxFit.cover,
+                                      width: 75,
+                                      height: 75,
+                                      child: InkWell(
+                                        onTap: () {},
+                                      ),
+                                    ),
+                                  ),
+
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      SizedBox(
+                                        height: Common.screenHeight * 0.02,
+                                      ),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        children: <Widget>[
+                                          SizedBox(width: 10,),
+                                          Text("${widget.name}", style: TextStyle(fontSize: 20)),
+                                        ],
+                                      ),
+
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        children: <Widget>[
+                                          RawMaterialButton(
+                                              onPressed: () {
+                                                if (widget.myProfile)
+                                                  widget.tabCallback(3, 0);
+                                                else
+                                                  return;
+                                              },
+                                              constraints: BoxConstraints(),
+                                              shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
+                                              splashColor: Color(0xFFCA436B),
+                                              padding: EdgeInsets.all(10.0),
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                children: <Widget>[
+                                                  Icon(Icons.remove_red_eye, size: 20),
+                                                  SizedBox(width: 5,),
+                                                  Text(_views.toString(), style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+                                                ],
+                                              )
+                                          ),
+                                          SizedBox(
+                                            width: 10,
+                                          ),
+                                          RawMaterialButton(
+                                              onPressed: () {
+                                                if (widget.myProfile)
+                                                  widget.tabCallback(HomePageIndices.info, 1);
+                                                else
+                                                  //TODO do later, check if page already liked
+                                                  return;
+                                              },
+                                              constraints: BoxConstraints(),
+                                              shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
+                                              splashColor: Color(0xFFCA436B),
+                                              padding: EdgeInsets.all(10.0),
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                children: <Widget>[
+                                                  Icon(Icons.favorite, size: 20),
+                                                  SizedBox(width: 5,),
+                                                  Text(_likes.toString(), style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+                                                ],
+                                              )
+                                          ),
+                                        ],
+                                      )
+                                    ],
+                                  )
+                                ],
+                              ),
+                            ),
                           ),
                         ),
                       ),
+                    ),
 
-                      SizedBox(
-                        width: 10,
-                      ),
 
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          SizedBox(
-                            height: Common.screenHeight * 0.02,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: <Widget>[
-                              SizedBox(width: 10,),
-                              Text("${widget.name}", style: TextStyle(fontSize: 20)),
-                            ],
-                          ),
 
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: <Widget>[
-                              RawMaterialButton(
-                                onPressed: () {
-                                    if (widget.myProfile)
-                                      widget.tabCallback(3, 0);
-                                    else
-                                      return;
-                                  },
-                                  constraints: BoxConstraints(),
-                                  shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
-                                  splashColor: Color(0xFFCA436B),
-                                  padding: EdgeInsets.all(10.0),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                      Icon(Icons.remove_red_eye, size: 20),
-                                      SizedBox(width: 5,),
-                                      Text(_views.toString(), style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
-                                    ],
-                                  )
-                              ),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              RawMaterialButton(
-                                  onPressed: () {
-                                    if (widget.myProfile)
-                                      widget.tabCallback(HomePageIndices.info, 1);
-                                    else
-                                      //TODO do later, check if page already liked
-                                      return;
-                                  },
-                                  constraints: BoxConstraints(),
-                                  shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
-                                  splashColor: Color(0xFFCA436B),
-                                  padding: EdgeInsets.all(10.0),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                      Icon(Icons.favorite, size: 20),
-                                      SizedBox(width: 5,),
-                                      Text(_likes.toString(), style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
-                                    ],
-                                  )
-                              ),
-                            ],
-                          )
-                        ],
-                      )
-                    ],
-                  ),
+                  ],
                 ),
               ),
             ),
-          ),
+
+            SliverPadding(
+              padding: EdgeInsets.only(top: 0),
+              sliver: SliverGrid(
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                ),
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                    return ProfileImageBox(imageUrl: _pictures[index]);
+                  },
+                  childCount: _pictures.length,
+                ),
+              ),
+            ),
+
+          ],
         ),
+
+        // IMAGE GRID
+
+//        ScrollConfiguration(
+//          behavior: CmScrollBehavior(),
+//          child: GridView.builder(
+//            itemCount: _pictures.length,
+//            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+//              crossAxisCount: 3,
+//            ),
+//            itemBuilder: (BuildContext context, int index) {
+//              return ProfileImageBox(imageUrl: _pictures[index]);
+//            },
+//            padding: EdgeInsets.fromLTRB(0, _containerPosition.dy + 140, 0, 0),
+//            primary: false,
+//            scrollDirection: Axis.vertical,
+//            physics: BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+//            controller: _scrollController,
+//          ),
+//        ),
+
+//        // BIO / DESCRIPTION BOX
+//
+//        Positioned(
+//          top: Common.screenHeight * 0.1 + 175 +
+//              (_scrollController.hasClients ?
+//                (_scrollController.position.pixels > 0 ? -1 : 0.5) *
+//                (_scrollController.position.pixels * _scrollController.position.pixels * 0.0015 +
+//                (_scrollController.position.pixels > 0 ? _scrollController.position.pixels : 0))
+//              : 0),
+//          left: Common.screenWidth * 0.1,
+//          child: Container(
+//            key: _bioKey,
+//            width: Common.screenWidth * 0.8,
+//            child: Text(
+//              'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean viverra suscipit risus, id dapibus velit egestas non plentesque consectetur, erat sit amet eleifend dictum, nibh sapien suscipit leo, nec elementum mi nunc in lacus.',
+//              maxLines: 3,
+//              overflow: TextOverflow.ellipsis,
+//              style: TextStyle(fontSize: 15),
+//            ),
+//            decoration: BoxDecoration(
+//              color: Colors.white,
+//              border: Border.all(
+//                color: Colors.grey,
+//              ),
+//              borderRadius: BorderRadius.all(Radius.circular(30)),
+//            ),
+//            padding: EdgeInsets.all(20),
+//          ),
+//        ),
+//
+//        // BIO / DESCRIPTION EDIT BUTTON
+//
+//        if (widget.myProfile)
+//          Positioned(
+//          top: _containerPosition.dy + _containerSize.height - 27.5 +
+//              (_scrollController.hasClients ?
+//              (_scrollController.position.pixels > 0 ? -1 : 0.5) *
+//                  (_scrollController.position.pixels * _scrollController.position.pixels * 0.0015 +
+//                      (_scrollController.position.pixels > 0 ? _scrollController.position.pixels : 0))
+//                  : 0),
+//          right: Common.screenWidth * 0.05,
+//          child: RawMaterialButton(
+//            onPressed: () {
+//            },
+//            elevation: 2,
+//            fillColor: Color(0xFFCA436B),
+//            splashColor: Colors.white,
+//            child: Icon(
+//              Icons.edit,
+//              color: Colors.white,
+//              size: 20,
+//            ),
+//            padding: EdgeInsets.all(15.0),
+//            shape: CircleBorder(),
+//          ),
+//        ),
+
+        // PROFILE BOX
+
+//        Positioned(
+//          top: Common.screenHeight * 0.1 +
+//              (_scrollController.hasClients ?
+//                (_scrollController.position.pixels > 0 ? -1 : 0.5) *
+//                (_scrollController.position.pixels * _scrollController.position.pixels * 0.002)
+//              : 0),
+//          left: Common.screenWidth * 0.05,
+//          child: Hero(
+//            tag: widget.myProfile ? 'preview_tag' : 'external_tag',
+//            child: SizedBox(
+//              width: Common.screenWidth * 0.9,
+//              height: 150,
+//              child: Card(
+//                elevation: 10,
+//                color: Colors.white,
+//                child: Container(
+//                  padding: EdgeInsets.fromLTRB(40, 0, 20, 0),
+//                  child: Row(
+//                    mainAxisAlignment: MainAxisAlignment.start,
+//                    children: <Widget>[
+//
+//                      Common.profilePicture == null ?
+//                      SizedBox(
+//                        width: 75,
+//                        height: 75,
+//                        child: Material(
+//                          elevation: 4,
+//                          color: Colors.grey,
+//                          shape: CircleBorder(),
+//                        ),
+//                      ) :
+//                      Material(
+//                        elevation: 4,
+//                        shape: CircleBorder(),
+//                        clipBehavior: Clip.hardEdge,
+//                        color: Colors.transparent,
+//                        child: Ink.image(
+//                          image: widget.imageUrl == null ? FileImage(Common.profilePicture) : NetworkImage(widget.imageUrl),
+//                          fit: BoxFit.cover,
+//                          width: 75,
+//                          height: 75,
+//                          child: InkWell(
+//                            onTap: () {},
+//                          ),
+//                        ),
+//                      ),
+//
+//                      SizedBox(
+//                        width: 10,
+//                      ),
+//
+//                      Column(
+//                        mainAxisAlignment: MainAxisAlignment.center,
+//                        crossAxisAlignment: CrossAxisAlignment.start,
+//                        children: <Widget>[
+//                          SizedBox(
+//                            height: Common.screenHeight * 0.02,
+//                          ),
+//                          Row(
+//                            mainAxisAlignment: MainAxisAlignment.start,
+//                            children: <Widget>[
+//                              SizedBox(width: 10,),
+//                              Text("${widget.name}", style: TextStyle(fontSize: 20)),
+//                            ],
+//                          ),
+//
+//                          Row(
+//                            mainAxisAlignment: MainAxisAlignment.start,
+//                            children: <Widget>[
+//                              RawMaterialButton(
+//                                onPressed: () {
+//                                    if (widget.myProfile)
+//                                      widget.tabCallback(3, 0);
+//                                    else
+//                                      return;
+//                                  },
+//                                  constraints: BoxConstraints(),
+//                                  shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
+//                                  splashColor: Color(0xFFCA436B),
+//                                  padding: EdgeInsets.all(10.0),
+//                                  child: Row(
+//                                    mainAxisAlignment: MainAxisAlignment.center,
+//                                    children: <Widget>[
+//                                      Icon(Icons.remove_red_eye, size: 20),
+//                                      SizedBox(width: 5,),
+//                                      Text(_views.toString(), style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+//                                    ],
+//                                  )
+//                              ),
+//                              SizedBox(
+//                                width: 10,
+//                              ),
+//                              RawMaterialButton(
+//                                  onPressed: () {
+//                                    if (widget.myProfile)
+//                                      widget.tabCallback(HomePageIndices.info, 1);
+//                                    else
+//                                      //TODO do later, check if page already liked
+//                                      return;
+//                                  },
+//                                  constraints: BoxConstraints(),
+//                                  shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
+//                                  splashColor: Color(0xFFCA436B),
+//                                  padding: EdgeInsets.all(10.0),
+//                                  child: Row(
+//                                    mainAxisAlignment: MainAxisAlignment.center,
+//                                    children: <Widget>[
+//                                      Icon(Icons.favorite, size: 20),
+//                                      SizedBox(width: 5,),
+//                                      Text(_likes.toString(), style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+//                                    ],
+//                                  )
+//                              ),
+//                            ],
+//                          )
+//                        ],
+//                      )
+//                    ],
+//                  ),
+//                ),
+//              ),
+//            ),
+//          ),
+//        ),
 
         // ADD PICTURE BUTTON
 

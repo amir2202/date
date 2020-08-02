@@ -56,8 +56,9 @@ class HomePageState extends State<HomePage> with SingleTickerProviderStateMixin 
   ValueNotifier<double> _forwardNotifier3;
   ValueNotifier<bool> _forceForward3;
 
-  double _cHeight = 0;
-  double _c3Height = 0;
+  double _c4Height = 150.0;
+  double _c3Height = 100.0;
+  double _containerHeight = 150.0;
 
   tabCallback(index, option) {
     setState(() {
@@ -76,25 +77,34 @@ class HomePageState extends State<HomePage> with SingleTickerProviderStateMixin 
   disownCallback(index) {
     setState(() {
       _ownership = index;
+
+      if (index == HomePageIndices.profile) {
+        _c4Height = _n4.value;
+        _containerHeight = _c4Height;
+      } else if (_ownership == HomePageIndices.info) {
+        _c3Height = _n3.value;
+        _containerHeight = _c3Height;
+      }
+
     });
   }
 
-  double _containerHeight() {
-    if (Common.screenHeight == null || !_pageController.hasClients) {
-      return 0;
-    } else if (_ownership == -1) {
-      double t = _pageController.hasClients ? _cHeight - (4 - _pageController.page) * (_cHeight - _c3Height) : 0;
-      _forwardNotifier3.value = t > _c3Height ? t : _c3Height;
-      return t > _c3Height ? t : _c3Height;
-    } else if (_ownership == HomePageIndices.profile) {
-      _cHeight = _n4.value;
-    } else if (_ownership == HomePageIndices.info) {
-      _c3Height = _n3.value;
-      return _c3Height;
-    }
-
-    return _cHeight;
-  }
+//  double _containerHeight() {
+//    if (Common.screenHeight == null || !_pageController.hasClients) {
+//      return 0;
+//    } else if (_ownership == -1) {
+//      double t = _pageController.hasClients ? _cHeight - (4 - _pageController.page) * (_cHeight - _c3Height) : 0;
+//      _forwardNotifier3.value = t > _c3Height ? t : _c3Height;
+//      return t > _c3Height ? t : _c3Height;
+//    } else if (_ownership == HomePageIndices.profile) {
+//      _cHeight = _n4.value;
+//    } else if (_ownership == HomePageIndices.info) {
+//      _c3Height = _n3.value;
+//      return _c3Height;
+//    }
+//
+//    return _cHeight;
+//  }
 
   PageController _pageController;
   TabController _infoTabController;
@@ -104,11 +114,6 @@ class HomePageState extends State<HomePage> with SingleTickerProviderStateMixin 
       Common.screenWidth = MediaQuery.of(context).size.width;
       Common.screenHeight = MediaQuery.of(context).size.height;
     }
-
-    setState(() {
-      _cHeight = Common.screenHeight * 0.2;
-      _c3Height = Common.screenHeight * 0.12;
-    });
   }
 
   @override
@@ -122,6 +127,10 @@ class HomePageState extends State<HomePage> with SingleTickerProviderStateMixin 
       setState(() {
         _ownership = -1;
         _forceForward3.value = true;
+
+        double t = _pageController.hasClients ? _c4Height - (4 - _pageController.page) * (_c4Height - _c3Height) : 0;
+        _forwardNotifier3.value = t > _c3Height ? t : _c3Height;
+        _containerHeight = t > _c3Height ? t : _c3Height;
       });
     });
 
@@ -187,7 +196,7 @@ class HomePageState extends State<HomePage> with SingleTickerProviderStateMixin 
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               Container(
-                height: _containerHeight(),
+                height: _containerHeight,
                 color: Color(0xFFCA436B),
               ),
               Expanded(
