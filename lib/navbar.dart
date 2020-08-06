@@ -80,6 +80,15 @@ class NavBarItemState extends State<NavBarItem> {
 
         _leftPadding = leftPadding + direction * (widget.animation.value * 7.5);
       });
+    } else {
+      setState(() {
+        _selected = false;
+        _width = 50.0;
+        _opacity = 0.0;
+        _iconOpacity = 0.0;
+        _textOpacity = 0.0;
+        _leftPadding = 12.5;
+      });
     }
 
   }
