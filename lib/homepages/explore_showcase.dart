@@ -76,7 +76,7 @@ class ShowcaseState extends State<Showcase> {
               );
             },
             scrollDirection: Axis.horizontal,
-            physics: const BouncingScrollPhysics(),
+            physics: widget.enabled ? const BouncingScrollPhysics() : const NeverScrollableScrollPhysics(),
             padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
           ),
 

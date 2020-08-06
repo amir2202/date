@@ -36,6 +36,7 @@ class ExploreListEntryState extends State<ExploreListEntry> {
     super.initState();
 
     widget.parentScrollController.addListener(_onParentScroll);
+    widget.offsetNotifier.addListener(_onParentScroll);
   }
 
   @override
@@ -43,6 +44,7 @@ class ExploreListEntryState extends State<ExploreListEntry> {
     super.dispose();
 
     widget.parentScrollController.removeListener(_onParentScroll);
+    widget.offsetNotifier.removeListener(_onParentScroll);
   }
 
   @override
