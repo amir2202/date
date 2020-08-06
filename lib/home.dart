@@ -1,4 +1,5 @@
 import 'package:dating/homepages/ChatPage.dart';
+import 'package:dating/homepages/explore.dart';
 import 'package:dating/homepages/profile_info.dart';
 import 'package:flutter/material.dart';
 import 'package:dating/homepages/profile.dart';
@@ -62,15 +63,21 @@ class HomePageState extends State<HomePage> with SingleTickerProviderStateMixin 
 
   tabCallback(index, option) {
     setState(() {
-      _index = index;
 
       if (index == HomePageIndices.info) {
         _infoTabController.animateTo(option,
             duration: Duration(milliseconds: 0), curve: Curves.ease);
       }
 
-      _pageController.animateToPage(index,
-          duration: Duration(milliseconds: 200), curve: Curves.ease);
+      if ((index - _index).abs() == 1) {
+        _pageController.animateToPage(index,
+            duration: Duration(milliseconds: 200), curve: Curves.ease);
+      } else {
+        _pageController.jumpToPage(index);
+      }
+
+      _index = index;
+
     });
   }
 
@@ -157,7 +164,7 @@ class HomePageState extends State<HomePage> with SingleTickerProviderStateMixin 
     // bottom navigation bar pages
     _pages = <Widget>[
 
-      Text('a'),
+      ExplorePage(),
 
       Text('a'),
 
