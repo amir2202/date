@@ -1,6 +1,7 @@
 import 'package:dating/homepages/ChatPage.dart';
 import 'package:dating/homepages/explore.dart';
 import 'package:dating/homepages/profile_info.dart';
+import 'package:dating/navbar.dart';
 import 'package:flutter/material.dart';
 import 'package:dating/homepages/profile.dart';
 import 'package:dating/common.dart';
@@ -48,7 +49,7 @@ class HomePageState extends State<HomePage> with SingleTickerProviderStateMixin 
 
   List<Widget> _pages;
 
-  int _index = HomePageIndices.profile;
+  int _index = 0;
   int _ownership = -1;
 
   ValueNotifier<double> _n3;
@@ -64,17 +65,17 @@ class HomePageState extends State<HomePage> with SingleTickerProviderStateMixin 
   tabCallback(index, option) {
     setState(() {
 
-      if (index == HomePageIndices.info) {
-        _infoTabController.animateTo(option,
-            duration: Duration(milliseconds: 0), curve: Curves.ease);
-      }
-
-      if ((index - _index).abs() == 1) {
-        _pageController.animateToPage(index,
-            duration: Duration(milliseconds: 200), curve: Curves.ease);
-      } else {
-        _pageController.jumpToPage(index);
-      }
+//      if (index == HomePageIndices.info) {
+//        _infoTabController.animateTo(option,
+//            duration: Duration(milliseconds: 0), curve: Curves.ease);
+//      }
+//
+//      if ((index - _index).abs() == 1) {
+//        _pageController.animateToPage(index,
+//            duration: Duration(milliseconds: 200), curve: Curves.ease);
+//      } else {
+//        _pageController.jumpToPage(index);
+//      }
 
       _index = index;
 
@@ -168,105 +169,75 @@ class HomePageState extends State<HomePage> with SingleTickerProviderStateMixin 
 
       Text('a'),
 
-      ChatPage(),
+      Container(),
 
-      ProfileInfoPage(
-        disownCallback: disownCallback,
-        notifier: _n3,
-        notifier2: _forwardNotifier3,
-        forceForward: _forceForward3,
-        tabController: _infoTabController,
-      ),
+      Container(),
 
-      ProfilePage(
-        tabCallback: tabCallback,
-        disownCallback: disownCallback,
-        notifier: _n4,
+      Container(),
 
-        myProfile: true,
-
-        userId: widget.userId,
-        name: widget.name,
-        imageUrl: widget.imageUrl,
-        pictureUrls: widget.pictureUrls,
-
-        totalViews: widget.totalViews,
-        totalLikes: widget.totalLikes
-      ),
+//      ProfileInfoPage(
+//        disownCallback: disownCallback,
+//        notifier: _n3,
+//        notifier2: _forwardNotifier3,
+//        forceForward: _forceForward3,
+//        tabController: _infoTabController,
+//      ),
+//
+//      ProfilePage(
+//        tabCallback: tabCallback,
+//        disownCallback: disownCallback,
+//        notifier: _n4,
+//
+//        myProfile: true,
+//
+//        userId: widget.userId,
+//        name: widget.name,
+//        imageUrl: widget.imageUrl,
+//        pictureUrls: widget.pictureUrls,
+//
+//        totalViews: widget.totalViews,
+//        totalLikes: widget.totalLikes
+//      ),
 
     ];
 
     return Scaffold(
-      body: Stack(
-        children: [
-          Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              Container(
-                height: _containerHeight,
-                color: Color(0xFFCA436B),
-              ),
-              Expanded(
-                child: Container(
-                  color: Colors.white,
-                ),
-              ),
-            ]
+      body: _pages[_index],
+      bottomNavigationBar: NavBar(
+        onTap: (index) {
+          print(index);
+          setState(() {
+            _index = index;
+          });
+        },
+        entries: <NavBarEntry>[
+          NavBarEntry(
+            icon: Icons.language,
+            text: 'Explore',
+            color: Color(0xFFCA436B),
           ),
-
-//          Positioned(
-//            left: Common.screenWidth * 0.05,
-//            top: Common.screenHeight * 0.1,
-//            child: Container(
-//                width: Common.screenWidth * 0.9,
-//                height: 150,
-//                child: Card(
-//                  elevation: 10,
-//                )
-//            ),
-//          ),
-
-          PageView(
-            controller: _pageController,
-            onPageChanged: (index) {
-              setState(() => _index = index);
-            },
-            children: _pages,
+          NavBarEntry(
+            icon: Icons.video_library,
+            text: 'Stories',
+            color: Color(0xFFCA436B),
           ),
-
-
-        ]
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.language),
-            title: Text('Explore'),
+          NavBarEntry(
+            icon: Icons.message,
+            text: 'Chat',
+            color: Color(0xFFCA436B),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.video_library),
-            title: Text('Stories'),
+          NavBarEntry(
+            icon: Icons.favorite,
+            text: 'Views',
+            color: Color(0xFFCA436B),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.message),
-            title: Text('Messages'),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.favorite),
-            title: Text('Views'),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            title: Text('Profile'),
+          NavBarEntry(
+            icon: Icons.person,
+            text: 'Profile',
+            color: Color(0xFFCA436B),
           ),
         ],
-        selectedItemColor: Color(0xFFCA436B),
-        unselectedItemColor: Colors.grey,
-        currentIndex: _index,
-        onTap: (index) {
-          tabCallback(index, 0);
-        },
-      ),
+      )
     );
   }
 }
