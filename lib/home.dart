@@ -1,6 +1,7 @@
 import 'package:dating/homepages/ChatPage.dart';
 import 'package:dating/homepages/explore.dart';
 import 'package:dating/homepages/profile_info.dart';
+import 'package:dating/homepages/profile_new.dart';
 import 'package:dating/navbar.dart';
 import 'package:flutter/material.dart';
 import 'package:dating/homepages/profile.dart';
@@ -173,7 +174,7 @@ class HomePageState extends State<HomePage> with SingleTickerProviderStateMixin 
 
       Container(),
 
-      Container(),
+      Profile(userId: widget.userId, name: widget.name, pictureUrl: widget.imageUrl, pictureUrls: widget.pictureUrls),
 
 //      ProfileInfoPage(
 //        disownCallback: disownCallback,
