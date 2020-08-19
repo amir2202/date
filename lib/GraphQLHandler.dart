@@ -46,6 +46,21 @@ class GraphQLHandler {
     }
   """;
 
+  static const String mostPopular = r"""
+  mutation mostPopular($start: Int,$end:Int) {
+      mostPopular(start:$start,end:$end) {
+        profilepic
+        userid
+        info {
+          stats {
+            totallikes
+            totalviews
+          }
+        }
+      }
+    }
+  """;
+
   static Future<QueryResult> getLists() {
     return client2.mutate(
       MutationOptions(
