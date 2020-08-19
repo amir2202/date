@@ -54,8 +54,11 @@ class ExplorePageState extends State<ExplorePage> with SingleTickerProviderState
         final String pictureUrl;
         final String text;
         final bool enabled;*/
-
-        allpopularentries.add(ShowcaseEntry(pictureUrl: user["profilepic"],enabled: true,text: "",userId:user["userid"]));
+        int likes = user["info"]["stats"]["totallikes"];
+        int views = user["info"]["stats"]["totalviews"];
+        //TODO matt the logic to display string
+        String display = (likes+views).toString();
+        allpopularentries.add(ShowcaseEntry(pictureUrl: user["profilepic"],enabled: true,text: display,userId:user["userid"]));
       }
       //TODO fix the list
     });
@@ -249,7 +252,7 @@ class ExplorePageState extends State<ExplorePage> with SingleTickerProviderState
                         Showcase(
                           enabled: true,
                           height: 100,
-                          entries: allpopularentries.length >= 4 ? allpopularentries.sublist(0,4):allpopularentries.sublist(0,allpopularentries.length),
+                          entries: allpopularentries.length >= 4 ? allpopularentries.sublist(0,4):allpopularentries,
                           
                           /*<ShowcaseEntry>[
                             ShowcaseEntry(

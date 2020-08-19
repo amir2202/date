@@ -42,7 +42,7 @@ class ShowcaseState extends State<Showcase> {
         ShowcaseCircleImage(
           diameter: widget.height,
           pictureUrl: entry.pictureUrl,
-          indicator: Indicator(icon: Icons.favorite, backgroundColor: !entry.enabled || !widget.enabled ? Colors.grey : Colors.green, text: '69'),
+          indicator: Indicator(icon: Icons.favorite, backgroundColor: !entry.enabled || !widget.enabled ? Colors.grey : Colors.green, text: entry.text),
           enabled: widget.enabled && entry.enabled,
         )
       );
