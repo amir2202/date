@@ -1,3 +1,4 @@
+import 'package:dating/messaging/Firebase.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/button_list.dart';
 import 'package:flutter_signin_button/button_view.dart';
@@ -17,6 +18,25 @@ class LogInPage extends StatefulWidget {
 }
 
 class LogInPageState extends State<LogInPage> {
+
+  void login(String userid,String name,String imageUrl,List<String> pictureUrls,int totalViews, int totalLikes){
+    FireBaseHandler.firebaseMessaging.subscribeToTopic(userid);
+    Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+            builder: (context) => HomePage(
+                userId: userid,
+                name: name,
+                totalLikes: totalLikes,
+                totalViews: totalViews,
+                imageUrl: imageUrl,
+                pictureUrls: pictureUrls
+            )
+        ),
+            (Route<dynamic> route) => false
+    );
+  }
+
 
   bool isLoggedIn = false;
   FocusNode textFocusNode1 = new FocusNode();
@@ -101,8 +121,8 @@ class LogInPageState extends State<LogInPage> {
                 for(dynamic el in pics){
                   pics2.add(el['filepath']);
                 }
-
-                Navigator.pushAndRemoveUntil(
+                login(result['FacebookLinked']['userid'].toString(),result['FacebookLinked']['info']['name'],result['FacebookLinked']['profilepic'],pics2,result['FacebookLinked']['info']['stats']['totalviews'],result['FacebookLinked']['info']['stats']['totallikes']);
+                /*Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(
                     builder: (context) => HomePage(
@@ -116,7 +136,7 @@ class LogInPageState extends State<LogInPage> {
                   ),
                   (Route<dynamic> route) => false
                 );
-
+*/
               }
             }
           )
@@ -273,22 +293,8 @@ class LogInPageState extends State<LogInPage> {
                       }
 
                       Common.userid = resultData['loginManual']['userid'].toString();
-
-                      Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => HomePage(
-                            userId: resultData['loginManual']['userid'].toString(),
-                            name:resultData['loginManual']['info']['name'],
-                            imageUrl:resultData['loginManual']['profilepic'],
-                            pictureUrls:pics2,
-
-                            totalViews: resultData['loginManual']['info']['stats']['totalviews'],
-                            totalLikes: resultData['loginManual']['info']['stats']['totallikes'],
-                          ),
-                        ),
-                        (Route<dynamic> route) => false
-                      );
+                      FireBaseHandler.firebaseMessaging.subscribeToTopic(Common.userid);
+                      login(resultData['loginManual']['userid'].toString(),resultData['loginManual']['info']['name'],resultData['loginManual']['profilepic'],pics2,resultData['loginManual']['info']['stats']['totalviews'],resultData['loginManual']['info']['stats']['totallikes']);
                     }
                   }
                 ),

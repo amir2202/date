@@ -8,7 +8,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
 import '../common.dart';
-import 'ChatCreator.dart';
+import '../ChatLogic/ChatCreator.dart';
 
 /*class MessagesService extends ChangeNotifier {
   final messages = <ChatMessage>[];

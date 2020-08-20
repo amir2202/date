@@ -5,7 +5,7 @@ import 'dart:io';
 import 'package:dash_chat/dash_chat.dart';
 import 'package:dating/ChatLogic/ChatCreator.dart';
 import 'package:dating/ChatLogic/DataHandler.dart';
-import 'package:dating/ChatLogic/MessageService.dart';
+import 'file:///C:/Users/amir2/AndroidStudioProjects/dating/lib/messaging/MessageService.dart';
 import 'package:dating/GraphQLHandler.dart';
 import 'package:dating/common.dart';
 import 'package:dating/homepages/profile_external.dart';
