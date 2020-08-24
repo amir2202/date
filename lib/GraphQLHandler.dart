@@ -180,6 +180,7 @@ mutation recentChats($caller:String!){
   static const String recentlyOnline = r"""mutation recentlyOnline($limit:Int){
 	recentlyOnline(limit:$limit){
     profilepic
+    userid
     info
     {
       stats{
