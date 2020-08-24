@@ -2,7 +2,6 @@ import 'dart:collection';
 import 'dart:convert';
 
 import 'package:dash_chat/dash_chat.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 
 //TODO use saved preferences, currently stored in runtime

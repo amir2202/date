@@ -77,6 +77,7 @@ class MessageService extends ChangeNotifier {
   }
 
 
+
   static Future<QueryResult> previousMessages(ChatUser caller,int to,int by) async{
       //FIRST CHECK IF LOCALLY there are prev messages
       //TODO

@@ -11,4 +11,8 @@ class GraphQLRequests{
 
     //PROCEED TO DOWNLOAD recent messages if not
   }
+  
+  static Future<QueryResult> recentlyOnline(int limit) async {
+    return await GraphQLHandler.client2.mutate(MutationOptions(documentNode: gql(GraphQLHandler.recentlyOnline),variables: {"limit":10}));
+  }
 }

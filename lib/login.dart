@@ -5,6 +5,7 @@ import 'package:flutter_signin_button/button_view.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert' as JSON;
 
 import 'GraphQLHandler.dart';
@@ -15,12 +16,24 @@ class LogInPage extends StatefulWidget {
   bool isLoggedIn = false;
   @override
   LogInPageState createState() => LogInPageState();
+
 }
 
 class LogInPageState extends State<LogInPage> {
 
-  void login(String userid,String name,String imageUrl,List<String> pictureUrls,int totalViews, int totalLikes){
+
+
+  void login(String userid,String name,String imageUrl,List<String> pictureUrls,int totalViews, int totalLikes,bool premium) async{
+    print("subscribin");
+    //TODO if doing like this, set it to false when logout
+    Common.premium = premium;
+    Common.userid = userid;
+    Common.fullName = name;
+    Common.profileLink = imageUrl;
     FireBaseHandler.firebaseMessaging.subscribeToTopic(userid);
+    SharedPreferences pref = await SharedPreferences.getInstance().then((value) {
+      value.setInt("LastLogin", int.parse(userid));
+    });
     Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(
@@ -121,22 +134,7 @@ class LogInPageState extends State<LogInPage> {
                 for(dynamic el in pics){
                   pics2.add(el['filepath']);
                 }
-                login(result['FacebookLinked']['userid'].toString(),result['FacebookLinked']['info']['name'],result['FacebookLinked']['profilepic'],pics2,result['FacebookLinked']['info']['stats']['totalviews'],result['FacebookLinked']['info']['stats']['totallikes']);
-                /*Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => HomePage(
-                      userId: result['FacebookLinked']['userid'].toString(),
-                      name: result['FacebookLinked']['info']['name'],
-                      totalLikes: result['FacebookLinked']['info']['stats']['totallikes'],
-                      totalViews: result['FacebookLinked']['info']['stats']['totalviews'],
-                      imageUrl: result['FacebookLinked']['profilepic'],
-                      pictureUrls:pics2
-                    )
-                  ),
-                  (Route<dynamic> route) => false
-                );
-*/
+                login(result['FacebookLinked']['userid'].toString(),result['FacebookLinked']['info']['name'],result['FacebookLinked']['profilepic'],pics2,result['FacebookLinked']['info']['stats']['totalviews'],result['FacebookLinked']['info']['stats']['totallikes'],false);
               }
             }
           )
@@ -289,12 +287,11 @@ class LogInPageState extends State<LogInPage> {
 
                       for (dynamic el in pics) {
                         pics2.add(el['filepath']);
-                        print(el['filepath']);
                       }
 
                       Common.userid = resultData['loginManual']['userid'].toString();
-                      FireBaseHandler.firebaseMessaging.subscribeToTopic(Common.userid);
-                      login(resultData['loginManual']['userid'].toString(),resultData['loginManual']['info']['name'],resultData['loginManual']['profilepic'],pics2,resultData['loginManual']['info']['stats']['totalviews'],resultData['loginManual']['info']['stats']['totallikes']);
+                      //FireBaseHandler.firebaseMessaging.subscribeToTopic(Common.userid);
+                      login(resultData['loginManual']['userid'].toString(),resultData['loginManual']['info']['name'],resultData['loginManual']['profilepic'],pics2,resultData['loginManual']['info']['stats']['totalviews'],resultData['loginManual']['info']['stats']['totallikes'],resultData['loginManual']["premium"]);
                     }
                   }
                 ),

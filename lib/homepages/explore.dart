@@ -12,7 +12,9 @@ class ExplorePage extends StatefulWidget {
 
 class ExplorePageState extends State<ExplorePage> with SingleTickerProviderStateMixin {
   Future<QueryResult> fut;
-  bool complete = false;
+  Future<QueryResult> lastOnline;
+  bool popularcomplete = false;
+  bool onlinecomplete = false;
   List<ShowcaseEntry> allpopularentries;
   ScrollController _scrollController;
   ValueNotifier<double> _offsetNotifier;
@@ -24,7 +26,7 @@ class ExplorePageState extends State<ExplorePage> with SingleTickerProviderState
 
   double _imageContainerHeight = 225.0;
   double _imageContainerParallax = 0.0;
-  bool _userHasPremium = false;
+  bool _userHasPremium = Common.premium;
 
   void _onScroll() {
 
@@ -43,10 +45,21 @@ class ExplorePageState extends State<ExplorePage> with SingleTickerProviderState
   @override
   void initState() {
     super.initState();
+
+    if(Common.premium = true){
+      lastOnline = GraphQLRequests.recentlyOnline(10);
+      lastOnline.then((value) {
+        onlinecomplete = true;
+        print(value.data);
+      });
+    }
     fut = GraphQLRequests.popularUsers(0, 0);
     fut.then((value) {
       allpopularentries = List<ShowcaseEntry>();
-      complete = true;
+      if(Common.premium == false){
+        onlinecomplete = true;
+      }
+      popularcomplete = true;
       dynamic userlist = value.data["mostPopular"];
       for(dynamic user in userlist){
         //VARS TO pass
@@ -83,10 +96,11 @@ class ExplorePageState extends State<ExplorePage> with SingleTickerProviderState
 
   @override
   Widget build(BuildContext context) {
-     return FutureBuilder(future: Future.wait([fut]),builder: (context,snapshot){
-       if(!complete){
+     return FutureBuilder(future: Common.premium == true ?Future.wait([fut,lastOnline]):fut,builder: (context,snapshot){
+       if(!(popularcomplete && onlinecomplete)){
          return CircularProgressIndicator();
        }
+       else{
        return Stack(
         children: <Widget>[
           Positioned(
@@ -140,7 +154,7 @@ class ExplorePageState extends State<ExplorePage> with SingleTickerProviderState
                             children: <Widget>[
                               Expanded(
                                 child: Text(
-                                  'Buy premium to meet new funny girls uwu XD now give me your money HAHA please im literally starving',
+                                  'Buy premium to see recently online and more.',
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontWeight: FontWeight.w600,
@@ -151,6 +165,7 @@ class ExplorePageState extends State<ExplorePage> with SingleTickerProviderState
                                 width: 10,
                               ),
                               FloatingActionButton(
+                                heroTag: "explore page",
                                 onPressed: () {},
                                 child: Icon(Icons.arrow_forward, color: const Color(0xFFCA436B)),
                                 backgroundColor: Colors.white,
@@ -240,6 +255,9 @@ class ExplorePageState extends State<ExplorePage> with SingleTickerProviderState
                                 },
                                 onTapUp: (details) {
                                   _animationController.reverse(from: 1);
+                                  //OPEN NEW PAGE
+                                  //TODO
+
                                 },
                                 onTapCancel: () {
                                   _animationController.reverse(from: 1);
@@ -306,9 +324,9 @@ class ExplorePageState extends State<ExplorePage> with SingleTickerProviderState
                   itemExtent: 200,
                   delegate: SliverChildBuilderDelegate((context, index) {
                     if (index == 0)
-                      return ExploreListEntry(listIndex: index, offsetNotifier: _offsetNotifier, parentScrollController: _scrollController, name: 'EPIC GAMER GIRL', pictureUrl: 'https://i.pinimg.com/736x/6c/76/01/6c7601b26133029458ff6a15b01a7a85.jpg',);
+                      return ExploreListEntry(listIndex: index, offsetNotifier: _offsetNotifier, parentScrollController: _scrollController, name: 'Beispiel', pictureUrl: 'https://i.pinimg.com/736x/6c/76/01/6c7601b26133029458ff6a15b01a7a85.jpg',);
                     else if (index == 1)
-                      return ExploreListEntry(listIndex: index, offsetNotifier: _offsetNotifier, parentScrollController: _scrollController, name: 'VERY EPIC CUTE DOGGO', pictureUrl: 'https://www.usmagazine.com/wp-content/uploads/2018/11/Maya-The-Dog-3.jpg?w=700&quality=70&strip=all',);
+                      return ExploreListEntry(listIndex: index, offsetNotifier: _offsetNotifier, parentScrollController: _scrollController, name: 'Beispiel 2', pictureUrl: 'https://www.usmagazine.com/wp-content/uploads/2018/11/Maya-The-Dog-3.jpg?w=700&quality=70&strip=all',);
                     return Container(color: Colors.white, width: MediaQuery.of(context).size.width);
                   }),
                 )
@@ -317,7 +335,7 @@ class ExplorePageState extends State<ExplorePage> with SingleTickerProviderState
             ),
           ),
         ],
-    );},
+    );}},
      );
   }
 }

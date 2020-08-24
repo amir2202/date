@@ -43,7 +43,7 @@ class ShowcaseState extends State<Showcase> {
           diameter: widget.height,
           pictureUrl: entry.pictureUrl,
           indicator: Indicator(icon: Icons.favorite, backgroundColor: !entry.enabled || !widget.enabled ? Colors.grey : Colors.green, text: entry.text),
-          enabled: widget.enabled && entry.enabled,
+          enabled: widget.enabled && entry.enabled,usertoretrieve: entry.userId,
         )
       );
     }

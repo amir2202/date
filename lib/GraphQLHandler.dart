@@ -61,6 +61,7 @@ class GraphQLHandler {
     }
   """;
 
+
   static Future<QueryResult> getLists() {
     return client2.mutate(
       MutationOptions(
@@ -160,6 +161,7 @@ mutation recentChats($caller:String!){
     mutation LoginM($email: String!, $password: String!) {
       loginManual(email: $email, password: $password) {
         userid
+        premium
         info {
           name
           stats {
@@ -174,6 +176,42 @@ mutation recentChats($caller:String!){
       }
     }
   """;
+
+  static const String recentlyOnline = r"""mutation recentlyOnline($limit:Int){
+	recentlyOnline(limit:$limit){
+    profilepic
+    info
+    {
+      stats{
+        totalviews
+        totallikes
+      }
+    }
+  }
+}
+""";
+  static const String pingOnline = r"""
+  mutation pingOnline($userid:Int){
+	pingOnline(userid:$userid)
+}""";
+
+  static const loginToken = r"""mutation loginToken($token:String!){
+  loginToken(token:$token){
+    userid
+    premium
+    pictures{
+      filepath
+    }
+    profilepic
+    info{
+      name
+    	stats{
+        totalviews
+        totallikes
+      }
+    }
+  }
+}""";
 
   static const String facebookLinked = r"""
     mutation FacebookLinked($fbid: String!) {
