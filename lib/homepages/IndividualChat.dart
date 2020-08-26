@@ -82,7 +82,7 @@ class IndividualChatState extends State<IndividualChat>{
   Socket socket;
   void test() async {
     //54.37.205.205
-    socket = await Socket.connect('192.168.0.30', 9999);
+    socket = await Socket.connect('54.37.205.205', 9999);
     print("connected");
     socket.add(utf8.encode(Common.userid + '\n'));
     await socket.flush();
@@ -155,7 +155,7 @@ class IndividualChatState extends State<IndividualChat>{
                 clipBehavior: Clip.hardEdge,
                 color: Colors.transparent,
                 child: Ink.image(
-                  image: NetworkImage(widget.caller.avatar),
+                  image: NetworkImage(widget.other.avatar),
                   fit: BoxFit.cover,
                   width:50,
                   height: 75,

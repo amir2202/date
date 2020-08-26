@@ -57,8 +57,10 @@ class ProfileExternalPageState extends State<ProfileExternalPage> {
           ),
 
           ProfilePage(
-            tabCallback: (a, b) {},
-            disownCallback: (a) { setState(() {}); },
+            tabCallback: (a, b) {
+            },
+            disownCallback: (a) { setState(() {
+            }); },
             notifier: _notifier,
 
             myProfile: false,

@@ -176,6 +176,9 @@ mutation recentChats($caller:String!){
       }
     }
   """;
+  static const viewLike = r"""mutation viewLikeUser($by:Int,$towards:Int,$opt:Int){
+	viewLikeUser(by:$by,towards:$towards,opt:$opt)
+}""";
 
   static const String recentlyOnline = r"""mutation recentlyOnline($limit:Int){
 	recentlyOnline(limit:$limit){

@@ -51,7 +51,7 @@ class ProfilePage extends StatefulWidget {
   final String imageUrl;
   final List<String> pictureUrls;
 
-  final int totalLikes;
+  int totalLikes;
   final int totalViews;
 
   ProfilePage({Key key,
@@ -402,7 +402,15 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
                                                 if (widget.myProfile)
                                                   widget.tabCallback(HomePageIndices.info, 1);
                                                 else
-                                                  //TODO do later, check if page already liked
+                                                  setState(() {
+                                                    //TODO check already liked
+                                                    GraphQLHandler.client2.mutate(MutationOptions(documentNode: gql(GraphQLHandler.viewLike),variables: {"by":Common.userid,"towards":widget.userId,"opt":0})).then((value) {
+                                                      if(value.data == true){
+                                                        print("ex");
+                                                        _likes = _likes +1;
+                                                      }
+                                                    });
+                                                  });
                                                   return;
                                               },
                                               constraints: BoxConstraints(),

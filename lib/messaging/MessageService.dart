@@ -31,7 +31,7 @@ class MessageService extends ChangeNotifier {
   MessageService(ChatUser caller,ChatUser other){
     this.caller = caller;
     this.other = other;
-    listen();
+    listen(caller.uid);
   }
   static final messages = <ChatMessage>[];
   Socket socket;
@@ -41,11 +41,11 @@ class MessageService extends ChangeNotifier {
     return messages;
   }
 
-  void listen() async {
+  void listen(String userid) async {
     //54.37.205.205
     socket = await Socket.connect('54.37.205.205', 9999);
     print("connected");
-    socket.add(utf8.encode(Common.userid + '\n'));
+    socket.add(utf8.encode(userid + '\n'));
     await socket.flush();
     //EQUIVALENT OF STRING BUILDER HERE
     //DATA Arrives in packets (thus each data instance is part of string)

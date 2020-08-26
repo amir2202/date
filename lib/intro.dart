@@ -40,6 +40,9 @@ class _introState extends State<intro>{
     int userid = prefs.getInt("LastLogin");
     print(prefs);
     if(userid != null && userid != 0){
+      Common.userid = userid.toString();
+      print("USERID");
+      print(Common.userid);
       saveduser = userid;
       return true;
     }

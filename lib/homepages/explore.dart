@@ -16,6 +16,27 @@ class ExplorePageState extends State<ExplorePage> with SingleTickerProviderState
   bool popularcomplete = false;
   bool onlinecomplete = false;
   List<ShowcaseEntry> allpopularentries;
+
+  //DEFAULT ENTRIES, these are overriden if user has premium
+  List<ShowcaseEntry> recentlyonlineEntries = <ShowcaseEntry>[
+  ShowcaseEntry(
+  userId: '0',
+  pictureUrl: 'https://i.pinimg.com/originals/3e/17/7a/3e177aaf03173a4eb243610bc343472e.jpg',
+  ),
+  ShowcaseEntry(
+  userId: '1',
+  pictureUrl: 'https://i.pinimg.com/originals/37/06/49/3706491ead343833c8bc86fa1b1d7d46.jpg',
+  ),
+  ShowcaseEntry(
+  userId: '2',
+  pictureUrl: 'https://64.media.tumblr.com/5d9d58c06de3405aa4c5ed4f0ec9e370/tumblr_p4qpfccwJP1tohdpqo1_400.jpg',
+  ),
+  ShowcaseEntry(
+  userId: '3',
+  pictureUrl: 'https://i.pinimg.com/736x/b9/30/cc/b930cca855a5b7496fa8df8c426ce6fc.jpg',
+  )];
+
+
   ScrollController _scrollController;
   ValueNotifier<double> _offsetNotifier;
   GlobalKey _nearbyKey;
@@ -50,6 +71,16 @@ class ExplorePageState extends State<ExplorePage> with SingleTickerProviderState
       lastOnline = GraphQLRequests.recentlyOnline(10);
       lastOnline.then((value) {
         onlinecomplete = true;
+        recentlyonlineEntries.clear();
+        recentlyonlineEntries = List<ShowcaseEntry>();
+        dynamic userlist = value.data["recentlyOnline"];
+        for(dynamic user in userlist){
+          int likes = user["info"]["stats"]["totallikes"];
+          int views = user["info"]["stats"]["totalviews"];
+          //TODO matt the logic to display string
+          String display = (likes+views).toString();
+          recentlyonlineEntries.add(ShowcaseEntry(pictureUrl: user["profilepic"],enabled: true,text: display,userId:user["userid"]));
+        }
         print(value.data);
       });
     }
@@ -210,24 +241,8 @@ class ExplorePageState extends State<ExplorePage> with SingleTickerProviderState
                         Showcase(
                           enabled: _userHasPremium,
                           height: 100,
-                          entries: <ShowcaseEntry>[
-                            ShowcaseEntry(
-                              userId: '0',
-                              pictureUrl: 'https://i.pinimg.com/originals/3e/17/7a/3e177aaf03173a4eb243610bc343472e.jpg',
-                            ),
-                            ShowcaseEntry(
-                              userId: '1',
-                              pictureUrl: 'https://i.pinimg.com/originals/37/06/49/3706491ead343833c8bc86fa1b1d7d46.jpg',
-                            ),
-                            ShowcaseEntry(
-                              userId: '2',
-                              pictureUrl: 'https://64.media.tumblr.com/5d9d58c06de3405aa4c5ed4f0ec9e370/tumblr_p4qpfccwJP1tohdpqo1_400.jpg',
-                            ),
-                            ShowcaseEntry(
-                              userId: '3',
-                              pictureUrl: 'https://i.pinimg.com/736x/b9/30/cc/b930cca855a5b7496fa8df8c426ce6fc.jpg',
-                            )
-                          ],
+                          entries: recentlyonlineEntries,
+
                         )
                       ],
                     ),
